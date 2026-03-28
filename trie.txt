@@ -1,0 +1,57 @@
+
+struct Trie{
+    struct Node{
+        int cnt;
+        Node *child[26];
+        Node(){
+            cnt = 0;
+            for(int i = 0; i < 26; ++i) child[i] = nullptr;
+        }
+    };
+
+    Node *root;
+    Trie(){
+        root = new Node();
+        root -> cnt++;
+    }
+
+    void add(string s){
+        Node *cur = root;
+        for(char c: s){
+            cur -> cnt++;
+            if (cur -> child[c - 'a'] == nullptr) 
+                cur -> child[c - 'a'] = new Node();
+            cur = cur -> child[c - 'a'];
+        }
+        cur -> cnt++;
+    }
+
+    void remove(string s){ // obviously s has to already be in the trie
+        try_remove(root, 0, s);
+    }
+
+    void try_remove(Node* &root, int i, string &s){
+        if (i < s.size()){
+            try_remove(root -> child[s[i] - 'a'], i + 1, s);
+        }
+        root -> cnt--;
+        if (root -> cnt == 0) {
+            delete root;
+            root = nullptr;
+        }
+    }
+
+    Node* find(string s){
+        Node* ans = root;
+        for(char c: s){
+            if (ans -> child[c - 'a'] == nullptr)
+                return nullptr;
+            ans = ans -> child[c - 'a'];
+        }
+        return ans;
+    }
+
+    bool exist(string s){
+        return find(s) == nullptr;
+    }
+};
