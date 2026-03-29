@@ -5,38 +5,50 @@
 #include <utility>
 
 Graph::Graph() {
+
+}
+
+Graph::~Graph() {
+	for (auto i : nodes) {
+		delete i;
+	}
 }
 
 
-void Graph::add_node(Node v) {
-	nodes.insert(v);
+
+Node* Graph::add_node(Node *v) {
+	nodes.push_back(v);
+	return v;
 }
-void Graph::add_edge(int u, int v) {
+void Graph::add_edge(Node* u, Node* v) {
 	edges.push_back(std::make_pair(u, v));
 }
-std::vector<Node> Graph::get_node_list() {
-	return std::vector(nodes.begin(), nodes.end());
+std::vector<Node*> Graph::get_node_list() {
+	return nodes;
 }
-std::vector<std::pair<int, int>> Graph::get_edges_val() {
-	return edges;
-}
-std::vector<std::pair<int, int>> Graph::get_edges_idx() {
-	std::vector<std::pair<int, int>> ans;
-	for (auto i : edges) {
-		int idx1 = -1, idx2 = -1;
-		int it = 0;
-		for (auto j : nodes) {
-			if (j.get_val() == i.first) {
-				idx1 = it;
-			}
-			if (j.get_val() == i.second) {
-				idx2 = it;
-			}
-			it++;
-		}
-		if (idx1 != -1 && idx2 != -1) {
-			ans.push_back(std::make_pair(idx1, idx2));
+
+Node* Graph::find_node(std::string u) {
+	for (Node* i : nodes) {
+		if (i->get_val() == u) {
+			return i;
 		}
 	}
+	return nullptr;
+}
+
+void Graph::add_edge(std::string u, std::string v) {
+	Node* m1 = find_node(u), *m2 = find_node(v);
+	if (m1 == nullptr || m2 == nullptr) return;
+	add_edge(m1, m2);
+}
+
+std::vector<std::pair<Node*, Node*>> Graph::get_edges_idx() {
+	return edges;
+}
+
+std::vector<std::pair<std::string, std::string>> Graph::get_edges_val() {
+	std::vector<std::pair<std::string, std::string>> ans;
+	for(auto i: edges)
+		ans.push_back(std::make_pair(i.first->get_val(), i.second->get_val()));
 	return ans;
 }

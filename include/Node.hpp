@@ -14,8 +14,8 @@ enum Shape{
 
 class Node {
 public:
-	Node(int val, sf::Vector2f pos, Shape shape = (Shape)0);
-	int get_val();
+	Node(std::string val, sf::Vector2f pos, Shape shape = (Shape)0);
+	std::string get_val();
 	sf::Vector2f get_pos();
 	Shape get_shape();
 
@@ -27,7 +27,7 @@ public:
 	OPEDEF(>=);
 	OPEDEF(<=);
 private:
-	int v;
+	std::string v;
 	sf::Vector2f p;
 	Shape s;
 };

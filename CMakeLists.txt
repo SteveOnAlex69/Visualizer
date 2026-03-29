@@ -26,7 +26,7 @@ target_include_directories(Visualizer PRIVATE
 	${CMAKE_SOURCE_DIR}/include
 )
 target_sources(Visualizer PRIVATE 
-	"src/GameLogic.cpp" "src/Helper.cpp" "src/MediaPlayer.cpp" "src/Node.cpp" "src/Graph.cpp" "src/LinkedList.cpp" "src/Hashmap.cpp")
+	"src/GameLogic.cpp" "src/Helper.cpp" "src/MediaPlayer.cpp" "src/Node.cpp" "src/Graph.cpp" "src/LinkedList.cpp" "src/Hashmap.cpp" "src/Trie.cpp" "src/BST.cpp" "src/AVL.cpp" "src/DrawingUnit.cpp")
 
 
 set(SFML_DIR "${CMAKE_SOURCE_DIR}/SFML/lib/cmake/SFML")

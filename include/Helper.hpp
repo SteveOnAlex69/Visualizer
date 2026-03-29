@@ -9,6 +9,10 @@
 const sf::Vector2u windowSize = sf::Vector2u(1920, 1200);
 const sf::Color BACKGROUND = sf::Color(174, 183, 132);
 const sf::Color FORESKIN = sf::Color(65, 67, 27);
+const std::string FONT_PATH = std::string(PROJECT_DIR) + "assets/Font/Consola.ttf";
+const sf::Vector2f screen_center(windowSize.x * 0.5f, windowSize.y * 0.5f);
+
+
 
 const int EDGE_WIDTH = 6;
 const double PI = atan(1);

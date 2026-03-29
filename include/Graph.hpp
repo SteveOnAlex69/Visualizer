@@ -11,14 +11,17 @@
 class Graph {
 public:
 	Graph();
-	void add_node(Node v);
-	void add_edge(int u, int v);
-	std::vector<Node> get_node_list();
-	std::vector<std::pair<int, int>> get_edges_val(); // get all of the edges by value
-	std::vector<std::pair<int, int>> get_edges_idx(); // get all of the edges by index
+	~Graph();
+	Node* add_node(Node *v);
+	void add_edge(Node *u, Node *v);
+	void add_edge(std::string u, std::string v);
+	std::vector<Node*> get_node_list();
+	std::vector<std::pair<std::string, std::string>> get_edges_val(); // get all of the edges by value
+	std::vector<std::pair<Node*, Node*>> get_edges_idx(); // get all of the edges by pointer
 private:
-	std::set<Node> nodes;
-	std::vector<std::pair<int, int>> edges;
+	std::vector<Node*> nodes;
+	std::vector<std::pair<Node*, Node*>> edges;
+	Node* find_node(std::string u);
 };
 
 #endif
