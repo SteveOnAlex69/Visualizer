@@ -1,4 +1,4 @@
-#include <DrawingUnit.hpp>
+#include <Drawing/DrawingUnit.hpp>
 #include <Helper.hpp>
 
 DrawingUnit::DrawingUnit() {
@@ -56,17 +56,38 @@ void DrawingUnit::draw_node(Node* i) {
 
 void DrawingUnit::draw_graph(Graph& graph) {
 	std::vector<Node*> li = graph.get_node_list();
-	std::vector<std::pair<Node*, Node*>> relation = graph.get_edges_idx();
+	std::vector<Edge> relation = graph.get_edges_idx();
 
 	for (auto i : relation) {
 		Node *u = i.first, *v = i.second;
+		sf::Vector2f fi = u->get_pos(), se = v->get_pos();
 		sf::RectangleShape line;
-		line.setSize(Point2((u -> get_pos() - v -> get_pos()).length(), EDGE_WIDTH));
+		line.setSize(Point2((fi - se).length(), EDGE_WIDTH));
 		line.setOrigin(Point2(0, EDGE_WIDTH / 2));
 		line.setFillColor(FORESKIN);
-		line.setPosition(u -> get_pos());
-		line.setRotation((v -> get_pos() - u -> get_pos()).angle());
+		line.setPosition(fi);
+		line.setRotation((se - fi).angle());
 		appwindow -> draw(line);
+
+		
+
+		if (i.val.size()) {
+			sf::CircleShape cyka(15);
+			cyka.setPosition((fi + se) * 0.5f);
+			cyka.setOrigin(sf::Vector2f(cyka.getLocalBounds().size) * 0.5f);
+			cyka.setFillColor(BACKGROUND);
+
+			appwindow->draw(cyka);
+
+			sf::Text inner(font);
+			inner.setString(i.val);
+			inner.setCharacterSize(24);
+			inner.setFillColor(FORESKIN);
+			inner.setPosition((fi + se) * 0.5f);
+			sf::FloatRect textRect = inner.getLocalBounds();
+			inner.setOrigin(textRect.size * 0.5f + textRect.position);
+			appwindow->draw(inner);
+		}
 	}
 	for (auto i : li) draw_node(i);
 }
@@ -85,14 +106,31 @@ void DrawingUnit::draw_linked_list(LinkedList& linked_list, sf::Vector2f ROOT) {
 }
 
 
-void DrawingUnit::draw_hash_map(HashMapChaining& chenning, sf::Vector2f ROOT) {
-	sf::Vector2f OFFSET(0, 150);
-	sf::Vector2f SPACING(150, 0);
+void DrawingUnit::draw_hash_map(HashMapChaining& hash_map, sf::Vector2f ROOT) {
+	sf::Vector2f OFFSETX(0, 150);
+	sf::Vector2f OFFSETY(150, 0);
 
 	Graph vcl;
-	for (int i = 0; i < chenning.n; ++i) {
-		vcl.add_node(new Node(std::to_string(i), ROOT + OFFSET * (1.0f * i), NO));
-		draw_linked_list(chenning.buckets[i], ROOT + OFFSET * (1.0f * i) + SPACING);
+	for (int i = 0; i < hash_map.get_size(); ++i) {
+		vcl.add_node(new Node(std::to_string(i), ROOT + OFFSETX * (1.0f * i), NO));
+		draw_linked_list(hash_map.buckets[i], ROOT + OFFSETX * (1.0f * i) + OFFSETY);
+	}
+	draw_graph(vcl);
+}
+
+
+void DrawingUnit::draw_hash_map(HashMapLinearProbing& hash_map, sf::Vector2f ROOT) {
+	sf::Vector2f OFFSETX(0, 150);
+	sf::Vector2f OFFSETY(150, 0);
+
+	Graph vcl;
+	for (int i = 0; i < hash_map.get_size(); ++i) {
+		vcl.add_node(new Node(std::to_string(i), ROOT + OFFSETY, NO));
+
+		if (hash_map.slots[i] != -1) {
+			vcl.add_node(new Node(std::to_string(hash_map.slots[i]), ROOT, SQUARE));
+		}
+		ROOT += OFFSETX;
 	}
 	draw_graph(vcl);
 }
@@ -102,7 +140,7 @@ template <class BSTNode>
 Node* loadingBST(BSTNode*root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET) {
 	if (root == nullptr) return nullptr;
 	Node* cur = graph.add_node(new Node(std::to_string(root -> val), ROOT, CIRCLE));
-	OFFSET.x *= 0.7f;
+	OFFSET.x *= 0.4f;
 	if (root->childL) {
 		Node* left_child = loadingBST(root->childL, graph, ROOT + sf::Vector2f(-OFFSET.x, OFFSET.y), OFFSET);
 		graph.add_edge(cur, left_child);
@@ -116,7 +154,7 @@ Node* loadingBST(BSTNode*root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFF
 
 template <class Tree> 
 void DrawingUnit::draw_BST(Tree& bst, sf::Vector2f ROOT) {
-	sf::Vector2f OFFSET(400, 150);
+	sf::Vector2f OFFSET(1000, 150);
 
 	Graph vcl;
 	loadingBST(bst.root, vcl, ROOT, OFFSET);
@@ -143,7 +181,7 @@ Node* loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f 
 		nROOT.x += OFFSET.x * (-0.5f + (cur_child - 0.5f) / child_cnt);
 
 		Node* child = loadingTrie(root->child[i], graph, nROOT, nOFFSET);
-		graph.add_edge(cur, child);
+		graph.add_edge(cur, child, std::string(1, 'a' + i));
 	}
 	
 	return cur;

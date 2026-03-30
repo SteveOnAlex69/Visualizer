@@ -3,13 +3,13 @@
 
 #include <SFML/Graphics.hpp>
 #include <Helper.hpp>
-#include <Node.hpp>
-#include <Graph.hpp>
-#include <LinkedList.hpp>
-#include <Hashmap.hpp>
-#include <Trie.hpp>
-#include <BST.hpp>
-#include <AVL.hpp>
+#include <Drawing/Node.hpp>
+#include <Drawing/Graph.hpp>
+#include <DataStructures/LinkedList.hpp>
+#include <DataStructures/Hashmap.hpp>
+#include <DataStructures/Trie.hpp>
+#include <DataStructures/BST.hpp>
+#include <DataStructures/AVL.hpp>
 #include <iostream>
 #include <filesystem>
 #include <vector>
@@ -18,21 +18,25 @@
 #include <concepts>
 #include <math.h>
 
-struct DrawingUnit {
-	sf::RenderWindow *appwindow;
-	sf::Font font;
+class DrawingUnit {
+public:
 	DrawingUnit();
 	DrawingUnit(sf::RenderWindow *window, sf::Font f);
 
 	void draw_node(Node *i);
 	void draw_graph(Graph& graph);
 	void draw_linked_list(LinkedList& linked_list, sf::Vector2f ROOT);
-	void draw_hash_map(HashMapChaining& chenning, sf::Vector2f ROOT);
+	
+	void draw_hash_map(HashMapChaining& hash_map, sf::Vector2f ROOT);
+	void draw_hash_map(HashMapLinearProbing& hash_map, sf::Vector2f ROOT);
 
 	template <class Tree>
 	void draw_BST(Tree& bst, sf::Vector2f ROOT);
-
 	void draw_trie(Trie& tri, sf::Vector2f ROOT);
+
+private:
+	sf::RenderWindow* appwindow;
+	sf::Font font;
 };
 
 

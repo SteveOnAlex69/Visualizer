@@ -1,4 +1,4 @@
-#include <BST.hpp>
+#include <DataStructures/BST.hpp>
 #include <string>
 #include <iostream>
 #include <vector>

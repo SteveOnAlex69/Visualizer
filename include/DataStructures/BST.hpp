@@ -15,19 +15,21 @@ struct BSTNode {
     BSTNode(int x = 0);
 };
 
-struct BST {
+class BST {
+public:
     BSTNode* root;
 
     BST();
 
     void insert(int x);
-    void insert(BSTNode*& root, int x);
     void traverse();
-    void traverse(BSTNode* root, std::vector<int>& ans);
     BSTNode* locate(int x);
-    BSTNode* locate(BSTNode* root, int x);
     bool exist(int x);
     bool erase(int x);
+private:
+    void insert(BSTNode*& root, int x);
+    void traverse(BSTNode* root, std::vector<int>& ans);
+    BSTNode* locate(BSTNode* root, int x);
     bool erase(BSTNode*& root, int x);
     int delete_left_most(BSTNode*& root);
 };

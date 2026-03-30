@@ -1,8 +1,11 @@
-#include <Hashmap.hpp>
+#include <DataStructures/Hashmap.hpp>
 #include <iostream>
 #include <vector>
 #include <utility>
 
+int HashMapChaining::get_size() {
+	return n;
+}
 
 HashMapChaining::HashMapChaining(int _n) {
 	n = _n;
@@ -28,6 +31,9 @@ LLNode* HashMapChaining::locate(int x) {
 }
 
 
+int HashMapLinearProbing::get_size() {
+	return n;
+}
 
 HashMapLinearProbing::HashMapLinearProbing(int _n) {
 	n = _n;

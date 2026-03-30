@@ -13,7 +13,8 @@ struct LLNode {
 	LLNode(int v = 0);
 };
 
-struct LinkedList {
+class LinkedList {
+public:
 	LLNode* head;
 	LinkedList();
 	void insert(int value);
@@ -22,6 +23,8 @@ struct LinkedList {
 	bool exist(int value);
 
 	std::vector<int> get_array();
+private:
+
 };
 
 

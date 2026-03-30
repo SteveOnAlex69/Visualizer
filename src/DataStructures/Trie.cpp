@@ -1,4 +1,4 @@
-#include <Trie.hpp>
+#include <DataStructures/Trie.hpp>
 #include <string>
 #include <iostream>
 #include <vector>

@@ -1,13 +1,13 @@
 ﻿#include <Helper.hpp>
 #include <GameLogic.hpp>
 #include <MediaPlayer.hpp>
-#include <Node.hpp>
-#include <Graph.hpp>
-#include <LinkedList.hpp>
-#include <Hashmap.hpp>
-#include <Trie.hpp>
-#include <BST.hpp>
-#include <AVL.hpp>
+#include <Drawing/Node.hpp>
+#include <Drawing/Graph.hpp>
+#include <DataStructures/LinkedList.hpp>
+#include <DataStructures/Hashmap.hpp>
+#include <DataStructures/Trie.hpp>
+#include <DataStructures/BST.hpp>
+#include <DataStructures/AVL.hpp>
 #include <iostream>
 #include <filesystem>
 #include <vector>
@@ -16,13 +16,15 @@
 #include <concepts>
 #include <math.h>
 
-#include <DrawingUnit.hpp>
+#include <Drawing/DrawingUnit.hpp>
+#include <UI/MenuManager.hpp>
 
 #define ll long long
 #define GETBIT(mask, i) (((mask) >> (i)) & 1)
 #define ALL(v) (v).begin(), (v).end()
 
 Trie tri;
+LinkedList li;
 sf::Font font;
 DrawingUnit drawing_unit;
 
@@ -31,6 +33,7 @@ void appStart(sf::RenderWindow& appwindow) {
 	font.openFromFile(FONT_PATH.c_str());
 
 	tri = Trie();
+	li = LinkedList();
 
 	drawing_unit = DrawingUnit(&appwindow, font);
 }
@@ -83,18 +86,6 @@ void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	handle_mouse(appwindow, delta);
 
 	
-	clockcock += delta;
-	if (clockcock >= 1) {
-		clockcock = 0;
-		std::string ahh(rngesus(1, 5), 'a');
-		for (char& c : ahh)
-			c += rngesus(0, 25);
-
-		tri.add(ahh);
-		std::cout << ahh << "\n";
-	}
-
-	drawing_unit.draw_trie(tri, sf::Vector2f(screen_center.x, 200));
 
 	appwindow.display();
 }

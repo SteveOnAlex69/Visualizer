@@ -15,14 +15,16 @@ struct TrieNode {
     TrieNode();
 };
 
-struct Trie {
+class Trie {
+public:
     TrieNode* root;
     Trie();
     void add(std::string s);
     void remove(std::string s);
-    void try_remove(TrieNode*& root, int i, std::string& s);
     TrieNode* find(std::string s);
     bool exist(std::string s);
+private:
+    void try_remove(TrieNode*& root, int i, std::string& s);
 };
 
 

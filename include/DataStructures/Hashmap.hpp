@@ -1,15 +1,16 @@
 #ifndef HASHMAP_HPP
 #define HASHMAP_HPP
 #include <SFML/Graphics.hpp>
-#include <LinkedList.hpp>
+#include <DataStructures/LinkedList.hpp>
 #include <vector>
 #include <set>
 #include <string>
 #include <map>
 #include <utility>
 
-struct HashMapChaining {
-	int n;
+class HashMapChaining {
+public:
+	int get_size();
 	std::vector<LinkedList> buckets;
 	HashMapChaining(int n = 0); // its preferable that n = prime
 	int hash_function(int x);
@@ -17,10 +18,13 @@ struct HashMapChaining {
 	bool erase(int x); // return whether deletion was successful
 	bool exist(int x);
 	LLNode* locate(int x);
+private:
+	int n;
 };
 
-struct HashMapLinearProbing {
-	int n;
+class HashMapLinearProbing {
+public:
+	int get_size();
 	std::vector<int> slots;
 	HashMapLinearProbing(int n = 0); // its preferable that n = prime
 	int hash_function(int x);
@@ -28,6 +32,8 @@ struct HashMapLinearProbing {
 	bool erase(int x); // return whether deletion was successful
 	bool exist(int x);
 	int locate(int x);
+private:
+	int n;
 };
 
 
