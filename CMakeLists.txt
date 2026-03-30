@@ -20,7 +20,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${OUTPUT_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${OUTPUT_DIR})
 
 #Main execcutable file
-add_executable(Visualizer "src/main.cpp")
+add_executable(Visualizer "src/main.cpp" "src/UI/Menu.cpp")
 
 target_include_directories(Visualizer PRIVATE
 	${CMAKE_SOURCE_DIR}/include
@@ -33,7 +33,7 @@ target_sources(Visualizer PRIVATE
     "src/DataStructures/LinkedList.cpp" "src/DataStructures/Hashmap.cpp" "src/DataStructures/Trie.cpp" 
     "src/DataStructures/BST.cpp" "src/DataStructures/AVL.cpp" 
     "src/UI/MenuManager.cpp"
-)
+ "src/UI/Button.cpp" "src/UI/Menu.cpp" "src/UI/UIUnit.cpp")
 
 
 set(SFML_DIR "${CMAKE_SOURCE_DIR}/SFML/lib/cmake/SFML")
