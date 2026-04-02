@@ -10,6 +10,16 @@ UIUnit::UIUnit(sf::RenderWindow* window, sf::Font f) {
 void UIUnit::add_element(Button* button) {
 	buttons.push_back(button);
 }
+
+void UIUnit::erase_element(Button* button) {
+	for(int i = 0; i < (int) buttons.size(); ++i) 
+		if (buttons[i] == button) {
+			buttons.erase(buttons.begin() + i);
+			break;
+		}
+	delete button;
+}
+
 void UIUnit::draw(sf::Vector2f mouse_pos) {
 	for (auto i : buttons) draw_button(i, mouse_pos);
 }

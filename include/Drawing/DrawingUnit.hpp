@@ -25,8 +25,8 @@ public:
 
 	void draw_node(Node *i);
 	void draw_graph(Graph& graph);
-	void draw_linked_list(LinkedList& linked_list, sf::Vector2f ROOT);
-	
+
+	void draw_linked_list(LinkedList& linked_list, sf::Vector2f ROOT, LLNode *highlighted_node = nullptr);
 	void draw_hash_map(HashMapChaining& hash_map, sf::Vector2f ROOT);
 	void draw_hash_map(HashMapLinearProbing& hash_map, sf::Vector2f ROOT);
 

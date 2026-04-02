@@ -10,6 +10,8 @@ DrawingUnit::DrawingUnit(sf::RenderWindow *window, sf::Font f) {
 }
 
 void DrawingUnit::draw_node(Node* i) {
+	sf::Color border_color = FORESKIN;
+	if (i->is_special()) border_color = sf::Color::Yellow;
 	if (i -> get_shape() == NO) {
 	}
 	else if (i -> get_shape() == CIRCLE) {
@@ -17,7 +19,7 @@ void DrawingUnit::draw_node(Node* i) {
 		cyka.setPosition(i -> get_pos());
 		cyka.setOrigin(sf::Vector2f(cyka.getLocalBounds().size) * 0.5f);
 		cyka.setOutlineThickness(6);
-		cyka.setOutlineColor(FORESKIN);
+		cyka.setOutlineColor(border_color);
 		cyka.setFillColor(BACKGROUND);
 		appwindow -> draw(cyka);
 	}
@@ -29,7 +31,7 @@ void DrawingUnit::draw_node(Node* i) {
 		rect.setPosition(i -> get_pos());
 		rect.setOrigin(sf::Vector2f(rect.getLocalBounds().size) * 0.5f);
 		rect.setOutlineThickness(6);
-		rect.setOutlineColor(FORESKIN);
+		rect.setOutlineColor(border_color);
 		rect.setFillColor(BACKGROUND);
 		appwindow -> draw(rect);
 	}
@@ -39,7 +41,7 @@ void DrawingUnit::draw_node(Node* i) {
 		cyka.setOrigin(cyka.getLocalBounds().size * 0.5f + cyka.getLocalBounds().position
 			+ sf::Vector2f(0, cyka.getLocalBounds().size.y * 0.1f));
 		cyka.setOutlineThickness(6);
-		cyka.setOutlineColor(FORESKIN);
+		cyka.setOutlineColor(border_color);
 		cyka.setFillColor(BACKGROUND);
 		appwindow -> draw(cyka);
 	}
@@ -47,7 +49,7 @@ void DrawingUnit::draw_node(Node* i) {
 	sf::Text inner(font);
 	inner.setString(i -> get_val());
 	inner.setCharacterSize(36);
-	inner.setFillColor(FORESKIN);
+	inner.setFillColor(border_color);
 	inner.setPosition(i -> get_pos());
 	sf::FloatRect textRect = inner.getLocalBounds();
 	inner.setOrigin(textRect.size * 0.5f + textRect.position);
@@ -92,13 +94,14 @@ void DrawingUnit::draw_graph(Graph& graph) {
 	for (auto i : li) draw_node(i);
 }
 
-void DrawingUnit::draw_linked_list(LinkedList& linked_list, sf::Vector2f ROOT) {
-	std::vector<int> arr = linked_list.get_array();
+void DrawingUnit::draw_linked_list(LinkedList& linked_list, sf::Vector2f ROOT, LLNode *highlighted_node) {
+	std::vector<LLNode*> arr = linked_list.get_array();
 	sf::Vector2f OFFSET(200, 0);
 	Graph vcl;
 	Node* prev = nullptr;
 	for (int i = 0; i < (int)arr.size(); ++i) {
-		Node* cur = vcl.add_node(new Node(std::to_string(arr[i]), ROOT + OFFSET * (1.0f * i), SQUARE));
+		Node* cur = vcl.add_node(new Node(arr[i]->val, ROOT + OFFSET * (1.0f * i), 
+			SQUARE, arr[i] == highlighted_node));
 		if (i > 0) vcl.add_edge(prev, cur);
 		prev = cur;
 	}
@@ -127,8 +130,8 @@ void DrawingUnit::draw_hash_map(HashMapLinearProbing& hash_map, sf::Vector2f ROO
 	for (int i = 0; i < hash_map.get_size(); ++i) {
 		vcl.add_node(new Node(std::to_string(i), ROOT + OFFSETY, NO));
 
-		if (hash_map.slots[i] != -1) {
-			vcl.add_node(new Node(std::to_string(hash_map.slots[i]), ROOT, SQUARE));
+		if (hash_map.slots[i] != "") {
+			vcl.add_node(new Node(hash_map.slots[i], ROOT, SQUARE));
 		}
 		ROOT += OFFSETX;
 	}

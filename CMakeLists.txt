@@ -20,20 +20,21 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${OUTPUT_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${OUTPUT_DIR})
 
 #Main execcutable file
-add_executable(Visualizer "src/main.cpp" "src/UI/Menu.cpp")
+add_executable(Visualizer "src/main.cpp" )
 
 target_include_directories(Visualizer PRIVATE
 	${CMAKE_SOURCE_DIR}/include
 )
 target_sources(Visualizer PRIVATE 
-	"src/GameLogic.cpp" "src/Helper.cpp" "src/MediaPlayer.cpp" 
-    "src/Drawing/Node.cpp" "src/Drawing/Graph.cpp" "src/Drawing/DrawingUnit.cpp"
-
+"src/GameLogic.cpp" "src/Helper.cpp" "src/MediaPlayer.cpp" 
 
     "src/DataStructures/LinkedList.cpp" "src/DataStructures/Hashmap.cpp" "src/DataStructures/Trie.cpp" 
-    "src/DataStructures/BST.cpp" "src/DataStructures/AVL.cpp" 
-    "src/UI/MenuManager.cpp"
- "src/UI/Button.cpp" "src/UI/Menu.cpp" "src/UI/UIUnit.cpp")
+    "src/DataStructures/BST.cpp" "src/DataStructures/AVL.cpp"     
+
+    "src/UI/MenuManager.cpp" "src/UI/Button.cpp" "src/UI/UIUnit.cpp" "src/UI/UIDesign.cpp"
+
+    "src/Drawing/Node.cpp" "src/Drawing/Graph.cpp" "src/Drawing/DrawingUnit.cpp"
+)
 
 
 set(SFML_DIR "${CMAKE_SOURCE_DIR}/SFML/lib/cmake/SFML")

@@ -14,10 +14,11 @@ enum Shape{
 
 class Node {
 public:
-	Node(std::string val, sf::Vector2f pos, Shape shape = (Shape)0);
+	Node(std::string val, sf::Vector2f pos, Shape shape = (Shape)0, bool special = false);
 	std::string get_val();
 	sf::Vector2f get_pos();
 	Shape get_shape();
+	bool is_special();
 
 	#define OPEDEF(o) bool operator o (const Node& x) const;
 	OPEDEF(>);
@@ -30,6 +31,7 @@ private:
 	std::string v;
 	sf::Vector2f p;
 	Shape s;
+	bool special;
 };
 
 #endif

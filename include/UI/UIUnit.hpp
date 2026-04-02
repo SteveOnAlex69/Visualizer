@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <UI/Button.hpp>
+#include <Drawing/DrawingUnit.hpp>
 #include <Helper.hpp>
 #include <iostream>
 #include <filesystem>
@@ -18,8 +19,10 @@ public:
 	UIUnit(sf::RenderWindow* window, sf::Font f);
 
 	void add_element(Button *button);
+	void erase_element(Button* button);
 	void draw(sf::Vector2f mouse_pos = sf::Vector2f(-1, -1));
 	Button* check_hovering(sf::Vector2f mouse_pos);
+
 private:
 	sf::RenderWindow* appwindow;
 	sf::Font font;

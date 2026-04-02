@@ -13,11 +13,11 @@ public:
 	int get_size();
 	std::vector<LinkedList> buckets;
 	HashMapChaining(int n = 0); // its preferable that n = prime
-	int hash_function(int x);
-	void insert(int x);
-	bool erase(int x); // return whether deletion was successful
-	bool exist(int x);
-	LLNode* locate(int x);
+	int hash_function(std::string x);
+	void insert(std::string x);
+	bool erase(std::string x); // return whether deletion was successful
+	bool exist(std::string x);
+	LLNode* locate(std::string x);
 private:
 	int n;
 };
@@ -25,13 +25,13 @@ private:
 class HashMapLinearProbing {
 public:
 	int get_size();
-	std::vector<int> slots;
+	std::vector<std::string> slots;
 	HashMapLinearProbing(int n = 0); // its preferable that n = prime
-	int hash_function(int x);
-	void insert(int x);
-	bool erase(int x); // return whether deletion was successful
-	bool exist(int x);
-	int locate(int x);
+	int hash_function(std::string x);
+	void insert(std::string x);
+	bool erase(std::string x); // return whether deletion was successful
+	bool exist(std::string x);
+	int locate(std::string x);
 private:
 	int n;
 };

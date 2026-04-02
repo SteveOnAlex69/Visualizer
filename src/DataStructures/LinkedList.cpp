@@ -3,23 +3,23 @@
 #include <vector>
 #include <utility>
 
-LLNode::LLNode(int v) {
+LLNode::LLNode(std::string v) {
 	val = v;
 	nxt = nullptr;
 }
 
 LinkedList::LinkedList() {
-	head = new LLNode(0);
+	head = new LLNode("");
 }
 
 
-void LinkedList::insert(int value) {
+void LinkedList::insert(std::string value) {
 	LLNode* cur = new LLNode(value);
 	cur->nxt = head->nxt;
 	head->nxt = cur;
 }
 
-bool LinkedList::erase(int value) { 
+bool LinkedList::erase(std::string value) {
 	LLNode* tmp = head;
 	while (tmp->nxt) {
 		if (tmp->nxt->val == value) {
@@ -32,7 +32,7 @@ bool LinkedList::erase(int value) {
 	}
 	return false;
 }
-LLNode* LinkedList::locate(int value) {
+LLNode* LinkedList::locate(std::string value) {
 	LLNode* tmp = head;
 	while (tmp->nxt) {
 		tmp = tmp->nxt;
@@ -42,17 +42,23 @@ LLNode* LinkedList::locate(int value) {
 	}
 	return nullptr;
 }
-bool LinkedList::exist(int value) {
+bool LinkedList::exist(std::string value) {
 	return (locate(value) != nullptr);
 }
 
-std::vector<int> LinkedList::get_array() {
-	std::vector<int> ans;
-	ans.push_back(0);
+std::vector<LLNode*> LinkedList::get_array() {
+	std::vector<LLNode*> ans;
+	ans.push_back(head);
 	LLNode* tmp = head;
 	while (tmp->nxt) {
 		tmp = tmp->nxt;
-		ans.push_back(tmp->val);
+		ans.push_back(tmp);
 	}
 	return ans;
+}
+
+void LinkedList::clear() {
+	while (head->nxt) {
+		erase(head->nxt->val);
+	}
 }

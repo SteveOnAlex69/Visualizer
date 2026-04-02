@@ -7,6 +7,8 @@ sf::RenderWindow appWindow;
 
 
 int main(int argv, char* args[]) {
+	std::cout << "booted" << std::endl;
+	
 	appWindow = sf::RenderWindow(sf::VideoMode(windowSize), "Visualizer",
 		sf::Style::Titlebar | sf::Style::Close);
 
@@ -14,6 +16,7 @@ int main(int argv, char* args[]) {
 		std::cerr << "Error creating window" << std::endl;
 		return false;
 	}
+
 
 	appStart(appWindow);
 

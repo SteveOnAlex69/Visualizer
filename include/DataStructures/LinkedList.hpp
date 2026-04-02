@@ -9,20 +9,22 @@
 
 struct LLNode {
 	LLNode* nxt;
-	int val;
-	LLNode(int v = 0);
+	std::string val;
+	LLNode(std::string v = "");
 };
 
 class LinkedList {
 public:
 	LLNode* head;
 	LinkedList();
-	void insert(int value);
-	bool erase(int value); // return whether deleted successfully
-	LLNode* locate(int value);
-	bool exist(int value);
+	void insert(std::string value);
+	bool erase(std::string value); // return whether deleted successfully
+	LLNode* locate(std::string value);
+	bool exist(std::string value);
 
-	std::vector<int> get_array();
+	std::vector<LLNode*> get_array();
+
+	void clear();
 private:
 
 };
