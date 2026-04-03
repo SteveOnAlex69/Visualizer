@@ -174,3 +174,15 @@ int AVL::delete_left_most(AVLNode*& root) {
         return ans;
     }
 }
+
+
+void AVL::clear() {
+    internal_clear(root);
+}
+
+void AVL::internal_clear(AVLNode* root) {
+    if (root == nullptr) return;
+    internal_clear(root->childL);
+    internal_clear(root->childR);
+    delete root;
+}

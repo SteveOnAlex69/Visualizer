@@ -26,12 +26,16 @@ public:
     BSTNode* locate(int x);
     bool exist(int x);
     bool erase(int x);
+
+    void clear();
 private:
     void insert(BSTNode*& root, int x);
     void traverse(BSTNode* root, std::vector<int>& ans);
     BSTNode* locate(BSTNode* root, int x);
     bool erase(BSTNode*& root, int x);
     int delete_left_most(BSTNode*& root);
+
+    void internal_clear(BSTNode *root);
 };
 
 

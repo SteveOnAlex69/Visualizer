@@ -82,3 +82,14 @@ int BST::delete_left_most(BSTNode*& root) {
         return ans;
     }
 }
+
+void BST::clear() {
+    internal_clear(root);
+}
+
+void BST::internal_clear(BSTNode* root) {
+    if (root == nullptr) return;
+    internal_clear(root->childL);
+    internal_clear(root->childR);
+    delete root;
+}

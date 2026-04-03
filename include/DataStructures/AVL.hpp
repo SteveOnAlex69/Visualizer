@@ -29,6 +29,8 @@ public:
     bool exist(int x);
     bool check_correct_depth();
     bool erase(int x);
+
+    void clear();
 private:
     void calculate_depth(AVLNode* x);
     int unbalanced(AVLNode* x);
@@ -41,6 +43,9 @@ private:
     void rotate_left(AVLNode*& root);
     void rotate_right(AVLNode*& root);
     void correct(AVLNode*& root);
+
+
+    void internal_clear(AVLNode* root);
 };
 
 

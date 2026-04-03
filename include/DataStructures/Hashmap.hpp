@@ -18,6 +18,8 @@ public:
 	bool erase(std::string x); // return whether deletion was successful
 	bool exist(std::string x);
 	LLNode* locate(std::string x);
+
+	void clear();
 private:
 	int n;
 };
@@ -32,6 +34,8 @@ public:
 	bool erase(std::string x); // return whether deletion was successful
 	bool exist(std::string x);
 	int locate(std::string x);
+
+	void clear();
 private:
 	int n;
 };

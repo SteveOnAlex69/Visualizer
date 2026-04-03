@@ -10,7 +10,7 @@
 
 
 struct TrieNode {
-    int cnt;
+    int cnt, sum;
     TrieNode* child[26];
     TrieNode();
 };
@@ -20,11 +20,15 @@ public:
     TrieNode* root;
     Trie();
     void add(std::string s);
-    void remove(std::string s);
+    bool erase(std::string s);
     TrieNode* find(std::string s);
     bool exist(std::string s);
+
+    void clear();
+
 private:
-    void try_remove(TrieNode*& root, int i, std::string& s);
+    bool try_remove(TrieNode*& root, int i, std::string& s);
+    void internal_clear(TrieNode* root);
 };
 
 

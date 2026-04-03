@@ -156,7 +156,28 @@ void handle_about(sf::RenderWindow& appwindow) {
 int prev_mask = 0;
 std::string text_box_mode = "";
 void handle_textbox_input(float delta) {
-	if (text_box) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::I)) {
+		visualizer.erase_element(text_box);
+		text_box = nullptr;
+
+		text_box = add_text_box(visualizer, sf::Vector2f(250, 700), sf::Vector2f(200, 60), 26, false, "");
+		text_box_mode = "INSERT";
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E)) {
+		visualizer.erase_element(text_box);
+		text_box = nullptr;
+
+		text_box = add_text_box(visualizer, sf::Vector2f(250, 770), sf::Vector2f(200, 60), 26, false, "");
+		text_box_mode = "ERASE";
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+		visualizer.erase_element(text_box);
+		text_box = nullptr;
+
+		text_box = add_text_box(visualizer, sf::Vector2f(250, 840), sf::Vector2f(200, 60), 26, false, "");
+		text_box_mode = "SEARCH";
+	}
+	else if (text_box) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
 			visualizer.erase_element(text_box);
 			text_box = nullptr;

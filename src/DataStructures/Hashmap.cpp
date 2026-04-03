@@ -31,6 +31,10 @@ bool HashMapChaining::exist(std::string x) {
 LLNode* HashMapChaining::locate(std::string x) {
 	return buckets[hash_function(x)].locate(x);
 }
+void HashMapChaining::clear() {
+	for (int i = 0; i < n; ++i)
+		buckets[i].clear();
+}
 
 int HashMapLinearProbing::get_size() {
 	return n;
@@ -76,5 +80,10 @@ int HashMapLinearProbing::locate(std::string x) {
 		if (idx == n) idx -= n;
 	}
 	return -1;
+}
 
+
+void HashMapLinearProbing::clear() {
+	for (int i = 0; i < n; ++i)
+		slots[i].clear();
 }

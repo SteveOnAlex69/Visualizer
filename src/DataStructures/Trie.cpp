@@ -11,33 +11,43 @@ TrieNode::TrieNode() {
 
 Trie::Trie() {
     root = new TrieNode();
-    root->cnt++;
+    root->cnt = root->sum = 1;
 }
 
 void Trie::add(std::string s) {
     TrieNode* cur = root;
     for (char c : s) {
-        cur->cnt++;
+        cur->sum++;
         if (cur->child[c - 'a'] == nullptr)
             cur->child[c - 'a'] = new TrieNode();
         cur = cur->child[c - 'a'];
     }
+    cur->sum++;
     cur->cnt++;
 }
 
-void Trie::remove(std::string s) { // obviously s has to already be in the trie
-    try_remove(root, 0, s);
+bool Trie::erase(std::string s) { // obviously s has to already be in the trie
+    return try_remove(root, 0, s);
 }
 
-void Trie::try_remove(TrieNode*& root, int i, std::string& s) {
+bool Trie::try_remove(TrieNode*& root, int i, std::string& s) {
+    bool check = true;
     if (i < s.size()) {
-        try_remove(root->child[s[i] - 'a'], i + 1, s);
+        check = try_remove(root->child[s[i] - 'a'], i + 1, s);
     }
-    root->cnt--;
-    if (root->cnt == 0) {
-        delete root;
-        root = nullptr;
+    else {
+        if (root->cnt == 0) return false;
+        root->cnt--; 
     }
+
+    if (check) {
+        root->sum--;
+        if (root->sum == 0) {
+            delete root;
+            root = nullptr;
+        }
+    }
+    return check;
 }
 
 TrieNode* Trie::find(std::string s) {
@@ -47,9 +57,23 @@ TrieNode* Trie::find(std::string s) {
             return nullptr;
         ans = ans->child[c - 'a'];
     }
-    return ans;
+    if (ans->cnt) return ans;
+    return nullptr;
 }
 
 bool Trie::exist(std::string s) {
     return find(s) == nullptr;
+}
+
+void Trie::clear() {
+    internal_clear(root);
+
+    root = new TrieNode();
+    root->cnt = root->sum = 1;
+}
+
+void Trie::internal_clear(TrieNode* root) {
+    if (root == nullptr) return;
+    for (int i = 0; i < 26; ++i) internal_clear(root->child[i]);
+    delete(root);
 }
