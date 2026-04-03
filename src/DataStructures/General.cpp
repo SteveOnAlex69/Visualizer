@@ -10,6 +10,24 @@ GeneralData::GeneralData() {
 	tri = Trie();
 }
 
+std::string get_ds_name(DS name) {
+	switch (name) {
+	case LINKED_LIST:
+		return "Linked List";
+	case HASHMAP_CHAIN:
+		return "Hash Table";
+	case BST_TREE:
+		return "Binary Search Tree";
+	case AVL_TREE:
+		return "AVL Tree";
+	case TRIE:
+		return "Trie";
+	default:
+		return "";
+	}
+}
+
+
 void GeneralData::reset_current() {
 	switch (selected_ds) {
 	case LINKED_LIST:

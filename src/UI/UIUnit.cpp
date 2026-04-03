@@ -27,24 +27,28 @@ void UIUnit::draw(sf::Vector2f mouse_pos) {
 void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 	sf::Vector2f pos = button->get_button_pos();
 	sf::Vector2f size = button->get_button_size();
-	sf::Color btn_color = button->get_button_color();
-	sf::Color fn_color = button->get_font_color();
+
+	sf::Color btn_color = FIRST_COLOR;
+
 	if (button->is_centered()) pos -= size * 0.5f;
 	if (button->check_hovering(mouse_pos)) {
-		std::swap(btn_color, fn_color);
+		btn_color = SECOND_COLOR;
 	}
 	
 	sf::RectangleShape rect;
 	rect.setPosition(pos);
 	rect.setSize(size);
-	rect.setFillColor(btn_color);
+	rect.setFillColor(sf::Color::Transparent);
+
+	rect.setOutlineThickness(5);
+	rect.setOutlineColor(btn_color);
 	appwindow->draw(rect);
 
 	sf::Text tex(font);
 	tex.setString(button -> get_string());
 	tex.setPosition(pos + size * 0.5f);
 	tex.setCharacterSize(button->get_font_size());
-	tex.setFillColor(fn_color);
+	tex.setFillColor(btn_color);
 
 	sf::FloatRect textRect = tex.getLocalBounds();
 	tex.setOrigin(textRect.size * 0.5f + textRect.position);

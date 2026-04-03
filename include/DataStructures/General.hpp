@@ -19,6 +19,8 @@ enum DS {
 	TRIE = 4
 };
 
+std::string get_ds_name(DS name);
+
 class GeneralData {
 public:
 	GeneralData();

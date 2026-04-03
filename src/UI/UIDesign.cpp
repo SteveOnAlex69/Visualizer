@@ -8,13 +8,13 @@ Button* add_text(UIUnit& menu, sf::Vector2f pos, int text_size, bool centered, s
 }
 
 Button* add_button(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, int text_size, bool centered, std::string s) {
-	Button* cur = new Button(pos, size,FORESKIN, sf::Color::White, text_size, centered, s, BUTTON);
+	Button* cur = new Button(pos, size,FIRST_COLOR, sf::Color::White, text_size, centered, s, BUTTON);
 	menu.add_element(cur);
 	return cur;
 }
 
 Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, int text_size, bool centered, std::string s) {
-	Button* cur = new Button(pos, size, FORESKIN, sf::Color::White, text_size, centered, s, TEXTBOX);
+	Button* cur = new Button(pos, size, FIRST_COLOR, sf::Color::White, text_size, centered, s, TEXTBOX);
 	menu.add_element(cur);
 	return cur;
 }
@@ -80,6 +80,6 @@ void setup_visualizer(UIUnit& visualizer) {
 	add_text(visualizer, screen_center + sf::Vector2f(0, -500), 100, true, "VISUALIZER");
 
 	add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(200, 60), 26, false, "INSERT");
-	add_button(visualizer, sf::Vector2f(30, 770), sf::Vector2f(200, 60), 26, false, "ERASE");
-	add_button(visualizer, sf::Vector2f(30, 840), sf::Vector2f(200, 60), 26, false, "SEARCH");
+	add_button(visualizer, sf::Vector2f(30, 790), sf::Vector2f(200, 60), 26, false, "ERASE");
+	add_button(visualizer, sf::Vector2f(30, 880), sf::Vector2f(200, 60), 26, false, "SEARCH");
 }

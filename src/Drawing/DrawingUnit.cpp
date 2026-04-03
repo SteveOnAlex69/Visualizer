@@ -10,7 +10,7 @@ DrawingUnit::DrawingUnit(sf::RenderWindow *window, sf::Font f) {
 }
 
 void DrawingUnit::draw_node(Node* i) {
-	sf::Color border_color = FORESKIN;
+	sf::Color border_color = FIRST_COLOR;
 	if (i->is_special()) border_color = sf::Color::Yellow;
 	if (i -> get_shape() == NO) {
 	}
@@ -66,7 +66,7 @@ void DrawingUnit::draw_graph(Graph& graph) {
 		sf::RectangleShape line;
 		line.setSize(Point2((fi - se).length(), EDGE_WIDTH));
 		line.setOrigin(Point2(0, EDGE_WIDTH / 2));
-		line.setFillColor(FORESKIN);
+		line.setFillColor(FIRST_COLOR);
 		line.setPosition(fi);
 		line.setRotation((se - fi).angle());
 		appwindow -> draw(line);
@@ -84,7 +84,7 @@ void DrawingUnit::draw_graph(Graph& graph) {
 			sf::Text inner(font);
 			inner.setString(i.val);
 			inner.setCharacterSize(24);
-			inner.setFillColor(FORESKIN);
+			inner.setFillColor(FIRST_COLOR);
 			inner.setPosition((fi + se) * 0.5f);
 			sf::FloatRect textRect = inner.getLocalBounds();
 			inner.setOrigin(textRect.size * 0.5f + textRect.position);

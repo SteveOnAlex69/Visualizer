@@ -7,19 +7,17 @@
 #include <math.h>
 
 const sf::Vector2u windowSize = sf::Vector2u(1920, 1200);
-const sf::Color BACKGROUND = sf::Color(174, 183, 132);
-const sf::Color FORESKIN = sf::Color(65, 67, 27);
+const sf::Color BACKGROUND = sf::Color(36, 36, 36);
+const sf::Color FIRST_COLOR = sf::Color(230, 230, 230);
+const sf::Color SECOND_COLOR = sf::Color(170, 170, 230);
 const std::string FONT_PATH = std::string(PROJECT_DIR) + "assets/Font/Consola.ttf";
 const sf::Vector2f screen_center(windowSize.x * 0.5f, windowSize.y * 0.5f);
 
 const sf::Vector2f LINKED_LIST_POS = sf::Vector2f(300, 400);
-const sf::Vector2f HASH_MAP_POS = sf::Vector2f(300, 300);
+const sf::Vector2f HASH_MAP_POS = sf::Vector2f(500, 350);
 const sf::Vector2f BST_POS = screen_center - sf::Vector2f(0, 300);
 const sf::Vector2f AVL_POS = BST_POS;
 const sf::Vector2f TRIE_POS = AVL_POS;
-
-
-
 
 const int EDGE_WIDTH = 6;
 const double PI = atan(1);

@@ -23,6 +23,8 @@
 #include <UI/UIUnit.hpp>
 #include <UI/UIDesign.hpp>
 
+#include <Decoration/Background.hpp>
+
 #define ll long long
 #define GETBIT(mask, i) (((mask) >> (i)) & 1)
 #define ALL(v) (v).begin(), (v).end()
@@ -35,8 +37,11 @@ MenuManager menu_manager;
 GeneralData ds;
 void* searched = nullptr;
 Button* text_box = nullptr;
+Button* ds_name = nullptr;
 
 UIUnit menu, settings, about, visualizer;
+
+BackgroundDrawer bg_drawer;
 
 
 void setup_menus() {
@@ -53,11 +58,15 @@ void appStart(sf::RenderWindow& appwindow) {
 	ds = GeneralData();
 
 	drawing_unit = DrawingUnit(&appwindow, font);
+	bg_drawer = BackgroundDrawer(&appwindow, font);
 
 	menu = UIUnit(&appwindow, font);
 	settings = UIUnit(&appwindow, font);
 	about = UIUnit(&appwindow, font);
 	visualizer = UIUnit(&appwindow, font);
+
+	ds_name = add_text_box(visualizer, sf::Vector2f(screen_center.x, 200), sf::Vector2f(0, 0), 36, true, 
+		get_ds_name(ds.get_current_type()));
 	
 	setup_menus();
 }
@@ -158,7 +167,7 @@ void handle_about(sf::RenderWindow& appwindow) {
 	}
 }
 
-int prev_mask = 0;
+int prev_mask = 0, back_space = 0;
 std::string text_box_mode = "";
 void handle_textbox_input(float delta) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::I)) {
@@ -172,14 +181,14 @@ void handle_textbox_input(float delta) {
 		visualizer.erase_element(text_box);
 		text_box = nullptr;
 
-		text_box = add_text_box(visualizer, sf::Vector2f(250, 770), sf::Vector2f(200, 60), 26, false, "");
+		text_box = add_text_box(visualizer, sf::Vector2f(250, 790), sf::Vector2f(200, 60), 26, false, "");
 		text_box_mode = "ERASE";
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
 		visualizer.erase_element(text_box);
 		text_box = nullptr;
 
-		text_box = add_text_box(visualizer, sf::Vector2f(250, 840), sf::Vector2f(200, 60), 26, false, "");
+		text_box = add_text_box(visualizer, sf::Vector2f(250, 880), sf::Vector2f(200, 60), 26, false, "");
 		text_box_mode = "SEARCH";
 	}
 	else if (text_box) {
@@ -206,7 +215,16 @@ void handle_textbox_input(float delta) {
 			visualizer.erase_element(text_box);
 			text_box = nullptr;
 		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Backspace)) {
+			if (back_space == 0) {
+				std::string cur = text_box->get_string();
+				if (cur.size()) cur.pop_back();
+				text_box->set_string(cur);
+				back_space = 1;
+			}
+		}
 		else {
+			back_space = 0;
 			int cur_mask = 0;
 			for (int j = 0; j <= 9; ++j) {
 				sf::Keyboard::Key num_key = (sf::Keyboard::Key)((int)sf::Keyboard::Key::Num0 + j);
@@ -219,7 +237,7 @@ void handle_textbox_input(float delta) {
 			for (int j = 0; j < 10; ++j) {
 				if (x % 2 == 0 && y % 2 == 1) {
 					std::string cur = text_box->get_string();
-					if (cur.size() < 10) cur.push_back('0' + j);
+					if (cur.size() < 4) cur.push_back('0' + j);
 					text_box->set_string(cur);
 				}
 				x /= 2; y /= 2;
@@ -260,6 +278,8 @@ void handle_ds_switcher(float delta) {
 void handle_visualizing(sf::RenderWindow& appwindow) {
 	visualizer.draw(get_mouse_pos(appwindow));
 
+	ds_name->set_string(get_ds_name( ds.get_current_type() ));
+
 	Button* cur = visualizer.check_hovering(get_mouse_pos(appwindow));
 	if (just_clicked) {
 		if (cur && cur->get_type() != TEXTBOX) {
@@ -289,7 +309,7 @@ void handle_visualizing(sf::RenderWindow& appwindow) {
 				text_box = nullptr;
 				text_box_mode = "";
 
-				text_box = add_text_box(visualizer, sf::Vector2f(250, 770), sf::Vector2f(200, 60), 26, false, "");
+				text_box = add_text_box(visualizer, sf::Vector2f(250, 790), sf::Vector2f(200, 60), 26, false, "");
 				text_box_mode = "ERASE";
 			}
 			else if (cur->get_string() == "SEARCH") {
@@ -298,7 +318,7 @@ void handle_visualizing(sf::RenderWindow& appwindow) {
 				text_box = nullptr;
 				text_box_mode = "";
 
-				text_box = add_text_box(visualizer, sf::Vector2f(250, 840), sf::Vector2f(200, 60), 26, false, "");
+				text_box = add_text_box(visualizer, sf::Vector2f(250, 880), sf::Vector2f(200, 60), 26, false, "");
 				text_box_mode = "SEARCH";
 			}
 		}
@@ -327,7 +347,7 @@ void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	int cur = pollEvent(appwindow);
 	if (cur == 0) return;
 
-	appwindow.clear(BACKGROUND);
+	bg_drawer.draw(get_mouse_pos(appwindow));
 	
 	handle_mouse(appwindow, delta);
 	handle_keypress(delta);
