@@ -29,12 +29,12 @@ target_sources(Visualizer PRIVATE
 "src/GameLogic.cpp" "src/Helper.cpp" "src/MediaPlayer.cpp" 
 
     "src/DataStructures/LinkedList.cpp" "src/DataStructures/Hashmap.cpp" "src/DataStructures/Trie.cpp" 
-    "src/DataStructures/BST.cpp" "src/DataStructures/AVL.cpp"     
+     "src/DataStructures/AVL.cpp"     
 
     "src/UI/MenuManager.cpp" "src/UI/Button.cpp" "src/UI/UIUnit.cpp" "src/UI/UIDesign.cpp"
 
     "src/Drawing/Node.cpp" "src/Drawing/Graph.cpp" "src/Drawing/DrawingUnit.cpp"
-)
+ "src/DataStructures/General.cpp")
 
 
 set(SFML_DIR "${CMAKE_SOURCE_DIR}/SFML/lib/cmake/SFML")

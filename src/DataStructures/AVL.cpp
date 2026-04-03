@@ -18,8 +18,9 @@ int AVLNode::right_child_depth() {
 }
 
 
-AVL::AVL() {
+AVL::AVL(bool is_self_balanced) {
     root = nullptr;
+    is_avl = is_self_balanced;
 }
 
 void AVL::calculate_depth(AVLNode* x) {
@@ -58,6 +59,7 @@ void AVL::rotate_right(AVLNode*& root) {
 
 
 void AVL::correct(AVLNode*& root) {
+    if (is_avl == false) return;
     if (unbalanced(root) == -1) {
         rotate_left(root);
         if (unbalanced(root) == 1) {
@@ -107,7 +109,7 @@ void AVL::traverse(AVLNode* root, std::vector<int>& ans) {
     }
 }
 
-AVLNode* AVL::locate(int x) {
+AVLNode* AVL::search(int x) {
     return locate(root, x);
 }
 
@@ -119,20 +121,9 @@ AVLNode* AVL::locate(AVLNode* root, int x) {
 }
 
 bool AVL::exist(int x) {
-    return locate(x) != nullptr;
+    return search(x) != nullptr;
 }
 
-bool AVL::check_correct_depth() {
-    return check_correct_depth(root);
-}
-bool AVL::check_correct_depth(AVLNode* root) {
-    if (root == nullptr) return true;
-    int cur = root->depth;
-    calculate_depth(root);
-    if (root->depth != cur) return false;
-    if (unbalanced(root)) return false;
-    return check_correct_depth(root->childL) && check_correct_depth(root->childR);
-}
 
 bool AVL::erase(int x) {
     return erase(root, x);
@@ -185,4 +176,18 @@ void AVL::internal_clear(AVLNode* root) {
     internal_clear(root->childL);
     internal_clear(root->childR);
     delete root;
+}
+
+
+// for debugging purposes
+bool AVL::check_correct_depth() {
+    return check_correct_depth(root);
+}
+
+bool AVL::check_correct_depth(AVLNode* root) {
+    if (root == nullptr) return true;
+    int cur = root->depth;
+    calculate_depth(root);
+    if (root->depth != cur) return false;
+    return check_correct_depth(root->childL) && check_correct_depth(root->childR);
 }

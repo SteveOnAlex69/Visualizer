@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include <DataStructures/LinkedList.hpp>
 #include <DataStructures/Hashmap.hpp>
-#include <DataStructures/BST.hpp>
 #include <DataStructures/AVL.hpp>
 #include <DataStructures/Trie.hpp>
 #include <vector>
@@ -15,22 +14,31 @@
 enum DS {
 	LINKED_LIST = 0,
 	HASHMAP_CHAIN = 1, 
-	HASHMAP_LINEAR = 2,
-	BST_TREE = 4,
-	AVL_TREE = 5,
-	TRIE = 6
+	BST_TREE = 2,
+	AVL_TREE = 3,
+	TRIE = 4
 };
 
 class GeneralData {
 public:
+	GeneralData();
+	void reset_current();
 
+	void* get_current_structure();
+	DS get_current_type();
+	void change_data_structure(DS st);
+	void next_data_structure();
+	void previous_data_structure();
+
+	void insert(std::string s);
+	bool erase(std::string s);
+	void* search(std::string s);
+	
 private:
 	DS selected_ds;
 	LinkedList li;
 	HashMapChaining mp_chain;
-	HashMapLinearProbing mp_linear;
-	BST bst_tree;
-	AVL avl_tree;
+	AVL bst_tree, avl_tree;
 	Trie tri;
 };
 

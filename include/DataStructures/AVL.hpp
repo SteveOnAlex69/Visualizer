@@ -22,10 +22,10 @@ class AVL {
 public:
     AVLNode* root;
 
-    AVL();
+    AVL(bool is_self_balanced = false);
     void insert(int x);
     void traverse();
-    AVLNode* locate(int x);
+    AVLNode* search(int x);
     bool exist(int x);
     bool check_correct_depth();
     bool erase(int x);
@@ -46,6 +46,7 @@ private:
 
 
     void internal_clear(AVLNode* root);
+    bool is_avl;
 };
 
 

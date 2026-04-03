@@ -5,8 +5,8 @@
 #include <utility>
 
 TrieNode::TrieNode() {
-    cnt = 0;
-    for (int i = 0; i < 26; ++i) child[i] = nullptr;
+    cnt = sum = 0;
+    for (int i = 0; i < ALPHA; ++i) child[i] = nullptr;
 }
 
 Trie::Trie() {
@@ -14,13 +14,13 @@ Trie::Trie() {
     root->cnt = root->sum = 1;
 }
 
-void Trie::add(std::string s) {
+void Trie::insert(std::string s) {
     TrieNode* cur = root;
     for (char c : s) {
         cur->sum++;
-        if (cur->child[c - 'a'] == nullptr)
-            cur->child[c - 'a'] = new TrieNode();
-        cur = cur->child[c - 'a'];
+        if (cur->child[c - '0'] == nullptr)
+            cur->child[c - '0'] = new TrieNode();
+        cur = cur->child[c - '0'];
     }
     cur->sum++;
     cur->cnt++;
@@ -31,9 +31,10 @@ bool Trie::erase(std::string s) { // obviously s has to already be in the trie
 }
 
 bool Trie::try_remove(TrieNode*& root, int i, std::string& s) {
+    if (root == nullptr) return false;
     bool check = true;
     if (i < s.size()) {
-        check = try_remove(root->child[s[i] - 'a'], i + 1, s);
+        check = try_remove(root->child[s[i] - '0'], i + 1, s);
     }
     else {
         if (root->cnt == 0) return false;
@@ -50,19 +51,19 @@ bool Trie::try_remove(TrieNode*& root, int i, std::string& s) {
     return check;
 }
 
-TrieNode* Trie::find(std::string s) {
+TrieNode* Trie::search(std::string s) {
     TrieNode* ans = root;
     for (char c : s) {
-        if (ans->child[c - 'a'] == nullptr)
+        if (ans->child[c - '0'] == nullptr)
             return nullptr;
-        ans = ans->child[c - 'a'];
+        ans = ans->child[c - '0'];
     }
     if (ans->cnt) return ans;
     return nullptr;
 }
 
 bool Trie::exist(std::string s) {
-    return find(s) == nullptr;
+    return search(s) == nullptr;
 }
 
 void Trie::clear() {
@@ -74,6 +75,6 @@ void Trie::clear() {
 
 void Trie::internal_clear(TrieNode* root) {
     if (root == nullptr) return;
-    for (int i = 0; i < 26; ++i) internal_clear(root->child[i]);
+    for (int i = 0; i < ALPHA; ++i) internal_clear(root->child[i]);
     delete(root);
 }

@@ -17,7 +17,7 @@ public:
 	void insert(std::string x);
 	bool erase(std::string x); // return whether deletion was successful
 	bool exist(std::string x);
-	LLNode* locate(std::string x);
+	LLNode* search(std::string x);
 
 	void clear();
 private:

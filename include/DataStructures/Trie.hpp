@@ -8,10 +8,10 @@
 #include <map>
 #include <utility>
 
-
+const int ALPHA = 10;
 struct TrieNode {
     int cnt, sum;
-    TrieNode* child[26];
+    TrieNode* child[ALPHA];
     TrieNode();
 };
 
@@ -19,13 +19,11 @@ class Trie {
 public:
     TrieNode* root;
     Trie();
-    void add(std::string s);
+    void insert(std::string s);
     bool erase(std::string s);
-    TrieNode* find(std::string s);
+    TrieNode* search(std::string s);
     bool exist(std::string s);
-
     void clear();
-
 private:
     bool try_remove(TrieNode*& root, int i, std::string& s);
     void internal_clear(TrieNode* root);

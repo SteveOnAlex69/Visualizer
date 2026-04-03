@@ -32,7 +32,7 @@ bool LinkedList::erase(std::string value) {
 	}
 	return false;
 }
-LLNode* LinkedList::locate(std::string value) {
+LLNode* LinkedList::search(std::string value) {
 	LLNode* tmp = head;
 	while (tmp->nxt) {
 		tmp = tmp->nxt;
@@ -43,7 +43,7 @@ LLNode* LinkedList::locate(std::string value) {
 	return nullptr;
 }
 bool LinkedList::exist(std::string value) {
-	return (locate(value) != nullptr);
+	return (search(value) != nullptr);
 }
 
 std::vector<LLNode*> LinkedList::get_array() {

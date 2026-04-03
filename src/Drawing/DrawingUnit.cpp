@@ -94,8 +94,8 @@ void DrawingUnit::draw_graph(Graph& graph) {
 	for (auto i : li) draw_node(i);
 }
 
-void DrawingUnit::draw_linked_list(LinkedList& linked_list, sf::Vector2f ROOT, LLNode *highlighted_node) {
-	std::vector<LLNode*> arr = linked_list.get_array();
+void DrawingUnit::draw_linked_list(LinkedList *linked_list, sf::Vector2f ROOT, LLNode *highlighted_node) {
+	std::vector<LLNode*> arr = linked_list -> get_array();
 	sf::Vector2f OFFSET(200, 0);
 	Graph vcl;
 	Node* prev = nullptr;
@@ -109,29 +109,29 @@ void DrawingUnit::draw_linked_list(LinkedList& linked_list, sf::Vector2f ROOT, L
 }
 
 
-void DrawingUnit::draw_hash_map(HashMapChaining& hash_map, sf::Vector2f ROOT) {
-	sf::Vector2f OFFSETX(0, 150);
-	sf::Vector2f OFFSETY(150, 0);
+void DrawingUnit::draw_hash_map(HashMapChaining *hash_map, sf::Vector2f ROOT, LLNode* highlighted_node) {
+	sf::Vector2f OFFSETY(0, 120);
+	sf::Vector2f OFFSETX(150, 0);
 
 	Graph vcl;
-	for (int i = 0; i < hash_map.get_size(); ++i) {
-		vcl.add_node(new Node(std::to_string(i), ROOT + OFFSETX * (1.0f * i), NO));
-		draw_linked_list(hash_map.buckets[i], ROOT + OFFSETX * (1.0f * i) + OFFSETY);
+	for (int i = 0; i < hash_map -> get_size(); ++i) {
+		vcl.add_node(new Node(std::to_string(i), ROOT + OFFSETY * (1.0f * i), NO));
+		draw_linked_list(&(hash_map -> buckets[i]), ROOT + OFFSETY * (1.0f * i) + OFFSETX, highlighted_node);
 	}
 	draw_graph(vcl);
 }
 
 
-void DrawingUnit::draw_hash_map(HashMapLinearProbing& hash_map, sf::Vector2f ROOT) {
+void DrawingUnit::draw_hash_map(HashMapLinearProbing *hash_map, sf::Vector2f ROOT) {
 	sf::Vector2f OFFSETX(0, 150);
-	sf::Vector2f OFFSETY(150, 0);
+	sf::Vector2f OFFSETY(120, 0);
 
 	Graph vcl;
-	for (int i = 0; i < hash_map.get_size(); ++i) {
+	for (int i = 0; i < hash_map -> get_size(); ++i) {
 		vcl.add_node(new Node(std::to_string(i), ROOT + OFFSETY, NO));
 
-		if (hash_map.slots[i] != "") {
-			vcl.add_node(new Node(hash_map.slots[i], ROOT, SQUARE));
+		if (hash_map -> slots[i] != "") {
+			vcl.add_node(new Node(hash_map -> slots[i], ROOT, SQUARE));
 		}
 		ROOT += OFFSETX;
 	}
@@ -140,60 +140,58 @@ void DrawingUnit::draw_hash_map(HashMapLinearProbing& hash_map, sf::Vector2f ROO
 
 
 template <class BSTNode>
-Node* loadingBST(BSTNode*root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET) {
+Node* loadingBST(BSTNode*root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET, BSTNode *highlighted_node) {
 	if (root == nullptr) return nullptr;
-	Node* cur = graph.add_node(new Node(std::to_string(root -> val), ROOT, CIRCLE));
+	Node* cur = graph.add_node(new Node(std::to_string(root -> val), ROOT, CIRCLE, root == highlighted_node));
 	OFFSET.x *= 0.4f;
 	if (root->childL) {
-		Node* left_child = loadingBST(root->childL, graph, ROOT + sf::Vector2f(-OFFSET.x, OFFSET.y), OFFSET);
+		Node* left_child = 
+			loadingBST(root->childL, graph, ROOT + sf::Vector2f(-OFFSET.x, OFFSET.y), OFFSET, highlighted_node);
 		graph.add_edge(cur, left_child);
 	}
 	if (root->childR) {
-		Node* right_child = loadingBST(root->childR, graph, ROOT + sf::Vector2f(OFFSET.x, OFFSET.y), OFFSET);
+		Node* right_child = 
+			loadingBST(root->childR, graph, ROOT + sf::Vector2f(OFFSET.x, OFFSET.y), OFFSET, highlighted_node);
 		graph.add_edge(cur, right_child);
 	}
 	return cur;
 }
 
-template <class Tree> 
-void DrawingUnit::draw_BST(Tree& bst, sf::Vector2f ROOT) {
+void DrawingUnit::draw_BST(AVL *bst, sf::Vector2f ROOT, AVLNode *highlighted_node) {
 	sf::Vector2f OFFSET(1000, 150);
 
 	Graph vcl;
-	loadingBST(bst.root, vcl, ROOT, OFFSET);
+	loadingBST(bst -> root, vcl, ROOT, OFFSET, highlighted_node);
 	draw_graph(vcl);
 }
 
-template void DrawingUnit::draw_BST<BST>(BST& bst, sf::Vector2f ROOT);
-template void DrawingUnit::draw_BST<AVL>(AVL& bst, sf::Vector2f ROOT);
 
-
-Node* loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET) {
+Node* loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET, TrieNode* highlighted_node) {
 	if (root == nullptr) return nullptr;
-	Node* cur = graph.add_node(new Node(std::to_string(root -> cnt), ROOT, CIRCLE));
+	Node* cur = graph.add_node(new Node(std::to_string(root -> cnt), ROOT, CIRCLE, root == highlighted_node));
 	int child_cnt = 0;
-	for (int i = 0; i < 26; ++i) if (root->child[i]) child_cnt++;
+	for (int i = 0; i < ALPHA; ++i) if (root->child[i]) child_cnt++;
 	if (child_cnt == 0) return cur;
 
 	int cur_child = 0;
 	sf::Vector2f nOFFSET = sf::Vector2f(OFFSET.x / child_cnt, OFFSET.y);
-	for (int i = 0; i < 26; ++i) if (root->child[i]) {
+	for (int i = 0; i < ALPHA; ++i) if (root->child[i]) {
 		cur_child++;
 		sf::Vector2f nROOT = ROOT;
 		nROOT.y += OFFSET.y;
 		nROOT.x += OFFSET.x * (-0.5f + (cur_child - 0.5f) / child_cnt);
 
-		Node* child = loadingTrie(root->child[i], graph, nROOT, nOFFSET);
-		graph.add_edge(cur, child, std::string(1, 'a' + i));
+		Node* child = loadingTrie(root->child[i], graph, nROOT, nOFFSET, highlighted_node);
+		graph.add_edge(cur, child, std::string(1, '0' + i));
 	}
 	
 	return cur;
 }
 
-void DrawingUnit::draw_trie(Trie& tri, sf::Vector2f ROOT) {
+void DrawingUnit::draw_trie(Trie *tri, sf::Vector2f ROOT, TrieNode *highlighted_node) {
 	sf::Vector2f OFFSET(1800, 150);
 
 	Graph vcl;
-	loadingTrie(tri.root, vcl, ROOT, OFFSET);
+	loadingTrie(tri -> root, vcl, ROOT, OFFSET, highlighted_node);
 	draw_graph(vcl);
 }

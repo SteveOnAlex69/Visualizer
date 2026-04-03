@@ -3,11 +3,6 @@
 #include <MediaPlayer.hpp>
 #include <Drawing/Node.hpp>
 #include <Drawing/Graph.hpp>
-#include <DataStructures/LinkedList.hpp>
-#include <DataStructures/Hashmap.hpp>
-#include <DataStructures/Trie.hpp>
-#include <DataStructures/BST.hpp>
-#include <DataStructures/AVL.hpp>
 #include <iostream>
 #include <filesystem>
 #include <vector>
@@ -15,6 +10,13 @@
 #include <algorithm>
 #include <concepts>
 #include <math.h>
+
+
+#include <DataStructures/LinkedList.hpp>
+#include <DataStructures/Hashmap.hpp>
+#include <DataStructures/Trie.hpp>
+#include <DataStructures/AVL.hpp>
+#include <DataStructures/General.hpp>
 
 #include <Drawing/DrawingUnit.hpp>
 #include <UI/MenuManager.hpp>
@@ -25,12 +27,13 @@
 #define GETBIT(mask, i) (((mask) >> (i)) & 1)
 #define ALL(v) (v).begin(), (v).end()
 
-Trie tri;
-LinkedList li;
 sf::Font font;
 DrawingUnit drawing_unit;
 MenuManager menu_manager;
-LLNode* searched = nullptr;
+
+
+GeneralData ds;
+void* searched = nullptr;
 Button* text_box = nullptr;
 
 UIUnit menu, settings, about, visualizer;
@@ -47,8 +50,7 @@ void appStart(sf::RenderWindow& appwindow) {
 	// load font
 	font.openFromFile(FONT_PATH.c_str());
 
-	tri = Trie();
-	li = LinkedList();
+	ds = GeneralData();
 
 	drawing_unit = DrawingUnit(&appwindow, font);
 
@@ -62,8 +64,11 @@ void appStart(sf::RenderWindow& appwindow) {
 
 bool pressing = false;
 void handle_textbox_input(float delta);
+void handle_ds_switcher(float delta);
+
 void handle_keypress(float delta) {
 	handle_textbox_input(delta);
+	handle_ds_switcher(delta);
 }
 
 
@@ -184,15 +189,18 @@ void handle_textbox_input(float delta) {
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
 			if (text_box_mode == "INSERT") {
-				li.insert(text_box->get_string());
+				if (text_box -> get_string().size())
+					ds.insert(text_box->get_string());
 				searched = nullptr;
 			}
 			else if (text_box_mode == "ERASE") {
-				li.erase(text_box->get_string());
+				if (text_box->get_string().size())
+					ds.erase(text_box->get_string());
 				searched = nullptr;
 			}
 			else if (text_box_mode == "SEARCH") {
-				searched = li.locate(text_box->get_string());
+				if (text_box->get_string().size())
+					searched = ds.search(text_box->get_string());
 			}
 
 			visualizer.erase_element(text_box);
@@ -221,6 +229,34 @@ void handle_textbox_input(float delta) {
 	}
 }
 
+int prev_arrow = 0;
+void handle_ds_switcher(float delta) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
+		if (prev_arrow == 0) {
+			ds.previous_data_structure();
+			delete text_box;
+			text_box_mode = "";
+			text_box = nullptr;
+		}
+		prev_arrow = 1;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
+		if (prev_arrow == 0) {
+			ds.next_data_structure();
+
+			visualizer.erase_element(text_box);
+			delete text_box;
+			text_box_mode = "";
+			text_box = nullptr;
+		}
+		prev_arrow = 1;
+	}
+	else {
+		prev_arrow = 0;
+	}
+}
+
+
 void handle_visualizing(sf::RenderWindow& appwindow) {
 	visualizer.draw(get_mouse_pos(appwindow));
 
@@ -230,7 +266,7 @@ void handle_visualizing(sf::RenderWindow& appwindow) {
 			if (cur->get_string() == "BACK") {
 				menu_manager.set_current_state(MENU);
 				searched = nullptr;
-				li.clear();
+				ds.reset_current();
 
 				visualizer.erase_element(text_box);
 				text_box = nullptr;
@@ -267,7 +303,24 @@ void handle_visualizing(sf::RenderWindow& appwindow) {
 			}
 		}
 	}
-	drawing_unit.draw_linked_list(li, sf::Vector2f(300, 400), searched);
+	void* current_ds = ds.get_current_structure();
+	switch (ds.get_current_type()) {
+	case LINKED_LIST:	
+		drawing_unit.draw_linked_list((LinkedList*)current_ds, LINKED_LIST_POS, (LLNode*)searched);
+		break;
+	case HASHMAP_CHAIN:
+		drawing_unit.draw_hash_map((HashMapChaining*)current_ds, HASH_MAP_POS, (LLNode*)searched);
+		break;
+	case BST_TREE:
+		drawing_unit.draw_BST((AVL*)current_ds, BST_POS, (AVLNode*)searched);
+		break;
+	case AVL_TREE:
+		drawing_unit.draw_BST((AVL*)current_ds, AVL_POS, (AVLNode*)searched);
+		break;
+	case TRIE:
+		drawing_unit.draw_trie((Trie*)current_ds, TRIE_POS, (TrieNode*)searched);
+		break;
+	}
 }
 
 void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s

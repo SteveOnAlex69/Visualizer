@@ -28,8 +28,8 @@ bool HashMapChaining::erase(std::string x) {
 bool HashMapChaining::exist(std::string x) {
 	return buckets[hash_function(x)].exist(x);
 }
-LLNode* HashMapChaining::locate(std::string x) {
-	return buckets[hash_function(x)].locate(x);
+LLNode* HashMapChaining::search(std::string x) {
+	return buckets[hash_function(x)].search(x);
 }
 void HashMapChaining::clear() {
 	for (int i = 0; i < n; ++i)
