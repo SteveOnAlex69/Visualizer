@@ -1,44 +1,47 @@
 #include <UI/UIDesign.hpp>
 
 
-Button* add_text(UIUnit& menu, sf::Vector2f pos, int text_size, bool centered, std::string s) {
-	Button* cur = new Button(pos, sf::Vector2f(0, 0), BACKGROUND, sf::Color::White, text_size, centered, s, TEXT);
+Button* add_text(UIUnit& menu, sf::Vector2f pos, int text_size, Alignment align_type, std::string s) {
+	Button* cur = new Button(pos, sf::Vector2f(0, 0), BACKGROUND, sf::Color::White, text_size, align_type, s, TEXT);
 	menu.add_element(cur);
 	return cur;
 }
 
-Button* add_button(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, int text_size, bool centered, std::string s) {
-	Button* cur = new Button(pos, size,FIRST_COLOR, sf::Color::White, text_size, centered, s, BUTTON);
+Button* add_button(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, int text_size, Alignment align_type, std::string s) {
+	Button* cur = new Button(pos, size,FIRST_COLOR, sf::Color::White, text_size, align_type, s, BUTTON);
 	menu.add_element(cur);
 	return cur;
 }
 
-Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, int text_size, bool centered, std::string s) {
-	Button* cur = new Button(pos, size, FIRST_COLOR, sf::Color::White, text_size, centered, s, TEXTBOX);
+Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, int text_size, Alignment align_type, std::string s) {
+	Button* cur = new Button(pos, size, FIRST_COLOR, sf::Color::White, text_size, align_type, s, TEXTBOX);
 	menu.add_element(cur);
 	return cur;
 }
 
 void setup_menu(UIUnit& menu) {
 	// set up menu
-	add_text(menu, screen_center + sf::Vector2f(0, -300), 100, true, "DATA VISUALIZER");
-	add_text(menu, sf::Vector2f(screen_center.x, screen_center.y * 2 - 10), 20, true,
+	add_text(menu, screen_center + sf::Vector2f(0, -300), 100, MIDDLE_CENTER, "DATA VISUALIZER");
+	add_text(menu, sf::Vector2f(screen_center.x, screen_center.y * 2 - 10), 20, MIDDLE_CENTER,
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
-	add_button(menu, screen_center + sf::Vector2f(0, -100), sf::Vector2f(300, 80), 36, true,
+	add_button(menu, screen_center + sf::Vector2f(0, -100), sf::Vector2f(300, 80), 36, MIDDLE_CENTER,
 		"START");
-	add_button(menu, screen_center + sf::Vector2f(0, 0), sf::Vector2f(300, 80), 36, true,
+	add_button(menu, screen_center + sf::Vector2f(0, 0), sf::Vector2f(300, 80), 36, MIDDLE_CENTER,
 		"SETTINGS");
-	add_button(menu, screen_center + sf::Vector2f(0, 100), sf::Vector2f(300, 80), 36, true,
+	add_button(menu, screen_center + sf::Vector2f(0, 100), sf::Vector2f(300, 80), 36, MIDDLE_CENTER,
 		"ABOUT");
-	add_button(menu, screen_center + sf::Vector2f(0, 200), sf::Vector2f(300, 80), 36, true,
+	add_button(menu, screen_center + sf::Vector2f(0, 200), sf::Vector2f(300, 80), 36, MIDDLE_CENTER,
 		"QUIT");
 }
 
 
 void setup_about(UIUnit& about) {
 	// set up about
-	add_button(about, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, false, "BACK");
-	add_text(about, screen_center + sf::Vector2f(0, -500), 100, true, "ABOUT");
+	add_button(about, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, TOP_LEFT, "BACK");
+	add_button(about, sf::Vector2f(windowSize.x - 30, 30), sf::Vector2f(200, 60), 26, TOP_RIGHT, "SETTINGS");
+
+
+	add_text(about, screen_center + sf::Vector2f(0, -500), 100, MIDDLE_CENTER, "ABOUT");
 
 	std::vector<std::string> lines;
 	lines.push_back("This project (Data structure visualizer) was made by Le Kien Thanh - 25125035");
@@ -64,22 +67,25 @@ void setup_about(UIUnit& about) {
 	for (int i = 0; i < (int)lines.size(); ++i) {
 		sf::Vector2f po(screen_center.x, 200);
 		po += sf::Vector2f(0, 36) * (i * 1.0f);
-		add_text(about, po, 30, true, lines[i]);
+		add_text(about, po, 30, MIDDLE_CENTER, lines[i]);
 	}
 }
 
 void setup_settings(UIUnit& settings) {
 	// set up settings
-	add_button(settings, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, false, "BACK");
-	add_text(settings, screen_center + sf::Vector2f(0, -500), 100, true, "SETTINGS");
+	add_button(settings, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, TOP_LEFT, "BACK");
+	add_text(settings, screen_center + sf::Vector2f(0, -500), 100, MIDDLE_CENTER, "SETTINGS");
 }
 
 void setup_visualizer(UIUnit& visualizer) {
 	// set up visualizer
-	add_button(visualizer, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, false, "BACK");
-	add_text(visualizer, screen_center + sf::Vector2f(0, -500), 100, true, "VISUALIZER");
+	add_button(visualizer, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, TOP_LEFT, "BACK");
+	add_button(visualizer, sf::Vector2f(windowSize.x - 30, 30), sf::Vector2f(200, 60), 26, TOP_RIGHT, "SETTINGS");
 
-	add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(200, 60), 26, false, "INSERT");
-	add_button(visualizer, sf::Vector2f(30, 790), sf::Vector2f(200, 60), 26, false, "ERASE");
-	add_button(visualizer, sf::Vector2f(30, 880), sf::Vector2f(200, 60), 26, false, "SEARCH");
+
+	add_text(visualizer, screen_center + sf::Vector2f(0, -500), 100, MIDDLE_CENTER, "VISUALIZER");
+
+	add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(200, 60), 26, TOP_LEFT, "INSERT");
+	add_button(visualizer, sf::Vector2f(30, 790), sf::Vector2f(200, 60), 26, TOP_LEFT, "ERASE");
+	add_button(visualizer, sf::Vector2f(30, 880), sf::Vector2f(200, 60), 26, TOP_LEFT, "SEARCH");
 }

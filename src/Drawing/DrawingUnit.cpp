@@ -71,10 +71,18 @@ void DrawingUnit::draw_graph(Graph& graph) {
 		line.setRotation((se - fi).angle());
 		appwindow -> draw(line);
 
-		
+		// draw arrow
+		sf::Vector2f arrow_pos = se + sf::Vector2f(50, 0).rotatedBy((fi - se).angle());
+		sf::CircleShape arrow(18, 3);
+		arrow.setRotation((se - fi).angle() + sf::Vector2f(0, 1).angle());
+		arrow.setPosition(arrow_pos);
+		arrow.setOrigin(sf::Vector2f(arrow.getLocalBounds().size) * 0.5f);
+		arrow.setFillColor(FIRST_COLOR);
+
+		appwindow->draw(arrow);
 
 		if (i.val.size()) {
-			sf::CircleShape cyka(15);
+			sf::CircleShape cyka(18);
 			cyka.setPosition((fi + se) * 0.5f);
 			cyka.setOrigin(sf::Vector2f(cyka.getLocalBounds().size) * 0.5f);
 			cyka.setFillColor(BACKGROUND);
@@ -83,7 +91,7 @@ void DrawingUnit::draw_graph(Graph& graph) {
 
 			sf::Text inner(font);
 			inner.setString(i.val);
-			inner.setCharacterSize(24);
+			inner.setCharacterSize(30);
 			inner.setFillColor(FIRST_COLOR);
 			inner.setPosition((fi + se) * 0.5f);
 			sf::FloatRect textRect = inner.getLocalBounds();
@@ -96,13 +104,21 @@ void DrawingUnit::draw_graph(Graph& graph) {
 
 void DrawingUnit::draw_linked_list(LinkedList *linked_list, sf::Vector2f ROOT, LLNode *highlighted_node) {
 	std::vector<LLNode*> arr = linked_list -> get_array();
-	sf::Vector2f OFFSET(200, 0);
+	sf::Vector2f OFFSETX(200, 0);
+	sf::Vector2f OFFSETY(0, 150);
 	Graph vcl;
-	Node* prev = nullptr;
+
+	Node* prev = vcl.add_node(new Node("", ROOT, SQUARE, true));
+
 	for (int i = 0; i < (int)arr.size(); ++i) {
-		Node* cur = vcl.add_node(new Node(arr[i]->val, ROOT + OFFSET * (1.0f * i), 
+		int y = i / 7;
+		int x = i % 7;
+		if (y % 2) x = 6 - x;
+		x++;
+
+		Node* cur = vcl.add_node(new Node(arr[i]->val, ROOT + OFFSETX * (1.0f * x) + OFFSETY * (1.0f * y),
 			SQUARE, arr[i] == highlighted_node));
-		if (i > 0) vcl.add_edge(prev, cur);
+		vcl.add_edge(prev, cur);
 		prev = cur;
 	}
 	draw_graph(vcl);

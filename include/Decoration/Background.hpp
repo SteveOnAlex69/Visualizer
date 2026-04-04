@@ -16,15 +16,15 @@ public:
 	BackgroundDrawer();
 	BackgroundDrawer(sf::RenderWindow* window, sf::Font f);
 
-	void draw(sf::Vector2f mouse_position);
+	void draw(sf::Vector2f mouse_position, float delta = 0);
 private:
 	sf::RenderWindow* appwindow;
 	sf::Font font;
 
 	std::vector<sf::Vector3f> points;
 
-	void draw1(sf::Vector2f mouse_position);	
-	void draw2(sf::Vector2f mouse_position);
+	void draw1(sf::Vector2f mouse_position, float delta = 0);	
+	void draw2(sf::Vector2f mouse_position, float delta = 0);
 
 };
 

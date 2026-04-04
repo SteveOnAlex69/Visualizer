@@ -65,7 +65,7 @@ void appStart(sf::RenderWindow& appwindow) {
 	about = UIUnit(&appwindow, font);
 	visualizer = UIUnit(&appwindow, font);
 
-	ds_name = add_text_box(visualizer, sf::Vector2f(screen_center.x, 200), sf::Vector2f(0, 0), 36, true, 
+	ds_name = add_text_box(visualizer, sf::Vector2f(screen_center.x, 200), sf::Vector2f(0, 0), 36, MIDDLE_CENTER,
 		get_ds_name(ds.get_current_type()));
 	
 	setup_menus();
@@ -160,8 +160,10 @@ void handle_about(sf::RenderWindow& appwindow) {
 	Button* cur = about.check_hovering(get_mouse_pos(appwindow));
 	if (just_clicked) {
 		if (cur) {
-			if (cur->get_string() == "BACK") {
-				menu_manager.set_current_state(MENU);
+			if (cur->get_string() == "BACK" || cur->get_string() == "SETTINGS") {
+				if (cur->get_string() == "BACK")
+					menu_manager.set_current_state(MENU);
+				else menu_manager.set_current_state(SETTINGS);
 			}
 		}
 	}
@@ -174,21 +176,21 @@ void handle_textbox_input(float delta) {
 		visualizer.erase_element(text_box);
 		text_box = nullptr;
 
-		text_box = add_text_box(visualizer, sf::Vector2f(250, 700), sf::Vector2f(200, 60), 26, false, "");
+		text_box = add_text_box(visualizer, sf::Vector2f(250, 700), sf::Vector2f(200, 60), 26, TOP_LEFT, "");
 		text_box_mode = "INSERT";
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E)) {
 		visualizer.erase_element(text_box);
 		text_box = nullptr;
 
-		text_box = add_text_box(visualizer, sf::Vector2f(250, 790), sf::Vector2f(200, 60), 26, false, "");
+		text_box = add_text_box(visualizer, sf::Vector2f(250, 790), sf::Vector2f(200, 60), 26, TOP_LEFT, "");
 		text_box_mode = "ERASE";
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
 		visualizer.erase_element(text_box);
 		text_box = nullptr;
 
-		text_box = add_text_box(visualizer, sf::Vector2f(250, 880), sf::Vector2f(200, 60), 26, false, "");
+		text_box = add_text_box(visualizer, sf::Vector2f(250, 880), sf::Vector2f(200, 60), 26, TOP_LEFT, "");
 		text_box_mode = "SEARCH";
 	}
 	else if (text_box) {
@@ -276,15 +278,15 @@ void handle_ds_switcher(float delta) {
 
 
 void handle_visualizing(sf::RenderWindow& appwindow) {
-	visualizer.draw(get_mouse_pos(appwindow));
-
 	ds_name->set_string(get_ds_name( ds.get_current_type() ));
 
 	Button* cur = visualizer.check_hovering(get_mouse_pos(appwindow));
 	if (just_clicked) {
 		if (cur && cur->get_type() != TEXTBOX) {
-			if (cur->get_string() == "BACK") {
-				menu_manager.set_current_state(MENU);
+			if (cur->get_string() == "BACK" || cur->get_string() == "SETTINGS") {
+				if (cur->get_string() == "BACK")
+					menu_manager.set_current_state(MENU);
+				else menu_manager.set_current_state(SETTINGS);
 				searched = nullptr;
 				ds.reset_current();
 
@@ -300,7 +302,7 @@ void handle_visualizing(sf::RenderWindow& appwindow) {
 				text_box_mode = "";
 
 
-				text_box = add_text_box(visualizer, sf::Vector2f(250, 700), sf::Vector2f(200, 60), 26, false, "");
+				text_box = add_text_box(visualizer, sf::Vector2f(250, 700), sf::Vector2f(200, 60), 26, TOP_LEFT, "");
 				text_box_mode = "INSERT";
 			}	
 			else if (cur->get_string() == "ERASE") {
@@ -309,7 +311,7 @@ void handle_visualizing(sf::RenderWindow& appwindow) {
 				text_box = nullptr;
 				text_box_mode = "";
 
-				text_box = add_text_box(visualizer, sf::Vector2f(250, 790), sf::Vector2f(200, 60), 26, false, "");
+				text_box = add_text_box(visualizer, sf::Vector2f(250, 790), sf::Vector2f(200, 60), 26, TOP_LEFT, "");
 				text_box_mode = "ERASE";
 			}
 			else if (cur->get_string() == "SEARCH") {
@@ -318,7 +320,7 @@ void handle_visualizing(sf::RenderWindow& appwindow) {
 				text_box = nullptr;
 				text_box_mode = "";
 
-				text_box = add_text_box(visualizer, sf::Vector2f(250, 880), sf::Vector2f(200, 60), 26, false, "");
+				text_box = add_text_box(visualizer, sf::Vector2f(250, 880), sf::Vector2f(200, 60), 26, TOP_LEFT, "");
 				text_box_mode = "SEARCH";
 			}
 		}
@@ -341,13 +343,17 @@ void handle_visualizing(sf::RenderWindow& appwindow) {
 		drawing_unit.draw_trie((Trie*)current_ds, TRIE_POS, (TrieNode*)searched);
 		break;
 	}
+
+
+	visualizer.draw(get_mouse_pos(appwindow));
+
 }
 
 void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	int cur = pollEvent(appwindow);
 	if (cur == 0) return;
 
-	bg_drawer.draw(get_mouse_pos(appwindow));
+	bg_drawer.draw(get_mouse_pos(appwindow), delta);
 	
 	handle_mouse(appwindow, delta);
 	handle_keypress(delta);

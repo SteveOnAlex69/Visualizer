@@ -48,7 +48,6 @@ bool LinkedList::exist(std::string value) {
 
 std::vector<LLNode*> LinkedList::get_array() {
 	std::vector<LLNode*> ans;
-	ans.push_back(head);
 	LLNode* tmp = head;
 	while (tmp->nxt) {
 		tmp = tmp->nxt;

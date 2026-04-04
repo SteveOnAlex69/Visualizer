@@ -10,9 +10,21 @@ enum ButtonType {
 	TEXTBOX = 2
 };
 
+enum Alignment {
+	TOP_LEFT = 0,
+	TOP_CENTER = 1,
+	TOP_RIGHT = 2,
+	MIDDLE_LEFT = 3,
+	MIDDLE_CENTER = 4,
+	MIDDLE_RIGHT = 5,
+	BOTTOM_LEFT = 6,
+	BOTTOM_CENTER = 7,
+	BOTTOM_RIGHT = 8
+};
+
 class Button {
 public:
-	Button(sf::Vector2f pos, sf::Vector2f size, sf::Color btn_color, sf::Color fn_color, int fn_sz, bool c = false, std::string val = "", ButtonType type = TEXT);
+	Button(sf::Vector2f pos, sf::Vector2f size, sf::Color btn_color, sf::Color fn_color, int fn_sz, Alignment align = TOP_LEFT, std::string val = "", ButtonType type = TEXT);
 	void set_button_color(sf::Color color);
 	void set_font_color(sf::Color color);
 	void set_font_size(int size);
@@ -28,15 +40,15 @@ public:
 	ButtonType get_type();
 
 	bool check_hovering(sf::Vector2f mouse_pos);
-	bool is_centered();
-	void set_centering(bool check);
+	Alignment get_alignment_type();
+	void set_alignment(Alignment align);
 private:
 	sf::Vector2f pos, size;
 	sf::Color button_color, font_color;
 	sf::Font font;
 	int font_size;
 	std::string text;
-	bool centered;
+	Alignment alignment;
 	ButtonType type;
 };
 

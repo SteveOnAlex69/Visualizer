@@ -2,10 +2,10 @@
 
 
 Button::Button(sf::Vector2f _pos, sf::Vector2f _size, sf::Color btn_color, sf::Color fn_color, 
-	int fn_sz, bool c, std::string val, ButtonType t) {
+	int fn_sz, Alignment align_type, std::string val, ButtonType t) {
 	pos = _pos, size = _size;
 	text = val;
-	centered = c;
+	alignment = align_type;
 	button_color = btn_color;
 	font_color = fn_color;
 	font_size = fn_sz;
@@ -25,11 +25,11 @@ sf::Vector2f Button::get_button_pos() { return pos; }
 sf::Vector2f Button::get_button_size() {return size;}
 
 
-bool Button::is_centered() {
-	return centered;
+Alignment Button::get_alignment_type() {
+	return alignment;
 }
-void Button::set_centering(bool check) {
-	centered = check;
+void Button::set_alignment(Alignment align_type) {
+	alignment = align_type;
 }
 
 std::string Button::get_string() {
@@ -43,9 +43,10 @@ void Button::set_string(std::string s) {
 
 bool Button::check_hovering(sf::Vector2f mouse_pos) {
 	sf::Vector2f s = pos, e = pos + size;
-	if (centered) {
-		s -= size * 0.5f;
-		e -= size * 0.5f;
-	}
+
+	int val = (int)alignment;
+	int x = val % 3, y = val / 3;
+	s -= sf::Vector2f(size.x * (0.5f * x), size.y * (0.5f * y));
+	e -= sf::Vector2f(size.x * (0.5f * x), size.y * (0.5f * y));
 	return (mouse_pos.x >= s.x && mouse_pos.y >= s.y && mouse_pos.x <= e.x && mouse_pos.y <= e.y);
 }

@@ -30,7 +30,9 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 
 	sf::Color btn_color = FIRST_COLOR;
 
-	if (button->is_centered()) pos -= size * 0.5f;
+	int val = (int)button->get_alignment_type();
+	pos -= sf::Vector2f(size.x * 0.5f * (val % 3), size.y * 0.5f * (val / 3));
+
 	if (button->check_hovering(mouse_pos)) {
 		btn_color = SECOND_COLOR;
 	}
@@ -38,7 +40,10 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 	sf::RectangleShape rect;
 	rect.setPosition(pos);
 	rect.setSize(size);
-	rect.setFillColor(sf::Color::Transparent);
+
+	if (button->get_type() == TEXT)
+		rect.setFillColor(sf::Color::Transparent);
+	else rect.setFillColor(BACKGROUND);
 
 	rect.setOutlineThickness(5);
 	rect.setOutlineColor(btn_color);
