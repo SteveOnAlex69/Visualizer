@@ -12,12 +12,12 @@ void UIUnit::add_element(Button* button) {
 }
 
 void UIUnit::erase_element(Button* button) {
-	for(int i = 0; i < (int) buttons.size(); ++i) 
+	for (int i = 0; i < (int)buttons.size(); ++i) {
 		if (buttons[i] == button) {
 			buttons.erase(buttons.begin() + i);
 			break;
 		}
-	delete button;
+	}
 }
 
 void UIUnit::draw(sf::Vector2f mouse_pos) {

@@ -89,3 +89,11 @@ void setup_visualizer(UIUnit& visualizer) {
 	add_button(visualizer, sf::Vector2f(30, 790), sf::Vector2f(200, 60), 26, TOP_LEFT, "ERASE");
 	add_button(visualizer, sf::Vector2f(30, 880), sf::Vector2f(200, 60), 26, TOP_LEFT, "SEARCH");
 }
+
+std::string spawn_text_box(UIUnit& scene, Button* &text_box, std::string category) {
+	sf::Vector2f pos = sf::Vector2f(250, 700);
+	if (category == "ERASE") pos += sf::Vector2f(0, 90);
+	if (category == "SEARCH") pos += sf::Vector2f(0, 180);
+	text_box = add_text_box(scene, pos, sf::Vector2f(200, 60), 26, TOP_LEFT, "");
+	return category;
+}

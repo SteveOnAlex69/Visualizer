@@ -4,7 +4,7 @@
 #include <GameLogic.hpp>
 
 sf::RenderWindow appWindow;
-
+const int FRAME_TIME = 10;
 
 int main(int argv, char* args[]) {
 	std::cout << "booted" << std::endl;
@@ -24,7 +24,7 @@ int main(int argv, char* args[]) {
 	while (appWindow.isOpen()) {
 		clock_t cur = clock();
 		int efn = cur - prev;
-		if (efn > 1) {
+		if (efn >= FRAME_TIME) {
 			prev = cur;
 			appLoop(appWindow, efn * 0.001f);
 		}

@@ -27,6 +27,9 @@ const double PI = atan(1);
 #define Point2 sf::Vector2f
 #define Point3 sf::Vector3f
 
+unsigned long long MASK(int i);
+int GETBIT(int mask, int i);
+
 float dotProduct(Point2 a, Point2 b);
 float dotProduct(Point3 a, Point3 b);
 

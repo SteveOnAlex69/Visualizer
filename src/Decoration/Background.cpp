@@ -1,4 +1,5 @@
 #include <Decoration/Background.hpp>
+#include <Helper.hpp>
 
 
 BackgroundDrawer::BackgroundDrawer() {
@@ -27,8 +28,8 @@ void BackgroundDrawer::draw1(sf::Vector2f mouse_pos, float delta) {
 
 
 	for (sf::Vector3f i : points) {
-		i.x -= mouse_pos.x;
-		i.y -= mouse_pos.y;
+		i.x -= mouse_pos.x * 0.3f;
+		i.y -= mouse_pos.y * 0.3f;
 
 		sf::Vector2f screen_pos = sf::Vector2f(i.x / i.z + 1, i.y / i.z + 1);
 		screen_pos.x *= screen_center.x;
@@ -37,13 +38,14 @@ void BackgroundDrawer::draw1(sf::Vector2f mouse_pos, float delta) {
 		const int SUB = 50;
 		int num = i.z;
 		sf::Color cur(250, 250, 250);
-		if (num % 3 == 0) cur.r -= SUB;
-		else if (num % 3 == 1) cur.g -= SUB;
-		else cur.b -= SUB;
+		
+		if (GETBIT(num, 0)) cur.r -= SUB;
+		if (GETBIT(num, 1)) cur.g -= SUB;
+		if (GETBIT(num, 2)) cur.b -= SUB;
 
 		sf::Color half_cur(cur.r / 2, cur.g / 2, cur.b / 2);
 
-		sf::RectangleShape cyka(sf::Vector2f(10000.0f / num, 10000.0f / num));
+		sf::RectangleShape cyka(sf::Vector2f(10000.0f / i.z, 10000.0f / i.z));
 		cyka.setRotation(sf::Vector2f(1, 1).angle());
 		cyka.setFillColor(half_cur);
 		cyka.setPosition(screen_pos);
@@ -51,8 +53,7 @@ void BackgroundDrawer::draw1(sf::Vector2f mouse_pos, float delta) {
 		appwindow->draw(cyka);
 
 
-
-		sf::RectangleShape inner_cyka(sf::Vector2f(5000.0f / num, 5000.0f / num));
+		sf::RectangleShape inner_cyka(sf::Vector2f(5000.0f / i.z, 5000.0f / i.z));
 		inner_cyka.setRotation(sf::Vector2f(1, 1).angle());
 		inner_cyka.setFillColor(cur);
 		inner_cyka.setPosition(screen_pos);

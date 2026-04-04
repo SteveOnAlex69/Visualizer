@@ -24,6 +24,6 @@ void setup_about(UIUnit& about);
 void setup_settings(UIUnit& settings);
 void setup_visualizer(UIUnit& visualizer);
 
-
+std::string spawn_text_box(UIUnit& scene, Button* &text_box, std::string category);
 
 #endif
