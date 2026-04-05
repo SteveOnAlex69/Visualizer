@@ -1,9 +1,11 @@
 
 #include <SFML/Graphics.hpp>
 #include <Helper.hpp>
+#include <intrin.h>
 
 unsigned long long MASK(int i) { return 1ULL << i; }
 int GETBIT(int mask, int i) { return ((mask) >> i) & 1; }
+int pop_cnt(unsigned long long mask) { return __popcnt(mask); }
 
 float dotProduct(Point2 a, Point2 b) {
 	return a.x * b.x + a.y * b.y;

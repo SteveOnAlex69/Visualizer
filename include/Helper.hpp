@@ -22,6 +22,8 @@ const sf::Vector2f TRIE_POS = AVL_POS;
 const int EDGE_WIDTH = 6;
 const double PI = atan(1);
 
+const float ANIMATION_TIME = 1;
+
 #define ll long long
 #define ull unsigned long long
 #define Point2 sf::Vector2f
@@ -29,6 +31,7 @@ const double PI = atan(1);
 
 unsigned long long MASK(int i);
 int GETBIT(int mask, int i);
+int pop_cnt(unsigned long long mask);
 
 float dotProduct(Point2 a, Point2 b);
 float dotProduct(Point3 a, Point3 b);

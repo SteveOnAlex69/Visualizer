@@ -32,7 +32,7 @@ public:
 	void next_data_structure();
 	void previous_data_structure();
 
-	void insert(std::string s);
+	bool insert(std::string s);
 	bool erase(std::string s);
 	void* search(std::string s);
 	

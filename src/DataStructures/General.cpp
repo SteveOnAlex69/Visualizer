@@ -80,42 +80,40 @@ void GeneralData::previous_data_structure() {
 	change_data_structure((DS)((int)(selected_ds + 4) % 5));
 }
 
-void GeneralData::insert(std::string s) {
+bool GeneralData::insert(std::string s) {
 	switch (selected_ds) {
 	case LINKED_LIST:
 		li.insert(s);
-		break;
+		return true;
 	case HASHMAP_CHAIN:
 		mp_chain.insert(s);
-		break;
+		return true;
 	case BST_TREE:
 		bst_tree.insert(std::stoi(s));
-		break;
+		return true;
 	case AVL_TREE:
 		avl_tree.insert(std::stoi(s));
-		break;
+		return true;
 	case TRIE:
 		tri.insert(s);
-		break;
+		return true;
 	}
+	return false;
 }
 bool GeneralData::erase(std::string s) {
 	switch (selected_ds) {
 	case LINKED_LIST:
 		return li.erase(s);
 	case HASHMAP_CHAIN:
-		mp_chain.erase(s);
-		break;
+		return mp_chain.erase(s);
 	case BST_TREE:
-		bst_tree.erase(std::stoi(s));
-		break;
+		return bst_tree.erase(std::stoi(s));
 	case AVL_TREE:
-		avl_tree.erase(std::stoi(s));
-		break;
+		return avl_tree.erase(std::stoi(s));
 	case TRIE:
-		tri.erase(s);
-		break;
+		return tri.erase(s);
 	}
+	return false;
 }
 void* GeneralData::search(std::string s) {
 	switch (selected_ds) {

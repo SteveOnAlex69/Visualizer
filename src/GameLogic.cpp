@@ -39,15 +39,16 @@ MenuManager menu_manager;
 
 GeneralData ds;
 void* searched = nullptr;
-
 Button* text_box = nullptr;
 std::string text_box_mode = "";
-
 Button* ds_name = nullptr;
 
 UIUnit menu, settings, about, visualizer;
 BackgroundDrawer bg_drawer;
 InputHandler input_state;
+
+std::vector<Graph> graph_versions;
+float epoch;
 
 
 void setup_menus() {
@@ -55,6 +56,25 @@ void setup_menus() {
 	setup_about(about);
 	setup_settings(settings);
 	setup_visualizer(visualizer);
+}
+
+Graph get_graph() {
+	void* current_ds = ds.get_current_structure();
+	switch (ds.get_current_type()) {
+	case LINKED_LIST:
+		return drawing_unit.get_linked_list_graph(
+			(LinkedList*)current_ds, LINKED_LIST_POS, (LLNode*)searched);
+	case HASHMAP_CHAIN:
+		return drawing_unit.get_hash_map_graph(
+			(HashMapChaining*)current_ds, HASH_MAP_POS, (LLNode*)searched);
+	case BST_TREE:
+	case AVL_TREE:
+		return drawing_unit.get_BST_graph(
+			(AVL*)current_ds, BST_POS, (AVLNode*)searched);
+	case TRIE:
+		return drawing_unit.get_trie_graph(
+			(Trie*)current_ds, TRIE_POS, (TrieNode*)searched);
+	}
 }
 
 void appStart(sf::RenderWindow& appwindow) {
@@ -139,6 +159,7 @@ void handle_ds_switcher() {
 
 		visualizer.erase_element(text_box);
 		text_box_mode = ""; text_box = nullptr;
+		graph_versions.clear();
 	}
 }
 
@@ -154,6 +175,8 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 		searched = nullptr;
 		ds.reset_current();
 		visualizer.erase_element(text_box);
+		graph_versions.clear();
+		epoch = 0;
 		text_box = nullptr; text_box_mode = "";
 	}
 	else if (input_state.get_keyboard_key(KEY_I) == CLICK || pressed_button == "INSERT") {
@@ -174,22 +197,28 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 			text_box = nullptr; text_box_mode = "";
 		}
 		else if (input_state.get_keyboard_key(ENTER) == CLICK) {
-			searched = nullptr;
-			if (text_box_mode == "INSERT") {
-				if (text_box->get_string().size())
-					ds.insert(text_box->get_string());
-			}
-			else if (text_box_mode == "ERASE") {
-				if (text_box->get_string().size())
-					ds.erase(text_box->get_string());
-			}
-			else if (text_box_mode == "SEARCH") {
-				if (text_box->get_string().size())
+			if (text_box->get_string().size()) {
+				searched = nullptr;
+				if (text_box_mode == "INSERT") {
+					if (ds.insert(text_box->get_string())) {
+						graph_versions.push_back(get_graph());
+						epoch = 0;
+					}
+				}
+				else if (text_box_mode == "ERASE") {
+					if (ds.erase(text_box->get_string())) {
+						graph_versions.push_back(get_graph());
+						epoch = 0;
+					}
+				}
+				else if (text_box_mode == "SEARCH") {
 					searched = ds.search(text_box->get_string());
+					graph_versions.push_back(get_graph());
+					epoch = 0;
+				}
+				visualizer.erase_element(text_box);
+				text_box = nullptr; text_box_mode = "";
 			}
-
-			visualizer.erase_element(text_box);
-			text_box = nullptr; text_box_mode = "";
 		}
 		else if (input_state.get_keyboard_key(BACKSPACE) == CLICK) {
 			std::string cur = text_box->get_string();
@@ -206,7 +235,6 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 				}
 			}
 		}
-
 	}
 }
 
@@ -214,28 +242,18 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuManager& menu_manager) {
 	handle_ds_switcher();
 	ds_name->set_string(get_ds_name( ds.get_current_type() ));
-
 	Button* cur = visualizer.check_hovering(input_state.get_mouse_pos());
-
 	handle_textbox_input(cur, visualizer);
-	void* current_ds = ds.get_current_structure();
-	switch (ds.get_current_type()) {
-	case LINKED_LIST:	
-		drawing_unit.draw_linked_list((LinkedList*)current_ds, LINKED_LIST_POS, (LLNode*)searched);
-		break;
-	case HASHMAP_CHAIN:
-		drawing_unit.draw_hash_map((HashMapChaining*)current_ds, HASH_MAP_POS, (LLNode*)searched);
-		break;
-	case BST_TREE:
-		drawing_unit.draw_BST((AVL*)current_ds, BST_POS, (AVLNode*)searched);
-		break;
-	case AVL_TREE:
-		drawing_unit.draw_BST((AVL*)current_ds, AVL_POS, (AVLNode*)searched);
-		break;
-	case TRIE:
-		drawing_unit.draw_trie((Trie*)current_ds, TRIE_POS, (TrieNode*)searched);
-		break;
+
+	if (graph_versions.empty()) {
+		graph_versions.push_back(get_graph());
+		epoch = 0;
 	}
+
+	if (epoch >= ANIMATION_TIME || graph_versions.size() == 1)
+		drawing_unit.draw_graph(graph_versions.back());
+	else drawing_unit.draw_graph(graph_versions[graph_versions.size() - 2], 
+		graph_versions[graph_versions.size() - 1], epoch);
 	visualizer.draw(input_state.get_mouse_pos());
 }
 
@@ -258,6 +276,8 @@ void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	bg_drawer.draw(input_state.get_mouse_pos(), delta);
 	input_state.update_mouse(delta);
 	input_state.update_keyboard(delta);
+
+	epoch += delta;
 
 	switch (menu_manager.get_current_state()) {
 	case MENU:

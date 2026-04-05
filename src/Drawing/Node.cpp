@@ -2,11 +2,19 @@
 #include <iostream>
 #include <vector>
 
-Node::Node(std::string val, sf::Vector2f pos, Shape shape, bool sp) {
+const int BASE = 307;
+
+Node::Node(std::string val, sf::Vector2f pos, unsigned long long hash_val, Shape shape, bool sp) {
 	v = val;
 	p = pos;
 	s = shape;
 	special = sp;
+	opacity = 1;
+
+	hash_value = hash_val;
+	for (char c : val) {
+		hash_value = hash_value * BASE + c;
+	}
 }
 
 std::string Node::get_val() {
@@ -15,6 +23,10 @@ std::string Node::get_val() {
 
 sf::Vector2f Node::get_pos() {
 	return p;
+}
+
+void Node::set_pos(sf::Vector2f pos) {
+	p = pos;
 }
 
 Shape Node::get_shape() {
@@ -26,6 +38,15 @@ int cmp(Node a, Node b) {
 }
 
 bool Node::is_special() { return special; }
+
+
+unsigned long long Node::get_hash_val() {
+	return hash_value;
+}
+
+void Node::set_opacity(float o) { opacity = o; }
+float Node::get_opacity() { return opacity; }
+
 
 #define OPE(o) bool Node::operator o (const Node& x) const {return cmp(*this, x) o 0;}
 OPE(> );
