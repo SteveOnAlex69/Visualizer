@@ -1,4 +1,5 @@
 #include <UI/UIUnit.hpp>
+#include <fstream>
 
 
 UIUnit::UIUnit() {}
@@ -12,11 +13,9 @@ void UIUnit::add_element(Button* button) {
 }
 
 void UIUnit::erase_element(Button* button) {
-	for (int i = 0; i < (int)buttons.size(); ++i) {
-		if (buttons[i] == button) {
-			buttons.erase(buttons.begin() + i);
-			break;
-		}
+	for (int i = 0; i < (int)buttons.size(); ++i) if (buttons[i] == button) {
+		buttons.erase(buttons.begin() + i);
+		return;
 	}
 }
 
@@ -30,7 +29,7 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 
 	sf::Color btn_color = FIRST_COLOR;
 
-	int val = (int)button->get_alignment_type();
+	int val = (int)button->get_alignment();
 	pos -= sf::Vector2f(size.x * 0.5f * (val % 3), size.y * 0.5f * (val / 3));
 
 	if (button->check_hovering(mouse_pos)) {
@@ -41,7 +40,7 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 	rect.setPosition(pos);
 	rect.setSize(size);
 
-	if (button->get_type() == TEXT)
+	if (button->get_button_type() == TEXT)
 		rect.setFillColor(sf::Color::Transparent);
 	else rect.setFillColor(BACKGROUND);
 

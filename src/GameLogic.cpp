@@ -50,14 +50,6 @@ InputHandler input_state;
 std::vector<Graph> graph_versions;
 float epoch;
 
-
-void setup_menus() {
-	setup_menu(menu);
-	setup_about(about);
-	setup_settings(settings);
-	setup_visualizer(visualizer);
-}
-
 Graph get_graph() {
 	void* current_ds = ds.get_current_structure();
 	switch (ds.get_current_type()) {
@@ -77,6 +69,13 @@ Graph get_graph() {
 	}
 }
 
+void setup_menus() {
+	setup_menu(menu);
+	setup_about(about);
+	setup_settings(settings);
+	setup_visualizer(visualizer);
+}
+
 void appStart(sf::RenderWindow& appwindow) {
 	// load font
 	font.openFromFile(FONT_PATH.c_str());
@@ -91,9 +90,9 @@ void appStart(sf::RenderWindow& appwindow) {
 	about = UIUnit(&appwindow, font);
 	visualizer = UIUnit(&appwindow, font);
 
-	ds_name = add_text_box(visualizer, sf::Vector2f(screen_center.x, 200), sf::Vector2f(0, 0), 36, MIDDLE_CENTER,
-		get_ds_name(ds.get_current_type()));
-	
+	ds_name = add_text_box(visualizer, sf::Vector2f(screen_center.x, 200), sf::Vector2f(0, 0), 36, 
+		CENTER_CENTER, TOP_CENTER, get_ds_name(ds.get_current_type()));
+
 	setup_menus();
 }
 void handle_keypress() {
@@ -118,8 +117,8 @@ void handle_menu(sf::RenderWindow& appwindow, UIUnit &menu, MenuManager &menu_ma
 	Button* cur = menu.check_hovering(input_state.get_mouse_pos());
 	if (input_state.get_mouse_state() == CLICK) {
 		if (cur) {
-			if (menu_switcher(cur->get_string()));
-			else if (cur->get_string() == "QUIT") {
+			if (menu_switcher(cur->get_name()));
+			else if (cur->get_name() == "QUIT") {
 				appwindow.close();
 			}
 		}
@@ -132,7 +131,7 @@ void handle_settings(sf::RenderWindow& appwindow, UIUnit& settings, MenuManager&
 	Button* cur = settings.check_hovering(input_state.get_mouse_pos());
 	if (input_state.get_mouse_state() == CLICK) {
 		if (cur) {
-			if (menu_switcher(cur->get_string()));
+			if (menu_switcher(cur->get_name()));
 		}
 	}
 }
@@ -144,7 +143,7 @@ void handle_about(sf::RenderWindow& appwindow, UIUnit& about, MenuManager& menu_
 	Button* cur = about.check_hovering(input_state.get_mouse_pos());
 	if (input_state.get_mouse_state() == CLICK) {
 		if (cur) {
-			if (menu_switcher(cur->get_string()));
+			if (menu_switcher(cur->get_name()));
 		}
 	}
 }
@@ -167,8 +166,8 @@ void handle_ds_switcher() {
 void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 	std::string pressed_button = "";
 	if (input_state.get_mouse_state() == CLICK) {
-		if (cur && cur->get_type() != TEXTBOX) {
-			pressed_button = cur->get_string();
+		if (cur && cur->get_button_type() != TEXTBOX) {
+			pressed_button = cur->get_name();
 		}
 	}
 	if (menu_switcher(pressed_button)) {

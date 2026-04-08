@@ -15,9 +15,13 @@
 #include <math.h>
 
 
-Button* add_text(UIUnit& menu, sf::Vector2f pos, int text_size, Alignment align_type, std::string s);
-Button* add_button(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, int text_size, Alignment align_type, std::string s);
-Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, int text_size, Alignment align_type, std::string s);
+Button* add_text(UIUnit& menu, sf::Vector2f pos, int text_size,
+	Alignment align_type, Alignment rel_pos, std::string name, std::string text);
+Button* add_button(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
+	int text_size, Alignment align_type, Alignment rel_pos,
+	std::string name, std::string text);
+Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
+	int text_size, Alignment align_type, Alignment rel_pos, std::string name);
 
 void setup_menu(UIUnit& menu);
 void setup_about(UIUnit& about);

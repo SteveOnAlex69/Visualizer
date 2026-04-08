@@ -1,44 +1,42 @@
 #include <UI/Button.hpp>
 
 
-Button::Button(sf::Vector2f _pos, sf::Vector2f _size, sf::Color btn_color, sf::Color fn_color, 
-	int fn_sz, Alignment align_type, std::string val, ButtonType t) {
-	pos = _pos, size = _size;
-	text = val;
-	alignment = align_type;
-	button_color = btn_color;
-	font_color = fn_color;
-	font_size = fn_sz;
-	type = t;
+Button::Button() {
+	pos = size = sf::Vector2f(0, 0);
+	bg_color = font_color = accent_color = sf::Color(0, 0, 0);
+	font_size = 0;
+	text = button_name = "";
+	alignment = relative_pos = TOP_LEFT;
+	type = TEXT;
 }
 
-ButtonType Button::get_type() { return type; }
 
-void Button::set_button_color(sf::Color color) { button_color = color; }
+void Button::set_bg_color(sf::Color color) { bg_color = color; }
 void Button::set_font_color(sf::Color color) { font_color = color; }
 void Button::set_font_size(int size) { font_size = size; }
+void Button::set_font_accent_color(sf::Color color) { accent_color = color; }
 
-sf::Color Button::get_button_color() { return button_color;}
-sf::Color Button::get_font_color() { return font_color; }
-int Button::get_font_size() { return font_size; }
+void Button::set_string(std::string s) { text = s; }
+void Button::set_name(std::string s) { button_name = s; }
+void Button::set_alignment(Alignment align_type) { alignment = align_type; }
+void Button::set_relative_pos(Alignment align_type) { relative_pos = align_type; }
+void Button::set_button_size(sf::Vector2f sz) { size = sz; }
+void Button::set_button_pos(sf::Vector2f p) { pos = p; }
+void Button::set_button_type(ButtonType t) { t = type; }
+
+
+sf::Color Button::get_bg_color() { return bg_color; }
+sf::Color Button::get_font_color() {return font_color;}
+sf::Color Button::get_font_accent_color() { return accent_color; }
+
+std::string Button::get_string() { return text; }
+std::string Button::get_name() {return button_name;}
+Alignment Button::get_alignment() { return alignment; }
+Alignment Button::get_relative_pos() { return relative_pos; }
+sf::Vector2f Button::get_button_size() { return size; }
 sf::Vector2f Button::get_button_pos() { return pos; }
-sf::Vector2f Button::get_button_size() {return size;}
-
-
-Alignment Button::get_alignment_type() {
-	return alignment;
-}
-void Button::set_alignment(Alignment align_type) {
-	alignment = align_type;
-}
-
-std::string Button::get_string() {
-	return text;
-}
-
-void Button::set_string(std::string s) {
-	text = s;
-}
+ButtonType Button::get_button_type() { return type; }
+int Button::get_font_size() { return font_size; }
 
 
 bool Button::check_hovering(sf::Vector2f mouse_pos) {

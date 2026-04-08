@@ -32,6 +32,7 @@ bool LinkedList::erase(std::string value) {
 	}
 	return false;
 }
+
 LLNode* LinkedList::search(std::string value) {
 	LLNode* tmp = head;
 	while (tmp->nxt) {

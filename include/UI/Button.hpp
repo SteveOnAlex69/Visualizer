@@ -14,9 +14,9 @@ enum Alignment {
 	TOP_LEFT = 0,
 	TOP_CENTER = 1,
 	TOP_RIGHT = 2,
-	MIDDLE_LEFT = 3,
-	MIDDLE_CENTER = 4,
-	MIDDLE_RIGHT = 5,
+	CENTER_LEFT = 3,
+	CENTER_CENTER = 4,
+	CENTER_RIGHT = 5,
 	BOTTOM_LEFT = 6,
 	BOTTOM_CENTER = 7,
 	BOTTOM_RIGHT = 8
@@ -24,31 +24,41 @@ enum Alignment {
 
 class Button {
 public:
-	Button(sf::Vector2f pos, sf::Vector2f size, sf::Color btn_color, sf::Color fn_color, int fn_sz, Alignment align = TOP_LEFT, std::string val = "", ButtonType type = TEXT);
-	void set_button_color(sf::Color color);
+	Button();
+	void set_bg_color(sf::Color color);
+	void set_string(std::string s);
+	void set_alignment(Alignment align_type);
+	void set_button_size(sf::Vector2f size);
+	void set_button_pos(sf::Vector2f pos);
+	void set_relative_pos(Alignment align_type);
+	void set_name(std::string s);
+	void set_button_type(ButtonType type);
+
 	void set_font_color(sf::Color color);
+	void set_font_accent_color(sf::Color color);
 	void set_font_size(int size);
 	
-	sf::Color get_button_color();
+	sf::Color get_bg_color();
 	sf::Color get_font_color();
-	int get_font_size();
-	sf::Vector2f get_button_pos();
-	sf::Vector2f get_button_size();
-	std::string get_string();
-	void set_string(std::string s);
+	sf::Color get_font_accent_color();
 
-	ButtonType get_type();
+	std::string get_string();
+	std::string get_name();
+	Alignment get_alignment();
+	Alignment get_relative_pos();
+	sf::Vector2f get_button_size();
+	sf::Vector2f get_button_pos();
+	ButtonType get_button_type();
+	int get_font_size();
 
 	bool check_hovering(sf::Vector2f mouse_pos);
-	Alignment get_alignment_type();
-	void set_alignment(Alignment align);
+
 private:
 	sf::Vector2f pos, size;
-	sf::Color button_color, font_color;
-	sf::Font font;
+	sf::Color bg_color, font_color, accent_color;
 	int font_size;
-	std::string text;
-	Alignment alignment;
+	std::string text, button_name;
+	Alignment alignment, relative_pos;
 	ButtonType type;
 };
 
