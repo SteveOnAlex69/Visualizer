@@ -47,39 +47,45 @@ Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
 	cur->set_relative_pos(rel_pos);
 	cur->set_name(name);
 	cur->set_string("");
-	cur->set_button_type(BUTTON);
+	cur->set_button_type(TEXTBOX);
 	cur->set_bg_color(BACKGROUND);
 	cur->set_font_color(FIRST_COLOR);
 	cur->set_font_accent_color(SECOND_COLOR);
+	cur->set_focused(true);
 	menu.add_element(cur);
 	return cur;
 }
 
 void setup_menu(UIUnit& menu) {
 	// set up menu
-	add_text(menu, screen_center + sf::Vector2f(0, -300), 100, CENTER_CENTER, CENTER_CENTER, "TITLE", "DATA VISUALIZER");
-	add_text(menu, sf::Vector2f(screen_center.x, screen_center.y * 2 - 10), 20, CENTER_CENTER, CENTER_CENTER,
+	add_text(menu, sf::Vector2f(0, -300), 100, CENTER_CENTER, CENTER_CENTER, "TITLE", "DATA VISUALIZER");
+	add_text(menu, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
 		"BOTTOM_TEXT",
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
-	add_button(menu, screen_center + sf::Vector2f(0, -100), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+	add_button(menu, sf::Vector2f(0, -100), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
 		"START", "START");
-	add_button(menu, screen_center + sf::Vector2f(0, 0), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+	add_button(menu, sf::Vector2f(0, 0), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
 		"SETTINGS", "SETTINGS");
-	add_button(menu, screen_center + sf::Vector2f(0, 100), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+	add_button(menu, sf::Vector2f(0, 100), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
 		"ABOUT", "ABOUT");
-	add_button(menu, screen_center + sf::Vector2f(0, 200), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+	add_button(menu, sf::Vector2f(0, 200), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
 		"QUIT", "QUIT");
 }
 
 
 void setup_about(UIUnit& about) {
 	// set up about
+
+	add_text(about, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
+		"BOTTOM_TEXT",
+		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
+
 	add_button(about, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
-	add_button(about, sf::Vector2f(windowSize.x - 30, 30), sf::Vector2f(200, 60), 26, 
+	add_button(about, sf::Vector2f(-30, 30), sf::Vector2f(200, 60), 26, 
 		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
 
 
-	add_text(about, screen_center + sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, 
+	add_text(about, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, 
 		"ABOUT", "ABOUT");
 
 	std::vector<std::string> lines;
@@ -104,41 +110,94 @@ void setup_about(UIUnit& about) {
 	lines.push_back("QUOTE OF THE DAY:");
 	lines.push_back("\"In my next magic trick, I will code a project worth half my grade in 2 hours.\"");
 	for (int i = 0; i < (int)lines.size(); ++i) {
-		sf::Vector2f po(screen_center.x, 200);
+		sf::Vector2f po(0, 200);
 		po += sf::Vector2f(0, 36) * (i * 1.0f);
-		add_text(about, po, 30, CENTER_CENTER, CENTER_CENTER, "AHH", lines[i]);
+		add_text(about, po, 30, CENTER_CENTER, TOP_CENTER, "AHH", lines[i]);
 	}
 }
 
 void setup_settings(UIUnit& settings) {
 	// set up settings
 	add_button(settings, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
-	add_text(settings, screen_center + sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, "SETTINGS", "SETTINGS");
+	add_text(settings, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, "SETTINGS", "SETTINGS");
+
+
+	add_text(settings, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
+		"BOTTOM_TEXT",
+		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
 }
 
 void setup_visualizer(UIUnit& visualizer) {
 	// set up visualizer
 	add_button(visualizer, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, 
 		TOP_LEFT, TOP_LEFT, "BACK", "BACK");
-	add_button(visualizer, sf::Vector2f(windowSize.x - 30, 30), sf::Vector2f(200, 60), 26, 
+	add_button(visualizer, sf::Vector2f(-30, 30), sf::Vector2f(200, 60), 26, 
 		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
 
 
-	add_text(visualizer, screen_center + sf::Vector2f(0, -500), 100, 
+	add_text(visualizer, sf::Vector2f(0, -500), 100, 
 		CENTER_CENTER, CENTER_CENTER, "VISUALIZER", "VISUALIZER");
 
 	add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, 
-		"INSERT", "INSERT");
+		"COMMAND_1", "INSERT");
 	add_button(visualizer, sf::Vector2f(30, 790), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT,
-		"ERASE", "ERASE");
+		"COMMAND_2", "ERASE");
 	add_button(visualizer, sf::Vector2f(30, 880), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, 
-		"SEARCH", "SEARCH");
+		"COMMAND_3", "SEARCH");
+
+
+	add_text(visualizer, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
+		"BOTTOM_TEXT",
+		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
 }
 
-std::string spawn_text_box(UIUnit& scene, Button* &text_box, std::string category) {
+std::string spawn_text_box(UIUnit& scene, std::string category) {
 	sf::Vector2f pos = sf::Vector2f(250, 700);
 	if (category == "ERASE") pos += sf::Vector2f(0, 90);
 	if (category == "SEARCH") pos += sf::Vector2f(0, 180);
-	text_box = add_text_box(scene, pos, sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, category);
+	add_text_box(scene, pos, sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "TEXT_BOX");
 	return category;
+}
+
+void spawn_message_box(UIUnit& scene, std::string message) {
+	add_button(scene, sf::Vector2f(0, -50), sf::Vector2f(200 + message.size() * 15, 60), 26, BOTTOM_CENTER, BOTTOM_CENTER,
+		"MESSAGE", message);
+}
+void despawn_message_box(UIUnit& scene) {
+	scene.erase_element(scene.find_button("MESSAGE"));
+}
+
+void spawn_form(UIUnit& scene) {
+	add_button(scene, sf::Vector2f(0, 0), sf::Vector2f(500, 200), 0, CENTER_CENTER, CENTER_CENTER,
+		"FORM", "");
+
+	add_text(scene, sf::Vector2f(0, -50), 50, CENTER_CENTER, CENTER_CENTER,
+		"FORM_TITLE", "INPUT EDGE");
+
+
+	add_text(scene, sf::Vector2f(-220, 50), 26, CENTER_CENTER, CENTER_CENTER,
+		"TEXT_U", "u:");
+	add_text(scene, sf::Vector2f(-60, 50), 26, CENTER_CENTER, CENTER_CENTER,
+		"TEXT_V", "v:");
+	add_text(scene, sf::Vector2f(100, 50), 26, CENTER_CENTER, CENTER_CENTER,
+		"TEXT_W", "w:");
+
+
+	add_text_box(scene, sf::Vector2f(-140, 50), sf::Vector2f(60, 40), 26, CENTER_CENTER, CENTER_CENTER,
+		"TEXT_BOX_U");
+	add_text_box(scene, sf::Vector2f(20, 50), sf::Vector2f(60, 40), 26, CENTER_CENTER, CENTER_CENTER,
+		"TEXT_BOX_V");
+	add_text_box(scene, sf::Vector2f(180, 50), sf::Vector2f(60, 40), 26, CENTER_CENTER, CENTER_CENTER,
+		"TEXT_BOX_W");
+}
+
+void despawn_form(UIUnit& scene) {
+	scene.erase_element(scene.find_button("FORM"));
+	scene.erase_element(scene.find_button("FORM_TITLE"));
+	scene.erase_element(scene.find_button("TEXT_U"));
+	scene.erase_element(scene.find_button("TEXT_V"));
+	scene.erase_element(scene.find_button("TEXT_W"));
+	scene.erase_element(scene.find_button("TEXT_BOX_U"));
+	scene.erase_element(scene.find_button("TEXT_BOX_V"));
+	scene.erase_element(scene.find_button("TEXT_BOX_W"));
 }

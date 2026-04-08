@@ -5,9 +5,10 @@ GeneralData::GeneralData() {
 	selected_ds = LINKED_LIST;
 	li = LinkedList();
 	mp_chain = HashMapChaining(7);
-	bst_tree = AVL(0);
 	avl_tree = AVL(1);
 	tri = Trie();
+	dijkstra = Dijkstra();
+	kruskal = Kruskal();
 }
 
 std::string get_ds_name(DS name) {
@@ -16,12 +17,14 @@ std::string get_ds_name(DS name) {
 		return "Linked List";
 	case HASHMAP_CHAIN:
 		return "Hash Table";
-	case BST_TREE:
-		return "Binary Search Tree";
 	case AVL_TREE:
 		return "AVL Tree";
 	case TRIE:
 		return "Trie";
+	case KRUSKAL:
+		return "Kruskal algorithm";
+	case DIJKSTRA:
+		return "Dijkstra algorithm";
 	default:
 		return "";
 	}
@@ -36,14 +39,17 @@ void GeneralData::reset_current() {
 	case HASHMAP_CHAIN:
 		mp_chain.clear();
 		break;
-	case BST_TREE:
-		bst_tree.clear();
-		break;
 	case AVL_TREE:
 		avl_tree.clear();
 		break;
 	case TRIE:
 		tri.clear();
+		break;
+	case KRUSKAL:
+		kruskal.clear();
+		break;
+	case DIJKSTRA:
+		dijkstra.clear();
 		break;
 	}
 }
@@ -58,13 +64,12 @@ void* GeneralData::get_current_structure() {
 		return (void*)&li;
 	case HASHMAP_CHAIN:
 		return (void*)&mp_chain;
-	case BST_TREE:
-		return (void*)&bst_tree;
 	case AVL_TREE:
 		return (void*)&avl_tree;
 	case TRIE:
 		return (void*)&tri;
 	}
+	// dijkstra and kruskal is not a data structure
 	return nullptr;
 }
 
@@ -74,10 +79,10 @@ void GeneralData::change_data_structure(DS st) {
 }
 
 void GeneralData::next_data_structure() {
-	change_data_structure((DS)((int)(selected_ds + 1) % 5));
+	change_data_structure((DS)((int)(selected_ds + 1) % TOTAL_DS_COUNT));
 }
 void GeneralData::previous_data_structure() {
-	change_data_structure((DS)((int)(selected_ds + 4) % 5));
+	change_data_structure((DS)((int)(selected_ds + TOTAL_DS_COUNT - 1) % TOTAL_DS_COUNT));
 }
 
 bool GeneralData::insert(std::string s) {
@@ -87,9 +92,6 @@ bool GeneralData::insert(std::string s) {
 		return true;
 	case HASHMAP_CHAIN:
 		mp_chain.insert(s);
-		return true;
-	case BST_TREE:
-		bst_tree.insert(std::stoi(s));
 		return true;
 	case AVL_TREE:
 		avl_tree.insert(std::stoi(s));
@@ -106,8 +108,6 @@ bool GeneralData::erase(std::string s) {
 		return li.erase(s);
 	case HASHMAP_CHAIN:
 		return mp_chain.erase(s);
-	case BST_TREE:
-		return bst_tree.erase(std::stoi(s));
 	case AVL_TREE:
 		return avl_tree.erase(std::stoi(s));
 	case TRIE:
@@ -121,12 +121,18 @@ void* GeneralData::search(std::string s) {
 		return (void*)li.search(s);
 	case HASHMAP_CHAIN:		
 		return (void*)mp_chain.search(s);
-	case BST_TREE:
-		return (void*)bst_tree.search(std::stoi(s));
 	case AVL_TREE:		
 		return (void*)avl_tree.search(std::stoi(s));
 	case TRIE:
 		return (void*)tri.search(s);
 	}
 	return nullptr;
+}
+
+void GeneralData::run() {
+	
+}
+
+bool GeneralData::is_drawing_ds() {
+	return (int)selected_ds <= 3;
 }

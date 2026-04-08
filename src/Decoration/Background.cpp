@@ -16,16 +16,12 @@ BackgroundDrawer::BackgroundDrawer(sf::RenderWindow* window, sf::Font f) {
 	std::sort(points.begin(), points.end(), [](sf::Vector3f a, sf::Vector3f b) {
 		return a.z > b.z;
 	});
-
-	
-	background.loadFromFile(BACKGROUND_PATH.c_str());
-	foreground.loadFromFile(FOREGROUND_PATH.c_str());
 }
 
 void BackgroundDrawer::draw(sf::Vector2f mouse_pos, float delta) {
 	appwindow->clear(BACKGROUND);
 	total_time += delta;
-	draw4(mouse_pos, delta);
+	draw1(mouse_pos, delta);
 }
 
 

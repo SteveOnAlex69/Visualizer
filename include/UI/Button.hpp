@@ -51,6 +51,9 @@ public:
 	ButtonType get_button_type();
 	int get_font_size();
 
+	void set_focused(bool f);
+	bool get_focused();
+
 	bool check_hovering(sf::Vector2f mouse_pos);
 
 private:
@@ -60,6 +63,7 @@ private:
 	std::string text, button_name;
 	Alignment alignment, relative_pos;
 	ButtonType type;
+	bool focused;
 };
 
 #endif

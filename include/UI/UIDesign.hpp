@@ -28,6 +28,10 @@ void setup_about(UIUnit& about);
 void setup_settings(UIUnit& settings);
 void setup_visualizer(UIUnit& visualizer);
 
-std::string spawn_text_box(UIUnit& scene, Button* &text_box, std::string category);
+std::string spawn_text_box(UIUnit& scene, std::string category);
+void spawn_message_box(UIUnit& scene, std::string message);
+void despawn_message_box(UIUnit& scene);
+void spawn_form(UIUnit& scene);
+void despawn_form(UIUnit& scene);
 
 #endif

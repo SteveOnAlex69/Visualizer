@@ -1,4 +1,5 @@
 #include <UI/UIUnit.hpp>
+#include <UI/Button.hpp>
 #include <fstream>
 
 
@@ -15,8 +16,15 @@ void UIUnit::add_element(Button* button) {
 void UIUnit::erase_element(Button* button) {
 	for (int i = 0; i < (int)buttons.size(); ++i) if (buttons[i] == button) {
 		buttons.erase(buttons.begin() + i);
+		delete button;
 		return;
 	}
+}
+
+Button* UIUnit::find_button(std::string name) {
+	for (auto i : buttons) if (i->get_name() == name)
+		return i;
+	return nullptr;
 }
 
 void UIUnit::draw(sf::Vector2f mouse_pos) {
@@ -26,23 +34,25 @@ void UIUnit::draw(sf::Vector2f mouse_pos) {
 void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 	sf::Vector2f pos = button->get_button_pos();
 	sf::Vector2f size = button->get_button_size();
+	sf::Color btn_color = button->get_font_color();
 
-	sf::Color btn_color = FIRST_COLOR;
 
-	int val = (int)button->get_alignment();
-	pos -= sf::Vector2f(size.x * 0.5f * (val % 3), size.y * 0.5f * (val / 3));
+	int rel_pos = (int)button->get_relative_pos();
+	pos += sf::Vector2f(screen_center.x * (rel_pos % 3), screen_center.y * (rel_pos / 3));
 
-	if (button->check_hovering(mouse_pos)) {
-		btn_color = SECOND_COLOR;
-	}
+	int alignment = (int)button->get_alignment();
+	pos -= sf::Vector2f(size.x * 0.5f * (alignment % 3), size.y * 0.5f * (alignment / 3));
+
+	if (button->check_hovering(mouse_pos)) 
+		btn_color = button->get_font_accent_color();
+	if (button->get_button_type() == TEXTBOX && button->get_focused())
+		btn_color = button->get_font_accent_color();
 	
 	sf::RectangleShape rect;
 	rect.setPosition(pos);
 	rect.setSize(size);
 
-	if (button->get_button_type() == TEXT)
-		rect.setFillColor(sf::Color::Transparent);
-	else rect.setFillColor(BACKGROUND);
+	rect.setFillColor(button -> get_bg_color());
 
 	rect.setOutlineThickness(5);
 	rect.setOutlineColor(btn_color);
@@ -64,4 +74,10 @@ Button* UIUnit::check_hovering(sf::Vector2f mouse_pos) {
 	for (auto i : buttons) if (i->check_hovering(mouse_pos))
 		return i;
 	return nullptr;
+}
+
+void UIUnit::click(sf::Vector2f mouse_pos) {
+	for (auto i : buttons) if (i -> get_button_type() == TEXTBOX) {
+		i->set_focused(i->check_hovering(mouse_pos));
+	}
 }

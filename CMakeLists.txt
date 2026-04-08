@@ -34,7 +34,7 @@ target_sources(Visualizer PRIVATE
     "src/UI/MenuManager.cpp" "src/UI/Button.cpp" "src/UI/UIUnit.cpp" "src/UI/UIDesign.cpp"
 
     "src/Drawing/Node.cpp" "src/Drawing/Graph.cpp" "src/Drawing/DrawingUnit.cpp"
- "src/DataStructures/General.cpp" "src/Decoration/Background.cpp" "src/Input/InputHandler.cpp")
+ "src/DataStructures/General.cpp" "src/Decoration/Background.cpp" "src/Input/InputHandler.cpp" "src/DataStructures/Kruskal.cpp" "src/DataStructures/Dijkstra.cpp")
 
 
 set(SFML_DIR "${CMAKE_SOURCE_DIR}/SFML/lib/cmake/SFML")

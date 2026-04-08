@@ -22,6 +22,11 @@ public:
 	void erase_element(Button* button);
 	void draw(sf::Vector2f mouse_pos = sf::Vector2f(-1, -1));
 	Button* check_hovering(sf::Vector2f mouse_pos);
+
+	Button* find_button(std::string name);
+
+	void click(sf::Vector2f mouse_pos); 
+
 private:
 	sf::RenderWindow* appwindow;
 	sf::Font font;

@@ -1,4 +1,5 @@
 #include <UI/Button.hpp>
+#include <Helper.hpp>
 
 
 Button::Button() {
@@ -22,7 +23,7 @@ void Button::set_alignment(Alignment align_type) { alignment = align_type; }
 void Button::set_relative_pos(Alignment align_type) { relative_pos = align_type; }
 void Button::set_button_size(sf::Vector2f sz) { size = sz; }
 void Button::set_button_pos(sf::Vector2f p) { pos = p; }
-void Button::set_button_type(ButtonType t) { t = type; }
+void Button::set_button_type(ButtonType t) { type = t; }
 
 
 sf::Color Button::get_bg_color() { return bg_color; }
@@ -46,5 +47,13 @@ bool Button::check_hovering(sf::Vector2f mouse_pos) {
 	int x = val % 3, y = val / 3;
 	s -= sf::Vector2f(size.x * (0.5f * x), size.y * (0.5f * y));
 	e -= sf::Vector2f(size.x * (0.5f * x), size.y * (0.5f * y));
+
+	val = (int)relative_pos;
+	x = val % 3, y = val / 3;
+	s += sf::Vector2f(screen_center.x * (1.f * x), screen_center.y * (1.f * y));
+	e += sf::Vector2f(screen_center.x * (1.f * x), screen_center.y * (1.f * y));
 	return (mouse_pos.x >= s.x && mouse_pos.y >= s.y && mouse_pos.x <= e.x && mouse_pos.y <= e.y);
 }
+
+void Button::set_focused(bool f) {focused = f;}
+bool Button::get_focused() { return focused;  }
