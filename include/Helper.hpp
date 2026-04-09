@@ -22,6 +22,7 @@ const sf::Vector2f HASH_MAP_POS = sf::Vector2f(500, 350);
 const sf::Vector2f BST_POS = screen_center - sf::Vector2f(0, 300);
 const sf::Vector2f AVL_POS = BST_POS;
 const sf::Vector2f TRIE_POS = AVL_POS;
+const sf::Vector2f GRAPH_ROOT = sf::Vector2f(500, 350);
 
 const int EDGE_WIDTH = 6;
 const double PI = atan(1);

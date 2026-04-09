@@ -26,6 +26,7 @@ public:
 	Button* find_button(std::string name);
 
 	void click(sf::Vector2f mouse_pos); 
+	Button* get_focused_text_box();
 
 private:
 	sf::RenderWindow* appwindow;

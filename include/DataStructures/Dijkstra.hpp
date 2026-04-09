@@ -18,7 +18,7 @@ public:
 	Dijkstra();
 
 	void add_edge(int u, int v, int w);
-	void del_edge(int u, int v, int w);
+	bool del_edge(int u, int v, int w);
 	std::vector<int> get_vertices();
 	std::vector<DijkstraEdge> get_edges();
 	std::vector<std::pair<int,long long>> run_dijkstra(int u, int v); 

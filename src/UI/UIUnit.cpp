@@ -45,7 +45,7 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 
 	if (button->check_hovering(mouse_pos)) 
 		btn_color = button->get_font_accent_color();
-	if (button->get_button_type() == TEXTBOX && button->get_focused())
+	if (button->get_focused())
 		btn_color = button->get_font_accent_color();
 	
 	sf::RectangleShape rect;
@@ -77,7 +77,15 @@ Button* UIUnit::check_hovering(sf::Vector2f mouse_pos) {
 }
 
 void UIUnit::click(sf::Vector2f mouse_pos) {
-	for (auto i : buttons) if (i -> get_button_type() == TEXTBOX) {
+	for (auto i : buttons) {
 		i->set_focused(i->check_hovering(mouse_pos));
 	}
+}
+
+Button* UIUnit::get_focused_text_box() {
+	for (Button* i : buttons) {
+		if (i->get_button_type() == TEXTBOX && i->get_focused())
+			return i;
+	}
+	return nullptr;
 }

@@ -9,6 +9,7 @@ Button::Button() {
 	text = button_name = "";
 	alignment = relative_pos = TOP_LEFT;
 	type = TEXT;
+	focused = false;
 }
 
 

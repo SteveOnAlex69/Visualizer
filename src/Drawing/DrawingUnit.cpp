@@ -301,9 +301,6 @@ Graph DrawingUnit::get_linked_list_graph(LinkedList* linked_list, sf::Vector2f R
 	}
 	return vcl;
 }
-void DrawingUnit::draw_linked_list(LinkedList *linked_list, sf::Vector2f ROOT, LLNode *highlighted_node) {
-	draw_graph(get_linked_list_graph(linked_list, ROOT, highlighted_node));
-}
 
 Graph DrawingUnit::get_hash_map_graph(HashMapChaining* hash_map, sf::Vector2f ROOT, LLNode* highlighted_node) {
 	sf::Vector2f OFFSETY(0, 120);
@@ -322,9 +319,6 @@ Graph DrawingUnit::get_hash_map_graph(HashMapChaining* hash_map, sf::Vector2f RO
 			vcl.add_edge(e.first, e.second, e.val);
 	}
 	return vcl;
-}
-void DrawingUnit::draw_hash_map(HashMapChaining *hash_map, sf::Vector2f ROOT, LLNode* highlighted_node) {
-	draw_graph(get_hash_map_graph(hash_map, ROOT, highlighted_node));
 }
 
 Node loadingBST(AVLNode *root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET, AVLNode *highlighted_node) {
@@ -351,9 +345,6 @@ Graph DrawingUnit::get_BST_graph(AVL *bst, sf::Vector2f ROOT, AVLNode *highlight
 	Graph vcl;
 	loadingBST(bst -> root, vcl, ROOT, OFFSET, highlighted_node);
 	return vcl;
-}
-void DrawingUnit::draw_BST(AVL* bst, sf::Vector2f ROOT, AVLNode* highlighted_node) {
-	draw_graph(get_BST_graph(bst, ROOT, highlighted_node));
 }
 
 
@@ -388,6 +379,45 @@ Graph DrawingUnit::get_trie_graph(Trie* tri, sf::Vector2f ROOT, TrieNode* highli
 	loadingTrie(tri->root, vcl, ROOT, OFFSET, highlighted_node);
 	return vcl;
 }
-void DrawingUnit::draw_trie(Trie *tri, sf::Vector2f ROOT, TrieNode *highlighted_node) {
-	draw_graph(get_trie_graph(tri, ROOT, highlighted_node));
+
+Graph DrawingUnit::get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT) {
+	Graph ans;
+	std::vector<int> vertices = kurst->get_vertices();
+
+	const int C = 7;
+
+	for (int i = 0; i < (int)vertices.size(); ++i) {
+		int x = i % C, y = i / C;
+		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(x * 200.f, y * 200.f), 
+			(unsigned long long)vertices[i],
+			CIRCLE, false));
+	}
+
+	std::vector<KruskalEdge> e = kurst->get_edges();
+	for (auto i : e) {
+		ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
+		ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w));
+	}
+
+	return ans;
+}
+
+
+Graph DrawingUnit::get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT) {
+	Graph ans;
+	std::vector<int> vertices = dik->get_vertices();
+	const int C = 7;
+
+	for (int i = 0; i < (int)vertices.size(); ++i) {
+		int x = i % C, y = i / C;
+		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(x * 200.f, y * 200.f),
+			(unsigned long long)vertices[i],
+			CIRCLE, false));
+	}
+	std::vector<DijkstraEdge> e = dik->get_edges();
+	for (auto i : e) {
+		ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
+	}
+
+	return ans;
 }

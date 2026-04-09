@@ -10,7 +10,7 @@ enum InputState {
 	HOLD = 2
 };
 
-const int MAX_INPUT_KEY = 41;
+const int MAX_INPUT_KEY = 45;
 enum InputKey {
     // number key
     ZERO = 0,ONE = 1,TWO = 2,THREE = 3,FOUR = 4,FIVE = 5,SIX = 6,SEVEN = 7,EIGHT = 8,NINE = 9,
@@ -26,7 +26,11 @@ enum InputKey {
     ESC = 37,
     BACKSPACE = 38,
     LEFT_ARROW = 39,
-    RIGHT_ARROW = 40
+    RIGHT_ARROW = 40,
+    TABS = 41,
+    LSHIFT = 42,
+    RSHIFT = 43,
+    SPACE = 44
 };
 
 class InputHandler {

@@ -1,4 +1,5 @@
 #include <DataStructures/Kruskal.hpp>
+#include <iostream>
 
 
 Kruskal::Kruskal(){
@@ -7,15 +8,17 @@ Kruskal::Kruskal(){
 }
 
 void Kruskal::add_edge(int u, int v, int w) {
+	std::cout << u << " " << v << " " << w << std::endl;
 	edges.push_back(KruskalEdge(u, v, w));
 }
-void Kruskal::del_edge(int u, int v, int w) {
+bool Kruskal::del_edge(int u, int v, int w) {
 	for (int i = 0; i < (int)edges.size(); ++i) {
 		if (edges[i].u == u && edges[i].v == v && edges[i].w == w) {
 			edges.erase(edges.begin() + i);
-			return;
+			return true;
 		}
 	}
+	return false;
 }
 
 std::vector<int> Kruskal::get_vertices() {

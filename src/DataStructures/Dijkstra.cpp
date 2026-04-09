@@ -7,13 +7,14 @@ Dijkstra::Dijkstra() {
 void Dijkstra::add_edge(int u, int v, int w) {
 	edges.push_back(DijkstraEdge(u, v, w));
 }
-void Dijkstra::del_edge(int u, int v, int w) {
+bool Dijkstra::del_edge(int u, int v, int w) {
 	for (int i = 0; i < (int)edges.size(); ++i) {
 		if (edges[i].u == u && edges[i].v == v && edges[i].w == w) {
 			edges.erase(edges.begin() + i);
-			return;
+			return true;
 		}
 	}
+	return false;
 }
 std::vector<int> Dijkstra::get_vertices() {
 	std::vector<int> vertices;

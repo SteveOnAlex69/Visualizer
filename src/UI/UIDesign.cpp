@@ -51,7 +51,6 @@ Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
 	cur->set_bg_color(BACKGROUND);
 	cur->set_font_color(FIRST_COLOR);
 	cur->set_font_accent_color(SECOND_COLOR);
-	cur->set_focused(true);
 	menu.add_element(cur);
 	return cur;
 }
@@ -155,7 +154,8 @@ std::string spawn_text_box(UIUnit& scene, std::string category) {
 	sf::Vector2f pos = sf::Vector2f(250, 700);
 	if (category == "ERASE") pos += sf::Vector2f(0, 90);
 	if (category == "SEARCH") pos += sf::Vector2f(0, 180);
-	add_text_box(scene, pos, sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "TEXT_BOX");
+	Button* lmao = add_text_box(scene, pos, sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "TEXT_BOX");
+	lmao->set_focused(1);
 	return category;
 }
 
@@ -168,12 +168,12 @@ void despawn_message_box(UIUnit& scene) {
 }
 
 void spawn_form(UIUnit& scene) {
-	add_button(scene, sf::Vector2f(0, 0), sf::Vector2f(500, 200), 0, CENTER_CENTER, CENTER_CENTER,
+	Button* form = add_button(scene, sf::Vector2f(0, 0), sf::Vector2f(500, 200), 0, CENTER_CENTER, CENTER_CENTER,
 		"FORM", "");
+	form->set_focused(1);
 
 	add_text(scene, sf::Vector2f(0, -50), 50, CENTER_CENTER, CENTER_CENTER,
 		"FORM_TITLE", "INPUT EDGE");
-
 
 	add_text(scene, sf::Vector2f(-220, 50), 26, CENTER_CENTER, CENTER_CENTER,
 		"TEXT_U", "u:");
@@ -182,13 +182,14 @@ void spawn_form(UIUnit& scene) {
 	add_text(scene, sf::Vector2f(100, 50), 26, CENTER_CENTER, CENTER_CENTER,
 		"TEXT_W", "w:");
 
-
 	add_text_box(scene, sf::Vector2f(-140, 50), sf::Vector2f(60, 40), 26, CENTER_CENTER, CENTER_CENTER,
 		"TEXT_BOX_U");
 	add_text_box(scene, sf::Vector2f(20, 50), sf::Vector2f(60, 40), 26, CENTER_CENTER, CENTER_CENTER,
 		"TEXT_BOX_V");
 	add_text_box(scene, sf::Vector2f(180, 50), sf::Vector2f(60, 40), 26, CENTER_CENTER, CENTER_CENTER,
 		"TEXT_BOX_W");
+
+	scene.find_button("TEXT_BOX_U")->set_focused(1);
 }
 
 void despawn_form(UIUnit& scene) {

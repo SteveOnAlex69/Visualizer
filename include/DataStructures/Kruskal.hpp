@@ -42,7 +42,7 @@ public:
 	Kruskal();
 	
 	void add_edge(int u, int v, int w);
-	void del_edge(int u, int v, int w);
+	bool del_edge(int u, int v, int w);
 	std::vector<int> get_vertices();
 	std::vector<KruskalEdge> get_edges();
 	std::vector<KruskalEdge> run_kruskal(); 

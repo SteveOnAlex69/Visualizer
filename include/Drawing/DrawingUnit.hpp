@@ -9,6 +9,8 @@
 #include <DataStructures/Hashmap.hpp>
 #include <DataStructures/Trie.hpp>
 #include <DataStructures/AVL.hpp>
+#include <DataStructures/Kruskal.hpp>
+#include <DataStructures/Dijkstra.hpp>
 #include <iostream>
 #include <filesystem>
 #include <vector>
@@ -31,12 +33,8 @@ public:
 	Graph get_BST_graph(AVL* bst, sf::Vector2f ROOT, AVLNode* highlighted_node = nullptr);
 	Graph get_trie_graph(Trie* tri, sf::Vector2f ROOT, TrieNode* highlighted_node = nullptr);
 
-	void draw_linked_list(LinkedList *linked_list, sf::Vector2f ROOT, LLNode *highlighted_node = nullptr);
-	void draw_hash_map(HashMapChaining *hash_map, sf::Vector2f ROOT, LLNode *highlighted_node = nullptr);
-	void draw_BST(AVL *bst, sf::Vector2f ROOT, AVLNode* highlighted_node = nullptr);
-	void draw_trie(Trie *tri, sf::Vector2f ROOT, TrieNode* highlighted_node = nullptr);
-
-
+	Graph get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT);
+	Graph get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT);
 
 	void draw_graph_stage1(Graph& graph1, Graph& graph2, float epoch);
 	void draw_graph_stage2(Graph& graph1, Graph& graph2, float epoch);

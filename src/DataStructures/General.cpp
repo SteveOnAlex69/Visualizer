@@ -68,8 +68,11 @@ void* GeneralData::get_current_structure() {
 		return (void*)&avl_tree;
 	case TRIE:
 		return (void*)&tri;
+	case KRUSKAL:
+		return (void*)&kruskal;
+	case DIJKSTRA:
+		return (void*)&dijkstra;
 	}
-	// dijkstra and kruskal is not a data structure
 	return nullptr;
 }
 
@@ -86,19 +89,42 @@ void GeneralData::previous_data_structure() {
 }
 
 bool GeneralData::insert(std::string s) {
+	
 	switch (selected_ds) {
-	case LINKED_LIST:
-		li.insert(s);
-		return true;
-	case HASHMAP_CHAIN:
-		mp_chain.insert(s);
-		return true;
-	case AVL_TREE:
-		avl_tree.insert(std::stoi(s));
-		return true;
-	case TRIE:
-		tri.insert(s);
-		return true;
+		case LINKED_LIST:
+			li.insert(s);
+			return true;
+		case HASHMAP_CHAIN:
+			mp_chain.insert(s);
+			return true;
+		case AVL_TREE:
+			avl_tree.insert(std::stoi(s));
+			return true;
+		case TRIE:
+			tri.insert(s);
+			return true;
+		case KRUSKAL:
+		{
+			std::vector<int> arr;
+			for (char c : s) {
+				if (c == ' ') arr.push_back(0);
+				else arr.back() = arr.back() * 10 + (c - '0');
+			}
+			if (arr.size() != 3) assert(false);
+			kruskal.add_edge(arr[0], arr[1], arr[2]);
+			return true;
+		}
+		case DIJKSTRA:
+		{
+			std::vector<int> arr;
+			for (char c : s) {
+				if (c == ' ') arr.push_back(0);
+				else arr.back() = arr.back() * 10 + (c - '0');
+			}
+			if (arr.size() != 3) assert(false);
+			dijkstra.add_edge(arr[0], arr[1], arr[2]);
+			return true;
+		}
 	}
 	return false;
 }
@@ -112,6 +138,26 @@ bool GeneralData::erase(std::string s) {
 		return avl_tree.erase(std::stoi(s));
 	case TRIE:
 		return tri.erase(s);
+	case KRUSKAL:
+		{
+			std::vector<int> arr;
+			for (char c : s) {
+				if (c == ' ') arr.push_back(0);
+				else arr.back() = arr.back() * 10 + (c - '0');
+			}
+			if (arr.size() != 3) assert(false);
+			return kruskal.del_edge(arr[0], arr[1], arr[2]);
+		}
+	case DIJKSTRA:
+		{
+			std::vector<int> arr;
+			for (char c : s) {
+				if (c == ' ') arr.push_back(0);
+				else arr.back() = arr.back() * 10 + (c - '0');
+			}
+			if (arr.size() != 3) assert(false);
+			return dijkstra.del_edge(arr[0], arr[1], arr[2]);
+		}
 	}
 	return false;
 }
