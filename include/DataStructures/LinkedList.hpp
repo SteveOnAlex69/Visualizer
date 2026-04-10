@@ -19,7 +19,7 @@ public:
 	LinkedList();
 	void insert(std::string value);
 	bool erase(std::string value); // return whether deleted successfully
-	LLNode* search(std::string value); // return the list of every node visited, ending at the desired node
+	std::vector<void*> search(std::string value); // return the list of every node visited, ending at the desired node
 	bool exist(std::string value);
 
 	std::vector<LLNode*> get_array();

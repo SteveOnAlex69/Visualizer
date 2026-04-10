@@ -51,19 +51,21 @@ bool Trie::try_remove(TrieNode*& root, int i, std::string& s) {
     return check;
 }
 
-TrieNode* Trie::search(std::string s) {
-    TrieNode* ans = root;
+std::vector<void*> Trie::search(std::string s) {
+    TrieNode* tmp = root;
+    std::vector<void*> ans;
     for (char c : s) {
-        if (ans->child[c - '0'] == nullptr)
-            return nullptr;
-        ans = ans->child[c - '0'];
+        ans.push_back(tmp);
+        if (tmp == nullptr) return ans;
+        tmp = tmp->child[c - '0'];
     }
-    if (ans->cnt) return ans;
-    return nullptr;
+    if (tmp->cnt) ans.push_back(tmp);
+    else ans.push_back(nullptr);
+    return ans;
 }
 
 bool Trie::exist(std::string s) {
-    return search(s) == nullptr;
+    return search(s).back() == nullptr;
 }
 
 void Trie::clear() {

@@ -9,7 +9,7 @@
 const sf::Vector2u windowSize = sf::Vector2u(1920, 1200);
 const sf::Color BACKGROUND = sf::Color(36, 36, 36);
 const sf::Color FIRST_COLOR = sf::Color(230, 230, 230);
-const sf::Color SECOND_COLOR = sf::Color(170, 170, 230);
+const sf::Color SECOND_COLOR = sf::Color(120, 120, 200);
 const std::string FONT_PATH = std::string(PROJECT_DIR) + "assets/Font/Consola.ttf";
 const std::string ART_PATH = std::string(PROJECT_DIR) + "assets/Art";
 const std::string BACKGROUND_PATH = ART_PATH + "/background.png";
@@ -24,6 +24,8 @@ const sf::Vector2f AVL_POS = BST_POS;
 const sf::Vector2f TRIE_POS = AVL_POS;
 const sf::Vector2f GRAPH_ROOT = sf::Vector2f(500, 350);
 
+const std::string command_name[4] = {"INSERT", "ERASE", "SEARCH", "RUN"};
+
 const int EDGE_WIDTH = 6;
 const double PI = atan(1);
 
@@ -37,6 +39,8 @@ const float ANIMATION_TIME = 1.0f;
 unsigned long long MASK(int i);
 int GETBIT(int mask, int i);
 int pop_cnt(unsigned long long mask);
+long long max(long long x, long long y);
+long long min(long long x, long long y);
 
 float dotProduct(Point2 a, Point2 b);
 float dotProduct(Point3 a, Point3 b);

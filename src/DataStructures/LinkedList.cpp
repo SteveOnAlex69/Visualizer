@@ -33,18 +33,20 @@ bool LinkedList::erase(std::string value) {
 	return false;
 }
 
-LLNode* LinkedList::search(std::string value) {
+std::vector<void*> LinkedList::search(std::string value) {
 	LLNode* tmp = head;
+	std::vector<void*> ans;
 	while (tmp->nxt) {
 		tmp = tmp->nxt;
-		if (tmp->val == value) {
-			return tmp;
-		}
+		ans.push_back(tmp);
+		if (tmp->val == value) 
+			return ans;
 	}
-	return nullptr;
+	ans.push_back(nullptr);
+	return ans;
 }
 bool LinkedList::exist(std::string value) {
-	return (search(value) != nullptr);
+	return (search(value).back() != nullptr);
 }
 
 std::vector<LLNode*> LinkedList::get_array() {

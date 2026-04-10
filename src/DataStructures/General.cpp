@@ -161,18 +161,20 @@ bool GeneralData::erase(std::string s) {
 	}
 	return false;
 }
-void* GeneralData::search(std::string s) {
+std::vector<void*> GeneralData::search(std::string s) {
 	switch (selected_ds) {
 	case LINKED_LIST:
-		return (void*)li.search(s);
+		return li.search(s);
 	case HASHMAP_CHAIN:		
-		return (void*)mp_chain.search(s);
+		return mp_chain.search(s);
 	case AVL_TREE:		
-		return (void*)avl_tree.search(std::stoi(s));
+		return avl_tree.search(std::stoi(s));
 	case TRIE:
-		return (void*)tri.search(s);
+		return tri.search(s);
 	}
-	return nullptr;
+
+	std::vector<void*> empty;
+	return empty;
 }
 
 void GeneralData::run() {

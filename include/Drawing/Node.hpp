@@ -25,6 +25,9 @@ public:
 	void set_opacity(float o);
 	float get_opacity();
 
+	void set_color(sf::Color color);
+	sf::Color get_color();
+
 	unsigned long long get_hash_val();
 
 	#define OPEDEF(o) bool operator o (const Node& x) const;
@@ -42,6 +45,8 @@ private:
 	float opacity;
 
 	unsigned long long hash_value;
+
+	sf::Color node_color;
 };
 
 #endif

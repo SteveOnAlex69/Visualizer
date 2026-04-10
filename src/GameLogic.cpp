@@ -41,7 +41,6 @@ MenuManager menu_manager;
 
 
 GeneralData ds;
-void* searched = nullptr;
 std::string text_box_mode = "";
 
 UIUnit menu, settings, about, visualizer;
@@ -49,10 +48,10 @@ BackgroundDrawer bg_drawer;
 InputHandler input_state;
 
 AnimationUnit anim;
-Graph get_graph() {
+Graph get_graph(void* bruno = nullptr) {
 	void* current_ds = ds.get_current_structure();
 	std::vector<void*> search_nodes;
-	if (searched) search_nodes.push_back(searched);
+	if (bruno) search_nodes.push_back(bruno);
 
 	switch (ds.get_current_type()) {
 	case LINKED_LIST:
@@ -82,7 +81,11 @@ Graph get_graph() {
 	return empty_graph;
 }
 
-void load_kruskal() {
+void update_graph() { // for a single update
+	anim.add_graph(get_graph());
+}
+
+void load_kruskal() { // for loading the entire kruskal family
 	void* current_ds = ds.get_current_structure();
 	anim.clear_graph();
 	for (int i = 0; ; ++i) {
@@ -91,6 +94,13 @@ void load_kruskal() {
 		);
 		if (cur.get_node_list().size() == 0) break;
 		anim.add_graph(cur, 0);
+	}
+}
+
+void execute_graph_search(std::vector<void*> searched_nodes) {
+	void* current_ds = ds.get_current_structure();
+	for (auto i : searched_nodes) {
+		anim.add_graph(get_graph(i), 0);
 	}
 }
 
@@ -120,6 +130,7 @@ void appStart(sf::RenderWindow& appwindow) {
 
 	setup_menus();
 }
+
 void handle_keypress() {
 
 }
@@ -161,7 +172,6 @@ void handle_settings(sf::RenderWindow& appwindow, UIUnit& settings, MenuManager&
 	}
 }
 
-
 void handle_about(sf::RenderWindow& appwindow, UIUnit& about, MenuManager& menu_manager) {
 	about.draw(input_state.get_mouse_pos());
 
@@ -175,13 +185,14 @@ void handle_about(sf::RenderWindow& appwindow, UIUnit& about, MenuManager& menu_
 
 
 void handle_ds_switcher() {
+	if (input_state.get_keyboard_key(LSHIFT) != RELEASE)
 	if (input_state.get_keyboard_key(LEFT_ARROW) == CLICK || input_state.get_keyboard_key(RIGHT_ARROW) == CLICK) {
 		if (input_state.get_keyboard_key(LEFT_ARROW) == CLICK)
 			ds.previous_data_structure();
 		else if (input_state.get_keyboard_key(RIGHT_ARROW) == CLICK)
 			ds.next_data_structure();
 
-		visualizer.erase_element(visualizer.find_button("TEXT_BOX"));
+		despawn_text_box(visualizer);
 		despawn_form(visualizer);
 		text_box_mode = ""; 
 		anim.clear_graph();
@@ -189,6 +200,49 @@ void handle_ds_switcher() {
 }
 
 float message_time = 0;
+
+int command_activated(std::string command) {
+	if (input_state.get_keyboard_key(KEY_I) || command == "COMMAND_1") return 1;
+	if (input_state.get_keyboard_key(KEY_E) || command == "COMMAND_2") return 2;
+	if (input_state.get_keyboard_key(KEY_S) || command == "COMMAND_3") return 3;
+	return 0;
+}
+
+void execute_command(int command) {
+	despawn_text_box(visualizer);
+	despawn_message_box(visualizer);
+	if (ds.is_drawing_ds()) {
+		text_box_mode = spawn_text_box(visualizer, command_name[command - 1]);
+	}
+	else {
+		if (command <= 2) {
+			spawn_form(visualizer);
+			text_box_mode = command_name[command - 1];
+		}
+		else {
+			load_kruskal();
+		}
+	}
+}
+
+void text_box_receive(std::string s) {
+	if (text_box_mode == "INSERT") {
+		if (ds.insert(s)) update_graph();
+	}
+	else if (text_box_mode == "ERASE") {
+		if (ds.erase(s)) update_graph();
+		else {
+			spawn_message_box(visualizer, "You erased a non-existing element!");
+			message_time = 0;
+		}
+	}
+	else if (text_box_mode == "SEARCH") {
+		std::vector<void*> searched = ds.search(s);
+		execute_graph_search(searched);
+	}
+	despawn_text_box(visualizer);
+	text_box_mode = "";
+}
 
 void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 	std::string pressed_button = "";
@@ -204,112 +258,57 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 		despawn_message_box(visualizer);
 
 	if (menu_switcher(pressed_button)) {
-		searched = nullptr;
 		ds.reset_current();
-		visualizer.erase_element(visualizer.find_button("TEXT_BOX"));		
+		despawn_text_box(visualizer);
 		despawn_message_box(visualizer);
 
 		anim.clear_graph();
 		text_box_mode = "";
 	}
-	else if (input_state.get_keyboard_key(KEY_I) == CLICK || pressed_button == "COMMAND_1") {
-		visualizer.erase_element(visualizer.find_button("TEXT_BOX"));
-		despawn_message_box(visualizer);
-		if (ds.is_drawing_ds())
-			text_box_mode = spawn_text_box(visualizer, "INSERT");
-		else {
-			spawn_form(visualizer);
-			text_box_mode = "INSERT";
-		}
-	}
-	else if (input_state.get_keyboard_key(KEY_E) == CLICK || pressed_button == "COMMAND_2") {
-		visualizer.erase_element(visualizer.find_button("TEXT_BOX"));
-		despawn_message_box(visualizer);
-		if (ds.is_drawing_ds())
-			text_box_mode = spawn_text_box(visualizer, "ERASE");
-		else {
-			spawn_form(visualizer);
-			text_box_mode = "ERASE";
-		}
-	}
-	else if (input_state.get_keyboard_key(KEY_S) == CLICK || pressed_button == "COMMAND_3") {
-		visualizer.erase_element(visualizer.find_button("TEXT_BOX"));
-		despawn_message_box(visualizer);
-
-		if (ds.is_drawing_ds())
-			text_box_mode = spawn_text_box(visualizer, "SEARCH");
-		else load_kruskal();
+	else if (command_activated(pressed_button)) {
+		execute_command(command_activated(pressed_button));
 	}
 	else if (visualizer.get_focused_text_box()) {
 		if (input_state.get_keyboard_key(ESC) == CLICK) {
-			visualizer.erase_element(visualizer.find_button("TEXT_BOX"));
+			despawn_text_box(visualizer);
 			despawn_message_box(visualizer);
 			text_box_mode = "";
 		}
 		else if (input_state.get_keyboard_key(TABS) == CLICK && input_state.get_keyboard_key(LSHIFT) != RELEASE) {
 			Button* cur = visualizer.get_focused_text_box();
-			if (cur->get_name() == "TEXT_BOX_W") {
-				cur->set_focused(0);
-				visualizer.find_button("TEXT_BOX_V")->set_focused(1);
-			}
-			else if (cur->get_name() == "TEXT_BOX_V") {
-				cur->set_focused(0);
-				visualizer.find_button("TEXT_BOX_U")->set_focused(1);
-			}
+			std::string name = cur->get_name();
+			name.back() = max('1', name.back() - 1);
+			cur->set_focused(0);
+			visualizer.find_button(name)->set_focused(1);
 		}
 		else if (input_state.get_keyboard_key(TABS) == CLICK 
 			|| input_state.get_keyboard_key(ENTER) == CLICK
 			|| input_state.get_keyboard_key(SPACE) == CLICK) {
 			despawn_message_box(visualizer);
 			if (ds.is_drawing_ds()) {
-				if (visualizer.find_button("TEXT_BOX")->get_string().size()) {
-					searched = nullptr;
-					if (text_box_mode == "INSERT") {
-						if (ds.insert(visualizer.find_button("TEXT_BOX")->get_string())) {
-							anim.add_graph(get_graph());
-						}
-					}
-					else if (text_box_mode == "ERASE") {
-						if (ds.erase(visualizer.find_button("TEXT_BOX")->get_string())) {
-							anim.add_graph(get_graph());
-						}
-						else {
-							spawn_message_box(visualizer, "You erased a non-existing element!");
-							message_time = 0;
-						}
-					}
-					else if (text_box_mode == "SEARCH") {
-						searched = ds.search(visualizer.find_button("TEXT_BOX")->get_string());
-						anim.add_graph(get_graph());
-					}
-					visualizer.erase_element(visualizer.find_button("TEXT_BOX"));
-					text_box_mode = "";
+				std::string s = visualizer.find_button("TEXT_BOX")->get_string();
+				if (s.size()) {
+					text_box_receive(s);
 				}
 			}
 			else {
 				Button* cur = visualizer.get_focused_text_box();
-				if (cur->get_name() == "TEXT_BOX_U") {
-					cur->set_focused(0);
-					visualizer.find_button("TEXT_BOX_V")->set_focused(1);
-				}
-				else if (cur->get_name() == "TEXT_BOX_V") {
-					cur->set_focused(0);
-					visualizer.find_button("TEXT_BOX_W")->set_focused(1);
-				}
+				std::string name = cur->get_name();
+				name.back()++;
+				cur->set_focused(0);
+				if (visualizer.find_button(name)) visualizer.find_button(name)->set_focused(1);
 				else {
-					std::string u = visualizer.find_button("TEXT_BOX_U")->get_string();
-					std::string v = visualizer.find_button("TEXT_BOX_V")->get_string();
-					std::string w = visualizer.find_button("TEXT_BOX_W")->get_string();
-
+					std::string u = visualizer.find_button("TEXT_BOX_1")->get_string(),
+						v = visualizer.find_button("TEXT_BOX_2")->get_string(),
+						w = visualizer.find_button("TEXT_BOX_3")->get_string();
 					if (u.size() && v.size() && w.size()) {
-						if (text_box_mode == "INSERT") {
-							if (ds.insert(" " + u + " " + v + " " + w))
-								anim.add_graph(get_graph());
-						}
-						if (text_box_mode == "ERASE") {
-							if (ds.erase(" " + u + " " + v + " " + w))
-								anim.add_graph(get_graph());
-						}
+						bool check = false;
+						if (text_box_mode == "INSERT") 
+							check = ds.insert(" " + u + " " + v + " " + w);
+						if (text_box_mode == "ERASE") 
+							check = ds.erase(" " + u + " " + v + " " + w);
+
+						if (check) update_graph();
 						visualizer.find_button("FORM")->set_focused(0);
 						text_box_mode = "";
 					}
@@ -347,10 +346,9 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 		message_time = 0;
 	}
 
-
 	Button* text_box = visualizer.find_button("TEXT_BOX");
 	if (text_box != nullptr && text_box->get_focused() == false) {
-		visualizer.erase_element(text_box);
+		despawn_text_box(visualizer);
 		text_box_mode = "";
 	}
 	Button* form_box = visualizer.find_button("FORM");
@@ -360,22 +358,16 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 	}
 
 	visualizer.find_button("DS_NAME")->set_string(get_ds_name( ds.get_current_type() ));
-	if (ds.is_drawing_ds()) {
-		visualizer.find_button("COMMAND_1")->set_string("INSERT");
-		visualizer.find_button("COMMAND_2")->set_string("ERASE");
+	if (ds.is_drawing_ds()) 
 		visualizer.find_button("COMMAND_3")->set_string("SEARCH");
-	}
-	else {
-		visualizer.find_button("COMMAND_1")->set_string("INSERT");
-		visualizer.find_button("COMMAND_2")->set_string("ERASE");
+	else 
 		visualizer.find_button("COMMAND_3")->set_string("RUN");
-	}
 
 	Button* cur = visualizer.check_hovering(input_state.get_mouse_pos());
 	handle_textbox_input(cur, visualizer);
 
 	if (anim.is_empty())
-		anim.add_graph(get_graph());
+		update_graph();
 
 	drawing_unit.draw_graph(anim.get_graph());
 	visualizer.draw(input_state.get_mouse_pos());
@@ -418,6 +410,5 @@ void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 		handle_visualizing(appwindow, visualizer, menu_manager);
 		break;
 	}
-
 	appwindow.display();
 }

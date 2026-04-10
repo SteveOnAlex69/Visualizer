@@ -8,7 +8,6 @@ Kruskal::Kruskal(){
 }
 
 void Kruskal::add_edge(int u, int v, int w) {
-	std::cout << u << " " << v << " " << w << std::endl;
 	edges.push_back(KruskalEdge(u, v, w));
 }
 bool Kruskal::del_edge(int u, int v, int w) {
@@ -50,7 +49,6 @@ std::vector<KruskalEdge> Kruskal::run_kruskal() {
 		int v = std::lower_bound(vertices.begin(), vertices.end(), i.v) - vertices.begin();
 		KruskalEdge cur = i;
 		cur.flag = mst.join_set(u, v);
-		std::cout << cur.u << " " << cur.v << " " << cur.w << " " << cur.flag << "\n";
 		ans.push_back(cur);
 	}
 	return ans;

@@ -21,7 +21,7 @@ BackgroundDrawer::BackgroundDrawer(sf::RenderWindow* window, sf::Font f) {
 void BackgroundDrawer::draw(sf::Vector2f mouse_pos, float delta) {
 	appwindow->clear(BACKGROUND);
 	total_time += delta;
-	draw2(mouse_pos, delta);
+	draw3(mouse_pos, delta);
 }
 
 

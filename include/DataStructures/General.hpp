@@ -39,7 +39,7 @@ public:
 
 	bool insert(std::string s);
 	bool erase(std::string s);
-	void* search(std::string s);
+	std::vector<void*> search(std::string s);
 
 	void run();
 	

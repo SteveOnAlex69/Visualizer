@@ -1,4 +1,5 @@
 #include <Drawing/Node.hpp>
+#include <Helper.hpp>
 #include <iostream>
 #include <vector>
 
@@ -15,6 +16,9 @@ Node::Node(std::string val, sf::Vector2f pos, unsigned long long hash_val, Shape
 	for (char c : val) {
 		hash_value = hash_value * BASE + c;
 	}
+
+	if (sp == 0) node_color = FIRST_COLOR;
+	else node_color = SECOND_COLOR;
 }
 
 std::string Node::get_val() {
@@ -47,6 +51,10 @@ unsigned long long Node::get_hash_val() {
 void Node::set_opacity(float o) { opacity = o; }
 float Node::get_opacity() { return opacity; }
 
+
+
+void Node::set_color(sf::Color color) { node_color = color; }
+sf::Color Node::get_color() { return node_color; }
 
 #define OPE(o) bool Node::operator o (const Node& x) const {return cmp(*this, x) o 0;}
 OPE(> );

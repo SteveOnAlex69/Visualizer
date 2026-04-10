@@ -7,6 +7,9 @@ unsigned long long MASK(int i) { return 1ULL << i; }
 int GETBIT(int mask, int i) { return ((mask) >> i) & 1; }
 int pop_cnt(unsigned long long mask) { return __popcnt(mask); }
 
+long long max(long long x, long long y) { return std::max(x, y); }
+long long min(long long x, long long y) { return std::min(x, y); }
+
 float dotProduct(Point2 a, Point2 b) {
 	return a.x * b.x + a.y * b.y;
 }

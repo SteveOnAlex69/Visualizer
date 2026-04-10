@@ -11,8 +11,7 @@ DrawingUnit::DrawingUnit(sf::RenderWindow *window, sf::Font f) {
 
 void DrawingUnit::draw_node(Node i) {
 	float opacity = i.get_opacity();
-	sf::Color border_color = FIRST_COLOR;
-	if (i.is_special()) border_color = sf::Color::Yellow;
+	sf::Color border_color = i.get_color();
 
 	border_color.a = opacity * 255;
 	if (i.get_shape() == NO) {

@@ -74,17 +74,26 @@ Graph AnimationUnit::get_graph_stage2(Graph& graph1, Graph& graph2, float epoch)
 	std::vector<Edge> e1 = graph1.get_edges_idx();
 	std::vector<Edge> e2 = graph2.get_edges_idx();
 
+	float scaling = sigmoid(epoch);
+
 	for (Node i : li1) {
 		sf::Vector2f pos_start = i.get_pos(), pos_end = i.get_pos();
+		sf::Color color_start = i.get_color(), color_end = i.get_color();
 		bool found = false;
 		for (Node j : li2)
 			if (i.get_hash_val() == j.get_hash_val()) {
 				pos_end = j.get_pos();
+				color_end = j.get_color();
 				found = true;
 			}
 		if (found) {
-			sf::Vector2f pos = pos_start + (pos_end - pos_start) * sigmoid(epoch);
+			sf::Vector2f pos = pos_start + (pos_end - pos_start) * scaling;
+			float r = color_end.r - color_start.r, g = color_end.g - color_start.g,
+				b = color_end.b - color_start.b;
+			r *= scaling; g *= scaling; b *= scaling;
 			i.set_pos(pos);
+			i.set_color(sf::Color(color_start.r + r, color_start.g + g, color_start.b + b));
+
 			graph.add_node(i);
 		}
 	}
@@ -147,6 +156,7 @@ int get_diff_state(Graph& graph1, Graph& graph2) {
 			if (i.get_hash_val() == j.get_hash_val()) {
 				found = true;
 				if (i.get_pos() != j.get_pos()) mask |= 2;
+				if (i.is_special() != j.is_special()) mask |= 2;
 			}
 		}
 		if (found == false) mask |= 1;

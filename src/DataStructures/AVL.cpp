@@ -109,19 +109,22 @@ void AVL::traverse(AVLNode* root, std::vector<int>& ans) {
     }
 }
 
-AVLNode* AVL::search(int x) {
-    return locate(root, x);
+std::vector<void*> AVL::search(int x) {
+    std::vector<void*> ans;
+    locate(root, x, ans);
+    return ans;
 }
 
-AVLNode* AVL::locate(AVLNode* root, int x) {
-    if (root == nullptr) return nullptr;
-    if (root->val == x) return root;
-    if (x < root->val) return locate(root->childL, x);
-    else return locate(root->childR, x);
+void AVL::locate(AVLNode* root, int x, std::vector<void*> &ans) {
+    ans.push_back(root);
+    if (root == nullptr) return;
+    if (root->val == x) return;
+    if (x < root->val) locate(root->childL, x, ans);
+    else locate(root->childR, x, ans);
 }
 
 bool AVL::exist(int x) {
-    return search(x) != nullptr;
+    return search(x).back() != nullptr;
 }
 
 

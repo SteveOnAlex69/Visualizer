@@ -24,15 +24,6 @@ sf::Vector2f InputHandler::get_mouse_pos() {
 }
 
 
-void handle_mouse(sf::RenderWindow& appwindow, InputState &mouse, float delta) {
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-		if (mouse == RELEASE) mouse = CLICK;
-		else mouse = HOLD;
-	}
-	else {
-		mouse = RELEASE;
-	}
-}
 void InputHandler::update_mouse(float delta) {
 	mouse = transform(mouse, sf::Mouse::isButtonPressed(sf::Mouse::Button::Left));
 }
