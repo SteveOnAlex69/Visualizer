@@ -27,7 +27,7 @@ const sf::Vector2f GRAPH_ROOT = sf::Vector2f(500, 350);
 const int EDGE_WIDTH = 6;
 const double PI = atan(1);
 
-const float ANIMATION_TIME = 1;
+const float ANIMATION_TIME = 1.0f;
 
 #define ll long long
 #define ull unsigned long long

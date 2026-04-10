@@ -50,6 +50,7 @@ std::vector<KruskalEdge> Kruskal::run_kruskal() {
 		int v = std::lower_bound(vertices.begin(), vertices.end(), i.v) - vertices.begin();
 		KruskalEdge cur = i;
 		cur.flag = mst.join_set(u, v);
+		std::cout << cur.u << " " << cur.v << " " << cur.w << " " << cur.flag << "\n";
 		ans.push_back(cur);
 	}
 	return ans;

@@ -101,186 +101,8 @@ void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity) {
 	}
 }
 
-void DrawingUnit::draw_graph(Graph& graph) {
-	std::vector<Node> li = graph.get_node_list();
-	std::vector<Edge> relation = graph.get_edges_idx();
-
-	for (Edge i : relation) {
-		draw_edge(graph.find_node(i.first), graph.find_node(i.second), i.val, i.opacity);
-	}
-	for (auto i : li) {
-		draw_node(i);
-	}
-}
-
-float sigmoid(float epoch) {
-	epoch -= 0.5f;
-	epoch *= 10;
-	return (float)1 / (1 + std::exp(-epoch));
-}
-
-int get_diff_state(Graph& graph1, Graph& graph2) {
-	// bit 0 will be true if we have to delete something from graph 1
-	// bit 1 will be true if we have to relocate something that is common across graph 1 and graph 2
-	// bit 2 will be true if we have to add something from graph 2
-	int mask = 0;
-	std::vector<Node> li1 = graph1.get_node_list();
-	std::vector<Node> li2 = graph2.get_node_list();
-	std::vector<Edge> e1 = graph1.get_edges_idx();
-	std::vector<Edge> e2 = graph2.get_edges_idx();
-
-	for (Node i : li1) {
-		bool found = false;
-		for (Node j : li2) {
-			if (i.get_hash_val() == j.get_hash_val()) {
-				found = true;
-				if (i.get_pos() != j.get_pos()) mask |= 2;
-			}
-		}
-		if (found == false) mask |= 1;
-	}
-	for (Node i : li2) {
-		bool found = false;
-		for (Node j : li1) 
-			if (i.get_hash_val() == j.get_hash_val())
-				found = true;
-		if (found == false) mask |= 4;
-	}
-
-	for (Edge i : e1) {
-		bool found = false;
-		for (Edge j : e2)
-			if (i.first == j.first && i.second == j.second && i.val == j.val)
-				found = true;
-		if (found == false) mask |= 1;
-	}
-	for (Edge i : e2) {
-		bool found = false;
-		for (Edge j : e1)
-			if (i.first == j.first && i.second == j.second && i.val == j.val)
-				found = true;
-		if (found == false) mask |= 4;
-	}
-
-	return mask;
-}
-
-void DrawingUnit::draw_graph_stage1(Graph& graph1, Graph& graph2, float epoch) {
-	Graph graph;
-	std::vector<Node> li1 = graph1.get_node_list();
-	std::vector<Node> li2 = graph2.get_node_list();
-	std::vector<Edge> e1 = graph1.get_edges_idx();
-	std::vector<Edge> e2 = graph2.get_edges_idx();
-
-	for (Node i : li1) {
-		sf::Vector2f pos_start = i.get_pos();
-		bool found = false;
-		for (Node j : li2)
-			if (i.get_hash_val() == j.get_hash_val()) {
-				found = true;
-			}
-
-		sf::Vector2f pos = pos_start;
-		i.set_pos(pos);
-		if (found == false) i.set_opacity(1-sigmoid(epoch));
-		graph.add_node(i);
-	}
-	for (Edge e : e1) {
-		bool found = false;
-		for (Edge g : e2) {
-			if (e.first == g.first && e.second == g.second && e.val == g.val)
-				found = true;
-		}
-		if (found)
-			graph.add_edge(e.first, e.second, e.val, 1);
-		else graph.add_edge(e.first, e.second, e.val, 1 - sigmoid(epoch));
-	}
-	draw_graph(graph);
-
-}
-void DrawingUnit::draw_graph_stage2(Graph& graph1, Graph& graph2, float epoch) {
-	Graph graph;
-	std::vector<Node> li1 = graph1.get_node_list();
-	std::vector<Node> li2 = graph2.get_node_list();
-	std::vector<Edge> e1 = graph1.get_edges_idx();
-	std::vector<Edge> e2 = graph2.get_edges_idx();
-
-	for (Node i : li1) {
-		sf::Vector2f pos_start = i.get_pos(), pos_end = i.get_pos();
-		bool found = false;
-		for (Node j : li2)
-			if (i.get_hash_val() == j.get_hash_val()) {
-				pos_end = j.get_pos();
-				found = true;
-			}
-		if (found) {
-			sf::Vector2f pos = pos_start + (pos_end - pos_start) * sigmoid(epoch);
-			i.set_pos(pos);
-			graph.add_node(i);
-		}
-	}
-	for (Edge e : e1) {
-		bool found = false;
-		for (Edge g : e2) {
-			if (e.first == g.first && e.second == g.second && e.val == g.val)
-				found = true;
-		}
-		if (found)
-			graph.add_edge(e.first, e.second, e.val);
-	}
-	draw_graph(graph);
-}
-void DrawingUnit::draw_graph_stage3(Graph& graph1, Graph& graph2, float epoch) {
-	Graph graph;
-	std::vector<Node> li1 = graph1.get_node_list();
-	std::vector<Node> li2 = graph2.get_node_list();
-	std::vector<Edge> e1 = graph1.get_edges_idx();
-	std::vector<Edge> e2 = graph2.get_edges_idx();
-
-	for (Node i : li2) {
-		sf::Vector2f pos_start = i.get_pos();
-		bool found = false;
-		for (Node j : li1)
-			if (i.get_hash_val() == j.get_hash_val()) 
-				found = true;
-		sf::Vector2f pos = pos_start;
-		i.set_pos(pos);
-		if (found == false) i.set_opacity(sigmoid(epoch));
-		graph.add_node(i);
-	}
-	for (Edge e : e2) {
-		bool found = false;
-		for (Edge g : e1) {
-			if (e.first == g.first && e.second == g.second && e.val == g.val)
-				found = true;
-		}
-		if (found)
-			graph.add_edge(e.first, e.second, e.val, 1);
-		else graph.add_edge(e.first, e.second, e.val, sigmoid(epoch));
-	}
-	draw_graph(graph);
-}
-
-
-void DrawingUnit::draw_graph(Graph& graph1, Graph& graph2, float epoch) {
-	int mask = get_diff_state(graph1, graph2);
-	if (epoch > ANIMATION_TIME || pop_cnt(mask) == 0) {
-		draw_graph(graph2);
-		return;
-	}
-	const float STEP = ANIMATION_TIME / pop_cnt(mask);
-	for (int i = 0; i < 3; ++i) if (GETBIT(mask, i)) {
-		if (epoch <= STEP) {
-			if (i == 0) draw_graph_stage1(graph1, graph2, epoch * pop_cnt(mask));
-			if (i == 1) draw_graph_stage2(graph1, graph2, epoch * pop_cnt(mask));
-			if (i == 2) draw_graph_stage3(graph1, graph2, epoch * pop_cnt(mask));
-			break;
-		}
-		epoch -= STEP;
-	}
-}
-
-Graph DrawingUnit::get_linked_list_graph(LinkedList* linked_list, sf::Vector2f ROOT, LLNode* highlighted_node) {
+Graph DrawingUnit::get_linked_list_graph(LinkedList* linked_list, sf::Vector2f ROOT, 
+	std::vector<void*> highlighted) {
 	std::vector<LLNode*> arr = linked_list->get_array();
 	sf::Vector2f OFFSETX(200, 0);
 	sf::Vector2f OFFSETY(0, 150);
@@ -295,21 +117,25 @@ Graph DrawingUnit::get_linked_list_graph(LinkedList* linked_list, sf::Vector2f R
 		x++;
 
 		Node cur = vcl.add_node(Node(arr[i]->val, ROOT + OFFSETX * (1.0f * x) + OFFSETY * (1.0f * y),
-			(unsigned long long) arr[i], SQUARE, arr[i] == highlighted_node));
+			(unsigned long long) arr[i], SQUARE, 
+			std::find(highlighted.begin(), highlighted.end(), arr[i]) != highlighted.end()
+		));
 		vcl.add_edge(prev, cur);
 		prev = cur;
 	}
 	return vcl;
 }
 
-Graph DrawingUnit::get_hash_map_graph(HashMapChaining* hash_map, sf::Vector2f ROOT, LLNode* highlighted_node) {
+Graph DrawingUnit::get_hash_map_graph(HashMapChaining* hash_map, sf::Vector2f ROOT,
+	std::vector<void*> highlighted){
 	sf::Vector2f OFFSETY(0, 120);
 	sf::Vector2f OFFSETX(150, 0);
 
 	Graph vcl;
 	for (int i = 0; i < hash_map->get_size(); ++i) {
 		vcl.add_node(Node(std::to_string(i), ROOT + OFFSETY * (1.0f * i), 0, NO));
-		Graph single_line = get_linked_list_graph(&(hash_map->buckets[i]), ROOT + OFFSETY * (1.0f * i) + OFFSETX, highlighted_node);
+		Graph single_line = get_linked_list_graph(&(hash_map->buckets[i]), 
+			ROOT + OFFSETY * (1.0f * i) + OFFSETX, highlighted);
 		
 		std::vector<Node> vertices = single_line.get_node_list();
 		std::vector<Edge> edges = single_line.get_edges_idx();
@@ -321,38 +147,44 @@ Graph DrawingUnit::get_hash_map_graph(HashMapChaining* hash_map, sf::Vector2f RO
 	return vcl;
 }
 
-Node loadingBST(AVLNode *root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET, AVLNode *highlighted_node) {
+Node loadingBST(AVLNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET,
+	std::vector<void*> highlighted) {
 	if (root == nullptr) return Node();
 	Node cur = graph.add_node(Node(std::to_string(root -> val), ROOT, (unsigned long long) root,
-		CIRCLE, root == highlighted_node));
+		CIRCLE, std::find(highlighted.begin(), highlighted.end(), root) != highlighted.end()
+	));
 	OFFSET.x *= 0.4f;
 	if (root->childL) {
 		Node left_child = 
-			loadingBST(root->childL, graph, ROOT + sf::Vector2f(-OFFSET.x, OFFSET.y), OFFSET, highlighted_node);
+			loadingBST(root->childL, graph, ROOT + sf::Vector2f(-OFFSET.x, OFFSET.y), OFFSET, 
+				highlighted);
 		graph.add_edge(cur, left_child);
 	}
 	if (root->childR) {
 		Node right_child = 
-			loadingBST(root->childR, graph, ROOT + sf::Vector2f(OFFSET.x, OFFSET.y), OFFSET, highlighted_node);
+			loadingBST(root->childR, graph, ROOT + sf::Vector2f(OFFSET.x, OFFSET.y), OFFSET, 
+				highlighted);
 		graph.add_edge(cur, right_child);
 	}
 	return cur;
 }
 
-Graph DrawingUnit::get_BST_graph(AVL *bst, sf::Vector2f ROOT, AVLNode *highlighted_node) {
+Graph DrawingUnit::get_BST_graph(AVL *bst, sf::Vector2f ROOT, std::vector<void*> highlighted) {
 	sf::Vector2f OFFSET(1000, 150);
 
 	Graph vcl;
-	loadingBST(bst -> root, vcl, ROOT, OFFSET, highlighted_node);
+	loadingBST(bst -> root, vcl, ROOT, OFFSET, highlighted);
 	return vcl;
 }
 
 
-Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET, TrieNode* highlighted_node) {
+Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET, 
+	std::vector<void*> highlighted) {
 	if (root == nullptr) return Node();
 	if (root == nullptr) return Node();
 	Node cur = graph.add_node(Node(std::to_string(root -> cnt), ROOT, (unsigned long long)root,
-		CIRCLE, root == highlighted_node));
+		CIRCLE, std::find(highlighted.begin(), highlighted.end(), root) != highlighted.end()
+	));
 	int child_cnt = 0;
 	for (int i = 0; i < ALPHA; ++i) if (root->child[i]) child_cnt++;
 	if (child_cnt == 0) return cur;
@@ -365,39 +197,62 @@ Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f O
 		nROOT.y += OFFSET.y;
 		nROOT.x += OFFSET.x * (-0.5f + (cur_child - 0.5f) / child_cnt);
 
-		Node child = loadingTrie(root->child[i], graph, nROOT, nOFFSET, highlighted_node);
+		Node child = loadingTrie(root->child[i], graph, nROOT, nOFFSET, highlighted);
 		graph.add_edge(cur, child, std::string(1, '0' + i));
 	}
 	
 	return cur;
 }
 
-Graph DrawingUnit::get_trie_graph(Trie* tri, sf::Vector2f ROOT, TrieNode* highlighted_node) {
+Graph DrawingUnit::get_trie_graph(Trie* tri, sf::Vector2f ROOT, std::vector<void*> highlighted) {
 	sf::Vector2f OFFSET(1800, 180);
 
 	Graph vcl;
-	loadingTrie(tri->root, vcl, ROOT, OFFSET, highlighted_node);
+	loadingTrie(tri->root, vcl, ROOT, OFFSET, highlighted);
 	return vcl;
 }
 
-Graph DrawingUnit::get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT) {
+Graph DrawingUnit::get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT, int it) {
 	Graph ans;
 	std::vector<int> vertices = kurst->get_vertices();
 
-	const int C = 7;
 
 	for (int i = 0; i < (int)vertices.size(); ++i) {
-		int x = i % C, y = i / C;
-		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(x * 200.f, y * 200.f), 
+		int y = (i * 5) % 7;
+		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(i * 200.f, y * 120.0f),
 			(unsigned long long)vertices[i],
 			CIRCLE, false));
 	}
 
-	std::vector<KruskalEdge> e = kurst->get_edges();
-	for (auto i : e) {
-		ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
-		ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w));
+	std::vector<KruskalEdge> e = kurst->run_kruskal();
+	if (it == -1) {
+		for (auto i : e) {
+			ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
+			ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w));
+		}
 	}
+	else {
+		for (auto i : e) {
+			if (it <= 0) break;
+			if (i.flag) {
+				ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
+				ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w));
+				it--;
+			}
+			else {
+				if (it == 1) {
+					ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
+					ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w));
+				}
+				it -= 2;
+			}
+		}
+		if (it > 0) {
+			Graph empty_graph;
+			return empty_graph;
+		}
+	}
+
 
 	return ans;
 }
@@ -409,8 +264,8 @@ Graph DrawingUnit::get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT) {
 	const int C = 7;
 
 	for (int i = 0; i < (int)vertices.size(); ++i) {
-		int x = i % C, y = i / C;
-		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(x * 200.f, y * 200.f),
+		int y = (i * 5) % 7;
+		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(i * 200.f, y * 120.f),
 			(unsigned long long)vertices[i],
 			CIRCLE, false));
 	}
@@ -419,5 +274,19 @@ Graph DrawingUnit::get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT) {
 		ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
 	}
 
+
 	return ans;
+}
+
+
+void DrawingUnit::draw_graph(Graph& graph) {
+	std::vector<Node> li = graph.get_node_list();
+	std::vector<Edge> relation = graph.get_edges_idx();
+
+	for (Edge i : relation) {
+		draw_edge(graph.find_node(i.first), graph.find_node(i.second), i.val, i.opacity);
+	}
+	for (auto i : li) {
+		draw_node(i);
+	}
 }

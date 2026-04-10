@@ -18,6 +18,7 @@
 #include <DataStructures/Dijkstra.hpp>
 #include <DataStructures/Kruskal.hpp>
 
+#include <Drawing/AnimationUnit.hpp>
 #include <Drawing/DrawingUnit.hpp>
 #include <Drawing/Graph.hpp>
 #include <Drawing/Node.hpp>
@@ -47,24 +48,25 @@ UIUnit menu, settings, about, visualizer;
 BackgroundDrawer bg_drawer;
 InputHandler input_state;
 
-std::vector<Graph> graph_versions;
-float epoch;
-
+AnimationUnit anim;
 Graph get_graph() {
 	void* current_ds = ds.get_current_structure();
+	std::vector<void*> search_nodes;
+	if (searched) search_nodes.push_back(searched);
+
 	switch (ds.get_current_type()) {
 	case LINKED_LIST:
 		return drawing_unit.get_linked_list_graph(
-			(LinkedList*)current_ds, LINKED_LIST_POS, (LLNode*)searched);
+			(LinkedList*)current_ds, LINKED_LIST_POS, search_nodes);
 	case HASHMAP_CHAIN:
 		return drawing_unit.get_hash_map_graph(
-			(HashMapChaining*)current_ds, HASH_MAP_POS, (LLNode*)searched);
+			(HashMapChaining*)current_ds, HASH_MAP_POS, search_nodes);
 	case AVL_TREE:
 		return drawing_unit.get_BST_graph(
-			(AVL*)current_ds, BST_POS, (AVLNode*)searched);
+			(AVL*)current_ds, BST_POS, search_nodes);
 	case TRIE:
 		return drawing_unit.get_trie_graph(
-			(Trie*)current_ds, TRIE_POS, (TrieNode*)searched);
+			(Trie*)current_ds, TRIE_POS, search_nodes);
 	case KRUSKAL:
 		return drawing_unit.get_kruskal_graph(
 			(Kruskal*)current_ds, GRAPH_ROOT
@@ -78,6 +80,18 @@ Graph get_graph() {
 	}
 	Graph empty_graph;
 	return empty_graph;
+}
+
+void load_kruskal() {
+	void* current_ds = ds.get_current_structure();
+	anim.clear_graph();
+	for (int i = 0; ; ++i) {
+		Graph cur = drawing_unit.get_kruskal_graph(
+			(Kruskal*)current_ds, GRAPH_ROOT, i
+		);
+		if (cur.get_node_list().size() == 0) break;
+		anim.add_graph(cur, 0);
+	}
 }
 
 void setup_menus() {
@@ -170,7 +184,7 @@ void handle_ds_switcher() {
 		visualizer.erase_element(visualizer.find_button("TEXT_BOX"));
 		despawn_form(visualizer);
 		text_box_mode = ""; 
-		graph_versions.clear();
+		anim.clear_graph();
 	}
 }
 
@@ -195,8 +209,7 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 		visualizer.erase_element(visualizer.find_button("TEXT_BOX"));		
 		despawn_message_box(visualizer);
 
-		graph_versions.clear();
-		epoch = 0;
+		anim.clear_graph();
 		text_box_mode = "";
 	}
 	else if (input_state.get_keyboard_key(KEY_I) == CLICK || pressed_button == "COMMAND_1") {
@@ -225,6 +238,7 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 
 		if (ds.is_drawing_ds())
 			text_box_mode = spawn_text_box(visualizer, "SEARCH");
+		else load_kruskal();
 	}
 	else if (visualizer.get_focused_text_box()) {
 		if (input_state.get_keyboard_key(ESC) == CLICK) {
@@ -252,14 +266,12 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 					searched = nullptr;
 					if (text_box_mode == "INSERT") {
 						if (ds.insert(visualizer.find_button("TEXT_BOX")->get_string())) {
-							graph_versions.push_back(get_graph());
-							epoch = 0;
+							anim.add_graph(get_graph());
 						}
 					}
 					else if (text_box_mode == "ERASE") {
 						if (ds.erase(visualizer.find_button("TEXT_BOX")->get_string())) {
-							graph_versions.push_back(get_graph());
-							epoch = 0;
+							anim.add_graph(get_graph());
 						}
 						else {
 							spawn_message_box(visualizer, "You erased a non-existing element!");
@@ -268,8 +280,7 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 					}
 					else if (text_box_mode == "SEARCH") {
 						searched = ds.search(visualizer.find_button("TEXT_BOX")->get_string());
-						graph_versions.push_back(get_graph());
-						epoch = 0;
+						anim.add_graph(get_graph());
 					}
 					visualizer.erase_element(visualizer.find_button("TEXT_BOX"));
 					text_box_mode = "";
@@ -293,11 +304,11 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 					if (u.size() && v.size() && w.size()) {
 						if (text_box_mode == "INSERT") {
 							if (ds.insert(" " + u + " " + v + " " + w))
-								graph_versions.push_back(get_graph());
+								anim.add_graph(get_graph());
 						}
 						if (text_box_mode == "ERASE") {
 							if (ds.erase(" " + u + " " + v + " " + w))
-								graph_versions.push_back(get_graph());
+								anim.add_graph(get_graph());
 						}
 						visualizer.find_button("FORM")->set_focused(0);
 						text_box_mode = "";
@@ -363,14 +374,10 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 	Button* cur = visualizer.check_hovering(input_state.get_mouse_pos());
 	handle_textbox_input(cur, visualizer);
 
-	if (graph_versions.empty()) {
-		graph_versions.push_back(get_graph());
-		epoch = 0;
-	}
-	if (epoch >= ANIMATION_TIME || graph_versions.size() == 1)
-		drawing_unit.draw_graph(graph_versions.back());
-	else drawing_unit.draw_graph(graph_versions[graph_versions.size() - 2], 
-		graph_versions[graph_versions.size() - 1], epoch);
+	if (anim.is_empty())
+		anim.add_graph(get_graph());
+
+	drawing_unit.draw_graph(anim.get_graph());
 	visualizer.draw(input_state.get_mouse_pos());
 }
 
@@ -394,8 +401,8 @@ void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	input_state.update_mouse(delta);
 	input_state.update_keyboard(delta);
 
-	epoch += delta;
 	message_time += delta;
+	anim.update_timer(delta);
 
 	switch (menu_manager.get_current_state()) {
 	case MENU:
