@@ -59,6 +59,7 @@ void AVL::rotate_right(AVLNode*& root) {
 
 
 void AVL::correct(AVLNode*& root) {
+    if (root == nullptr) return;
     if (is_avl == false) return;
     if (unbalanced(root) == -1) {
         rotate_left(root);

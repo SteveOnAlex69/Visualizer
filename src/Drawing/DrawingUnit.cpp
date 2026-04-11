@@ -279,11 +279,8 @@ Graph DrawingUnit::get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT,
 	for (auto i : e) {
 		ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
 	}
-
-
 	return ans;
 }
-
 
 void DrawingUnit::draw_graph(Graph& graph) {
 	std::vector<Node> li = graph.get_node_list();

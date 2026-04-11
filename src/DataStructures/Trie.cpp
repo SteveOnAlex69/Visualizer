@@ -59,8 +59,8 @@ std::vector<void*> Trie::search(std::string s) {
         if (tmp == nullptr) return ans;
         tmp = tmp->child[c - '0'];
     }
-    if (tmp->cnt) ans.push_back(tmp);
-    else ans.push_back(nullptr);
+    ans.push_back(tmp);
+    if (tmp -> cnt == 0) ans.push_back(nullptr);
     return ans;
 }
 

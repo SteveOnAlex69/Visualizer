@@ -83,8 +83,8 @@ Graph get_graph(void* bruno = nullptr) {
 	return empty_graph;
 }
 
-void update_graph() { // for a single update
-	anim.add_graph(get_graph());
+void update_graph(bool flag = 1) { // for a single update
+	anim.add_graph(get_graph(), flag);
 }
 
 void load_kruskal() { // for loading the entire kruskal family
@@ -101,6 +101,8 @@ void load_kruskal() { // for loading the entire kruskal family
 
 void execute_graph_search(std::vector<void*> searched_nodes) {
 	void* current_ds = ds.get_current_structure();
+	for (auto i : searched_nodes) std::cout << i << " ";
+	std::cout << std::endl;
 	for (auto i : searched_nodes) {
 		anim.add_graph(get_graph(i), 0);
 	}
@@ -127,8 +129,6 @@ void load_dijkstra(std::string x, std::string y) {
 		}
 
 		matter = dih->get_shortest_path(u, v);
-		for (auto i : matter) std::cout << i << " ";
-		std::cout << "\n";
 		Graph cur = drawing_unit.get_dijkstra_graph(
 			dih, GRAPH_ROOT, lmao, matter
 		);
@@ -271,11 +271,10 @@ void text_box_receive(std::string s) {
 		if (ds.insert(s)) update_graph();
 	}
 	else if (text_box_mode == "ERASE") {
-		if (ds.erase(s)) update_graph();
-		else {
-			spawn_message_box(visualizer, "You erased a non-existing element!");
-			message_time = 0;
-		}
+		std::vector<void*> searched = ds.search(s);
+		execute_graph_search(searched);
+		if (ds.erase(s)) 
+			update_graph(0);
 	}
 	else if (text_box_mode == "SEARCH") {
 		std::vector<void*> searched = ds.search(s);
