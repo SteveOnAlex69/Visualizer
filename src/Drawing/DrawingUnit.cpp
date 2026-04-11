@@ -107,7 +107,7 @@ Graph DrawingUnit::get_linked_list_graph(LinkedList* linked_list, sf::Vector2f R
 	sf::Vector2f OFFSETY(0, 150);
 	Graph vcl;
 
-	Node prev = vcl.add_node(Node("", ROOT, (unsigned long long)arr[0], SQUARE, true));
+	Node prev = vcl.add_node(Node("", ROOT, (unsigned long long)arr[0], SQUARE, 1));
 
 	for (int i = 1; i < (int)arr.size(); ++i) {
 		int y = (i-1) / 7;
@@ -117,7 +117,7 @@ Graph DrawingUnit::get_linked_list_graph(LinkedList* linked_list, sf::Vector2f R
 
 		Node cur = vcl.add_node(Node(arr[i]->val, ROOT + OFFSETX * (1.0f * x) + OFFSETY * (1.0f * y),
 			(unsigned long long) arr[i], SQUARE, 
-			std::find(highlighted.begin(), highlighted.end(), arr[i]) != highlighted.end()
+			2 * (std::find(highlighted.begin(), highlighted.end(), arr[i]) != highlighted.end())
 		));
 		vcl.add_edge(prev, cur);
 		prev = cur;
@@ -150,7 +150,7 @@ Node loadingBST(AVLNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFF
 	std::vector<void*> highlighted) {
 	if (root == nullptr) return Node();
 	Node cur = graph.add_node(Node(std::to_string(root -> val), ROOT, (unsigned long long) root,
-		CIRCLE, std::find(highlighted.begin(), highlighted.end(), root) != highlighted.end()
+		CIRCLE, 2 * (std::find(highlighted.begin(), highlighted.end(), root) != highlighted.end())
 	));
 	OFFSET.x *= 0.4f;
 	if (root->childL) {
@@ -182,7 +182,7 @@ Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f O
 	if (root == nullptr) return Node();
 	if (root == nullptr) return Node();
 	Node cur = graph.add_node(Node(std::to_string(root -> cnt), ROOT, (unsigned long long)root,
-		CIRCLE, std::find(highlighted.begin(), highlighted.end(), root) != highlighted.end()
+		CIRCLE, (std::find(highlighted.begin(), highlighted.end(), root) != highlighted.end())
 	));
 	int child_cnt = 0;
 	for (int i = 0; i < ALPHA; ++i) if (root->child[i]) child_cnt++;
@@ -257,16 +257,23 @@ Graph DrawingUnit::get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT, int it) 
 }
 
 
-Graph DrawingUnit::get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT) {
+Graph DrawingUnit::get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT, 
+	std::vector<int> highlight1, std::vector<int> highlight2) {
 	Graph ans;
 	std::vector<int> vertices = dik->get_vertices();
 	const int C = 7;
 
 	for (int i = 0; i < (int)vertices.size(); ++i) {
 		int y = (i * 5) % 7;
+		
+		int node_color = 0;
+		if (std::find(highlight1.begin(), highlight1.end(), vertices[i]) != highlight1.end())
+			node_color = 2;
+		if (std::find(highlight2.begin(), highlight2.end(), vertices[i]) != highlight2.end())
+			node_color = 3;
 		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(i * 200.f, y * 120.f),
 			(unsigned long long)vertices[i],
-			CIRCLE, false));
+			CIRCLE, node_color));
 	}
 	std::vector<DijkstraEdge> e = dik->get_edges();
 	for (auto i : e) {

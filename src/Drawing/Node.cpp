@@ -5,7 +5,7 @@
 
 const int BASE = 307;
 
-Node::Node(std::string val, sf::Vector2f pos, unsigned long long hash_val, Shape shape, bool sp) {
+Node::Node(std::string val, sf::Vector2f pos, unsigned long long hash_val, Shape shape, int sp) {
 	v = val;
 	p = pos;
 	s = shape;
@@ -17,8 +17,19 @@ Node::Node(std::string val, sf::Vector2f pos, unsigned long long hash_val, Shape
 		hash_value = hash_value * BASE + c;
 	}
 
-	if (sp == 0) node_color = FIRST_COLOR;
-	else node_color = SECOND_COLOR;
+	switch (sp) {
+	case 0:
+		node_color = FIRST_COLOR;
+		break;
+	case 1: 
+		node_color = THIRD_COLOR;
+		break;
+	case 2:
+		node_color = FOURTH_COLOR;
+		break;
+	case 3:
+		node_color = FIFTH_COLOR;
+	}
 }
 
 std::string Node::get_val() {
@@ -41,7 +52,7 @@ int cmp(Node a, Node b) {
 	return (a.get_val() > b.get_val()) - (a.get_val() < b.get_val());
 }
 
-bool Node::is_special() { return special; }
+int Node::is_special() { return special; }
 
 
 unsigned long long Node::get_hash_val() {

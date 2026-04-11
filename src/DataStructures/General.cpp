@@ -1,5 +1,5 @@
 #include <DataStructures/General.hpp>
-
+#include <iostream>
 
 GeneralData::GeneralData() {
 	selected_ds = LINKED_LIST;
@@ -122,6 +122,7 @@ bool GeneralData::insert(std::string s) {
 				else arr.back() = arr.back() * 10 + (c - '0');
 			}
 			if (arr.size() != 3) assert(false);
+			std::cout << arr[0] << " " << arr[1] << " " << arr[2] << "\n";
 			dijkstra.add_edge(arr[0], arr[1], arr[2]);
 			return true;
 		}

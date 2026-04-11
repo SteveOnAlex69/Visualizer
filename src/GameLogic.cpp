@@ -48,6 +48,7 @@ BackgroundDrawer bg_drawer;
 InputHandler input_state;
 
 AnimationUnit anim;
+float message_time = 0;
 Graph get_graph(void* bruno = nullptr) {
 	void* current_ds = ds.get_current_structure();
 	std::vector<void*> search_nodes;
@@ -71,8 +72,9 @@ Graph get_graph(void* bruno = nullptr) {
 			(Kruskal*)current_ds, GRAPH_ROOT
 		);
 	case DIJKSTRA:
+		std::vector<int> empty_list;
 		return drawing_unit.get_dijkstra_graph(
-			(Dijkstra*)current_ds, GRAPH_ROOT
+			(Dijkstra*)current_ds, GRAPH_ROOT, empty_list, empty_list
 		);
 
 		break;
@@ -101,6 +103,40 @@ void execute_graph_search(std::vector<void*> searched_nodes) {
 	void* current_ds = ds.get_current_structure();
 	for (auto i : searched_nodes) {
 		anim.add_graph(get_graph(i), 0);
+	}
+}
+
+void load_dijkstra(std::string x, std::string y) {
+	int u = std::stoi(x), v = std::stoi(y);
+
+	Dijkstra* dih = (Dijkstra*)ds.get_current_structure();
+	std::vector<int> vertices = dih->get_vertices();
+	if (std::binary_search(vertices.begin(), vertices.end(), u) &&
+		std::binary_search(vertices.begin(), vertices.end(), v)) {
+		std::vector<std::pair<int, long long>> spread_adventure =
+			dih->run_dijkstra(u, v);
+		
+		std::vector<int> lmao;
+		std::vector<int> matter;
+		for (auto i : spread_adventure) {
+			lmao.push_back(i.first);
+			Graph cur = drawing_unit.get_dijkstra_graph(
+				dih, GRAPH_ROOT, lmao, matter
+			);
+			anim.add_graph(cur, 0);
+		}
+
+		matter = dih->get_shortest_path(u, v);
+		for (auto i : matter) std::cout << i << " ";
+		std::cout << "\n";
+		Graph cur = drawing_unit.get_dijkstra_graph(
+			dih, GRAPH_ROOT, lmao, matter
+		);
+		anim.add_graph(cur, 0);
+	}
+	else {
+		spawn_message_box(visualizer, "The two vertices you inputed doesn't exist!");
+		message_time = 0;
 	}
 }
 
@@ -199,28 +235,33 @@ void handle_ds_switcher() {
 	}
 }
 
-float message_time = 0;
 
 int command_activated(std::string command) {
-	if (input_state.get_keyboard_key(KEY_I) || command == "COMMAND_1") return 1;
-	if (input_state.get_keyboard_key(KEY_E) || command == "COMMAND_2") return 2;
-	if (input_state.get_keyboard_key(KEY_S) || command == "COMMAND_3") return 3;
+	if (input_state.get_keyboard_key(KEY_I) == CLICK || command == "COMMAND_1") return 1;
+	if (input_state.get_keyboard_key(KEY_E) == CLICK || command == "COMMAND_2") return 2;
+	if (input_state.get_keyboard_key(KEY_S) == CLICK || command == "COMMAND_3") return 3;
 	return 0;
 }
 
 void execute_command(int command) {
 	despawn_text_box(visualizer);
 	despawn_message_box(visualizer);
+	despawn_form(visualizer);
 	if (ds.is_drawing_ds()) {
 		text_box_mode = spawn_text_box(visualizer, command_name[command - 1]);
 	}
 	else {
 		if (command <= 2) {
-			spawn_form(visualizer);
+			spawn_form(visualizer, 3);
 			text_box_mode = command_name[command - 1];
 		}
 		else {
-			load_kruskal();
+			if (ds.get_current_type() == KRUSKAL)
+				load_kruskal();
+			else {
+				spawn_form(visualizer, 2);
+				text_box_mode = "RUN";
+			}
 		}
 	}
 }
@@ -298,23 +339,39 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 				cur->set_focused(0);
 				if (visualizer.find_button(name)) visualizer.find_button(name)->set_focused(1);
 				else {
-					std::string u = visualizer.find_button("TEXT_BOX_1")->get_string(),
-						v = visualizer.find_button("TEXT_BOX_2")->get_string(),
-						w = visualizer.find_button("TEXT_BOX_3")->get_string();
-					if (u.size() && v.size() && w.size()) {
-						bool check = false;
-						if (text_box_mode == "INSERT") 
-							check = ds.insert(" " + u + " " + v + " " + w);
-						if (text_box_mode == "ERASE") 
-							check = ds.erase(" " + u + " " + v + " " + w);
+					if (text_box_mode == "INSERT" || text_box_mode == "ERASE") {
+						std::string u = visualizer.find_button("TEXT_BOX_1")->get_string(),
+							v = visualizer.find_button("TEXT_BOX_2")->get_string(),
+							w = visualizer.find_button("TEXT_BOX_3")->get_string();
+						if (u.size() && v.size() && w.size()) {
+							bool check = false;
+							if (text_box_mode == "INSERT")
+								check = ds.insert(" " + u + " " + v + " " + w);
+							if (text_box_mode == "ERASE")
+								check = ds.erase(" " + u + " " + v + " " + w);
 
-						if (check) update_graph();
-						visualizer.find_button("FORM")->set_focused(0);
-						text_box_mode = "";
+							if (check) update_graph();
+							visualizer.find_button("FORM")->set_focused(0);
+							text_box_mode = "";
+						}
+						else {
+							spawn_message_box(visualizer, "You didn't inputed enough items for edge!");
+							message_time = 0;
+						}
 					}
 					else {
-						spawn_message_box(visualizer, "You didn't inputed enough items for edge!");
-						message_time = 0;
+						std::string u = visualizer.find_button("TEXT_BOX_1")->get_string(),
+							v = visualizer.find_button("TEXT_BOX_2")->get_string();
+						if (u.size() && v.size()) {
+							load_dijkstra(u, v);
+
+							visualizer.find_button("FORM")->set_focused(0);
+							text_box_mode = "";
+						}
+						else {
+							spawn_message_box(visualizer, "You didn't inputed enough items for edge!");
+							message_time = 0;
+						}
 					}
 				}
 			}
@@ -337,15 +394,12 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 	}
 }
 
-
 void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuManager& menu_manager) {
 	handle_ds_switcher();
-
 	if (message_time >= 1) {
 		despawn_message_box(visualizer);
 		message_time = 0;
 	}
-
 	Button* text_box = visualizer.find_button("TEXT_BOX");
 	if (text_box != nullptr && text_box->get_focused() == false) {
 		despawn_text_box(visualizer);
@@ -390,6 +444,7 @@ void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	if (cur == 0) return;
 
 	bg_drawer.draw(input_state.get_mouse_pos(), delta);
+
 	input_state.update_mouse(delta);
 	input_state.update_keyboard(delta);
 

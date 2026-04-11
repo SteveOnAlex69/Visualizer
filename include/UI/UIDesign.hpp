@@ -32,7 +32,7 @@ std::string spawn_text_box(UIUnit& scene, std::string category);
 void despawn_text_box(UIUnit& scene);
 void spawn_message_box(UIUnit& scene, std::string message);
 void despawn_message_box(UIUnit& scene);
-void spawn_form(UIUnit& scene);
+void spawn_form(UIUnit& scene, int text_field_count);
 void despawn_form(UIUnit& scene);
 
 #endif

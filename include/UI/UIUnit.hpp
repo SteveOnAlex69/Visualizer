@@ -19,7 +19,7 @@ public:
 	UIUnit(sf::RenderWindow* window, sf::Font f);
 
 	void add_element(Button *button);
-	void erase_element(Button* button);
+	bool erase_element(Button* button);
 	void draw(sf::Vector2f mouse_pos = sf::Vector2f(-1, -1));
 	Button* check_hovering(sf::Vector2f mouse_pos);
 

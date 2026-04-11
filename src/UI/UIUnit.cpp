@@ -13,12 +13,13 @@ void UIUnit::add_element(Button* button) {
 	buttons.push_back(button);
 }
 
-void UIUnit::erase_element(Button* button) {
+bool UIUnit::erase_element(Button* button) {
 	for (int i = 0; i < (int)buttons.size(); ++i) if (buttons[i] == button) {
 		buttons.erase(buttons.begin() + i);
 		delete button;
-		return;
+		return true;
 	}
+	return false;
 }
 
 Button* UIUnit::find_button(std::string name) {

@@ -34,7 +34,8 @@ public:
 	Graph get_trie_graph(Trie* tri, sf::Vector2f ROOT, std::vector<void*> highlighted);
 
 	Graph get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT, int it = -1);
-	Graph get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT);
+	Graph get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT, 
+		std::vector<int> highlight1, std::vector<int> highlight2);
  // draw between two graph
 private:
 	sf::RenderWindow* appwindow;

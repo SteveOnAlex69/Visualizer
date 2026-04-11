@@ -151,6 +151,8 @@ void setup_visualizer(UIUnit& visualizer) {
 }
 
 std::string spawn_text_box(UIUnit& scene, std::string category) {
+	despawn_text_box(scene);
+
 	sf::Vector2f pos = sf::Vector2f(250, 700);
 	if (category == "ERASE") pos += sf::Vector2f(0, 90);
 	if (category == "SEARCH") pos += sf::Vector2f(0, 180);
@@ -164,6 +166,7 @@ void despawn_text_box(UIUnit& scene) {
 }
 
 void spawn_message_box(UIUnit& scene, std::string message) {
+	despawn_message_box(scene);
 	add_button(scene, sf::Vector2f(0, -50), sf::Vector2f(200 + message.size() * 15, 60), 26, BOTTOM_CENTER, BOTTOM_CENTER,
 		"MESSAGE", message);
 }
@@ -171,7 +174,8 @@ void despawn_message_box(UIUnit& scene) {
 	scene.erase_element(scene.find_button("MESSAGE"));
 }
 
-void spawn_form(UIUnit& scene) {
+void spawn_form(UIUnit& scene, int text_field_count) {
+	despawn_form(scene);
 	Button* form = add_button(scene, sf::Vector2f(0, 0), sf::Vector2f(500, 200), 0, CENTER_CENTER, CENTER_CENTER,
 		"FORM", "");
 	form->set_focused(1);
@@ -179,31 +183,32 @@ void spawn_form(UIUnit& scene) {
 	add_text(scene, sf::Vector2f(0, -50), 50, CENTER_CENTER, CENTER_CENTER,
 		"FORM_TITLE", "INPUT EDGE");
 
-	add_text(scene, sf::Vector2f(-220, 50), 26, CENTER_CENTER, CENTER_CENTER,
-		"TEXT_U", "u:");
-	add_text(scene, sf::Vector2f(-60, 50), 26, CENTER_CENTER, CENTER_CENTER,
-		"TEXT_V", "v:");
-	add_text(scene, sf::Vector2f(100, 50), 26, CENTER_CENTER, CENTER_CENTER,
-		"TEXT_W", "w:");
+	if (text_field_count < 1) assert(false);
+	sf::Vector2f ROOT(20, 50);
+	ROOT -= sf::Vector2f(80, 0) * (1.0f * text_field_count);
 
-	add_text_box(scene, sf::Vector2f(-140, 50), sf::Vector2f(60, 40), 26, CENTER_CENTER, CENTER_CENTER,
-		"TEXT_BOX_1");
-	add_text_box(scene, sf::Vector2f(20, 50), sf::Vector2f(60, 40), 26, CENTER_CENTER, CENTER_CENTER,
-		"TEXT_BOX_2");
-	add_text_box(scene, sf::Vector2f(180, 50), sf::Vector2f(60, 40), 26, CENTER_CENTER, CENTER_CENTER,
-		"TEXT_BOX_3");
+	for (int i = 1; i <= text_field_count; ++i) {
+		std::string lmao = "u:";
+		lmao[0] += i - 1;
+		add_text(scene, ROOT, 26, CENTER_CENTER, CENTER_CENTER,
+			"TEXT_" + std::string(1, '0' + i), lmao);
+		ROOT += sf::Vector2f(80, 0);
+		add_text_box(scene, ROOT, sf::Vector2f(60, 40), 26, CENTER_CENTER, CENTER_CENTER,
+			"TEXT_BOX_" + std::string(1, '0' + i));
+		ROOT += sf::Vector2f(80, 0);
+	}
 
 	scene.find_button("TEXT_BOX_1")->set_focused(1);
-	std::cout << scene.find_button("TEXT_BOX_1")->get_focused() << "\n";
 }
 
 void despawn_form(UIUnit& scene) {
-	scene.erase_element(scene.find_button("FORM"));
+	if (scene.erase_element(scene.find_button("FORM")) == false)
+		return;
 	scene.erase_element(scene.find_button("FORM_TITLE"));
-	scene.erase_element(scene.find_button("TEXT_U"));
-	scene.erase_element(scene.find_button("TEXT_V"));
-	scene.erase_element(scene.find_button("TEXT_W"));
-	scene.erase_element(scene.find_button("TEXT_BOX_1"));
-	scene.erase_element(scene.find_button("TEXT_BOX_2"));
-	scene.erase_element(scene.find_button("TEXT_BOX_3"));
+
+	for (int i = 1; ; ++i) {
+		if (scene.erase_element(scene.find_button("TEXT_" + std::string(1, '0' + i))) == false)
+			break;
+		scene.erase_element(scene.find_button("TEXT_BOX_" + std::string(1, '0' + i)));
+	}
 }

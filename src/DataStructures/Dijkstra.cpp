@@ -40,7 +40,7 @@ struct compare {
 	bool operator () (P a, P b) { return a.w > b.w; }
 };
 
-
+// perform flood fill
 std::vector<std::pair<int, long long>> Dijkstra::run_dijkstra(int u, int v) {
 	std::vector<int> vertices = get_vertices();
 	std::vector<std::pair<int, long long>> ans;
@@ -63,8 +63,9 @@ std::vector<std::pair<int, long long>> Dijkstra::run_dijkstra(int u, int v) {
 	std::vector<bool> visited(n);
 	while (pq.size()) {
 		P u = pq.top(); pq.pop();
-		if (!visited[u.i])
-			ans.push_back(std::make_pair(u.i, u.w));
+		if (!visited[u.i]) {
+			ans.push_back(std::make_pair(vertices[u.i], u.w));
+		}
 		else continue;
 		visited[u.i] = true;
 		if (u.i == v) break;
@@ -77,6 +78,9 @@ std::vector<std::pair<int, long long>> Dijkstra::run_dijkstra(int u, int v) {
 	}
 	return ans;
 }
+
+
+// trace the correct path.
 std::vector<int> Dijkstra::get_shortest_path(int u, int v) {
 	std::vector<int> vertices = get_vertices();
 	int n = vertices.size();
@@ -114,10 +118,10 @@ std::vector<int> Dijkstra::get_shortest_path(int u, int v) {
 	std::vector<int> ans;
 	if (visited[v]) {
 		while (v != u) {
-			ans.push_back(v);
+			ans.push_back(vertices[v]);
 			v = parent[v];
 		}
-		ans.push_back(u);
+		ans.push_back(vertices[u]);
 		std::reverse(ans.begin(), ans.end());
 		return ans;
 	}

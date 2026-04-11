@@ -1,4 +1,3 @@
-
 #include <SFML/Graphics.hpp>
 #include <Helper.hpp>
 #include <intrin.h>
