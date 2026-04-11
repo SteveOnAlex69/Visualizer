@@ -37,7 +37,10 @@ public:
 	void next_data_structure();
 	void previous_data_structure();
 
-	bool insert(std::string s);
+	std::vector<void*> search_before_insert(std::string s);
+	int insert(std::string s);
+	bool balance_structure();
+
 	bool erase(std::string s);
 	std::vector<void*> search(std::string s);
 

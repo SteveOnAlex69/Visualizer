@@ -4,7 +4,7 @@
 #include <GameLogic.hpp>
 
 sf::RenderWindow appWindow;
-const int FRAME_TIME = 10;
+const int FRAME_TIME = 5;
 
 int main(int argv, char* args[]) {
 	std::cout << "booted" << std::endl;
@@ -16,7 +16,6 @@ int main(int argv, char* args[]) {
 		std::cerr << "Error creating window" << std::endl;
 		return false;
 	}
-
 
 	appStart(appWindow);
 

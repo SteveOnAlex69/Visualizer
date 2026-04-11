@@ -14,16 +14,19 @@ Trie::Trie() {
     root->cnt = root->sum = 1;
 }
 
-void Trie::insert(std::string s) {
+int Trie::insert(std::string s) {
     TrieNode* cur = root;
     for (char c : s) {
         cur->sum++;
-        if (cur->child[c - '0'] == nullptr)
+        if (cur->child[c - '0'] == nullptr) {
             cur->child[c - '0'] = new TrieNode();
+            return 2;
+        }
         cur = cur->child[c - '0'];
     }
     cur->sum++;
     cur->cnt++;
+    return 1;
 }
 
 bool Trie::erase(std::string s) { // obviously s has to already be in the trie
@@ -60,7 +63,7 @@ std::vector<void*> Trie::search(std::string s) {
         tmp = tmp->child[c - '0'];
     }
     ans.push_back(tmp);
-    if (tmp -> cnt == 0) ans.push_back(nullptr);
+    if (tmp != nullptr && tmp -> cnt == 0) ans.push_back(nullptr);
     return ans;
 }
 

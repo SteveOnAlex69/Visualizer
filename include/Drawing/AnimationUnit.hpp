@@ -22,6 +22,8 @@ public:
 	bool is_empty();
 	bool done_animating();
 
+	void force_latest();
+
 	Graph get_graph();
 private:
 	std::vector<Graph> history;

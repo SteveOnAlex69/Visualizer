@@ -13,9 +13,6 @@ Node::Node(std::string val, sf::Vector2f pos, unsigned long long hash_val, Shape
 	opacity = 1;
 
 	hash_value = hash_val;
-	for (char c : val) {
-		hash_value = hash_value * BASE + c;
-	}
 
 	switch (sp) {
 	case 0:

@@ -36,10 +36,6 @@ int AVL::unbalanced(AVLNode* x) {
     return 0;
 }
 
-void AVL::insert(int x) {
-    insert(root, x);
-}
-
 void AVL::rotate_left(AVLNode*& root) {
     AVLNode* tmp = root->childL;
     root->childL = root->childL->childR;
@@ -58,9 +54,9 @@ void AVL::rotate_right(AVLNode*& root) {
 }
 
 
-void AVL::correct(AVLNode*& root) {
-    if (root == nullptr) return;
-    if (is_avl == false) return;
+bool AVL::correct(AVLNode*& root) {
+    if (root == nullptr) return false;
+    if (is_avl == false) return false;
     if (unbalanced(root) == -1) {
         rotate_left(root);
         if (unbalanced(root) == 1) {
@@ -68,6 +64,7 @@ void AVL::correct(AVLNode*& root) {
             calculate_depth(root);
             rotate_right(root);
         }
+        return true;
     }
     else if (unbalanced(root) == 1) {
         rotate_right(root);
@@ -76,19 +73,9 @@ void AVL::correct(AVLNode*& root) {
             calculate_depth(root);
             rotate_left(root);
         }
+        return true;
     }
-}
-
-void AVL::insert(AVLNode*& root, int x) {
-    if (root == nullptr) {
-        root = new AVLNode(x);
-        return;
-    }
-    if (x < root->val) insert(root->childL, x);
-    else insert(root->childR, x);
-
-    correct(root);
-    calculate_depth(root);
+    return false;
 }
 
 void AVL::traverse() {
@@ -109,6 +96,50 @@ void AVL::traverse(AVLNode* root, std::vector<int>& ans) {
         traverse(root->childR, ans);
     }
 }
+
+std::vector<void*> AVL::search_before_insert(int x) {
+    std::vector<void*> ans;
+    if (root == nullptr) return ans;
+    AVLNode* tmp = root;
+
+    while (tmp != nullptr) {
+        ans.push_back(tmp);
+        if (x < tmp->val) tmp = tmp->childL;
+        else tmp = tmp->childR;
+    }
+    
+    return ans;
+}
+
+void AVL::insert(int x) {
+    insert(root, x);
+}
+void AVL::insert(AVLNode*& root, int x) {
+    if (root == nullptr) {
+        root = new AVLNode(x);
+        return;
+    }
+    if (x < root->val) insert(root->childL, x);
+    else insert(root->childR, x);
+}
+
+
+bool AVL::balance_the_tree() {
+    return balance_the_tree(root);
+}
+bool AVL::balance_the_tree(AVLNode*& root) {
+    if (root == nullptr) 
+        return false;
+
+    bool ans = 0;
+    ans = ans || balance_the_tree(root->childL);
+    ans = ans || balance_the_tree(root->childR);
+
+    ans = ans || correct(root);
+    calculate_depth(root);
+    return ans;
+}
+
 
 std::vector<void*> AVL::search(int x) {
     std::vector<void*> ans;
@@ -137,42 +168,42 @@ bool AVL::erase(AVLNode*& root, int x) {
     if (root == nullptr) return false;
     if (x == root->val) { // delete this shit
         if (root->childR) {
-            int val = delete_left_most(root->childR);
-            root->val = val;
+            AVLNode* val = delete_left_most(root->childR);
+            val->childL = root->childL;
+            val->childR = root->childR;
+            
+            delete root;
+            root = val;
         }
         else {
             AVLNode* tmp = root;
             root = root->childL;
             delete tmp;
         }
-        correct(root);
         return true;
     }
     bool check = false;
     if (x < root->val) check = erase(root->childL, x);
     else check = erase(root->childR, x);
-    correct(root);
     return check;
 }
 
-int AVL::delete_left_most(AVLNode*& root) {
+AVLNode* AVL::delete_left_most(AVLNode*& root) {
     if (root->childL) {
-        int ans = delete_left_most(root->childL);
-        correct(root);
+        AVLNode* ans = delete_left_most(root->childL);
         return ans;
     }
     else {
         AVLNode* tmp = root;
         root = root->childR;
-        int ans = tmp->val;
-        delete tmp;
-        return ans;
+        return tmp;
     }
 }
 
 
 void AVL::clear() {
     internal_clear(root);
+    root = nullptr;
 }
 
 void AVL::internal_clear(AVLNode* root) {

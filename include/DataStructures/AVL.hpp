@@ -24,6 +24,10 @@ public:
 
     AVL(bool is_self_balanced = false);
     void insert(int x);
+    bool balance_the_tree();
+    std::vector<void*> search_before_insert(int x);
+
+
     void traverse();
     std::vector<void*> search(int x);
     bool exist(int x);
@@ -33,15 +37,19 @@ public:
 private:
     void calculate_depth(AVLNode* x);
     int unbalanced(AVLNode* x);
-    int delete_left_most(AVLNode*& root);
+    AVLNode* delete_left_most(AVLNode*& root);
     bool erase(AVLNode*& root, int x);
     void locate(AVLNode* root, int x, std::vector<void*> &ans);
     bool check_correct_depth(AVLNode* root);
     void traverse(AVLNode* root, std::vector<int>& ans);
-    void insert(AVLNode*& root, int x);
+
     void rotate_left(AVLNode*& root);
     void rotate_right(AVLNode*& root);
-    void correct(AVLNode*& root);
+    bool correct(AVLNode*& root);
+
+
+    void insert(AVLNode*& root, int x);
+    bool balance_the_tree(AVLNode*& root);
 
 
     void internal_clear(AVLNode* root);

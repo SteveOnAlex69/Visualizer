@@ -88,21 +88,19 @@ void GeneralData::previous_data_structure() {
 	change_data_structure((DS)((int)(selected_ds + TOTAL_DS_COUNT - 1) % TOTAL_DS_COUNT));
 }
 
-bool GeneralData::insert(std::string s) {
-	
+int GeneralData::insert(std::string s) {
 	switch (selected_ds) {
 		case LINKED_LIST:
 			li.insert(s);
-			return true;
+			return 1;
 		case HASHMAP_CHAIN:
 			mp_chain.insert(s);
-			return true;
+			return 1;
 		case AVL_TREE:
 			avl_tree.insert(std::stoi(s));
-			return true;
+			return 1;
 		case TRIE:
-			tri.insert(s);
-			return true;
+			return tri.insert(s);
 		case KRUSKAL:
 		{
 			std::vector<int> arr;
@@ -112,7 +110,7 @@ bool GeneralData::insert(std::string s) {
 			}
 			if (arr.size() != 3) assert(false);
 			kruskal.add_edge(arr[0], arr[1], arr[2]);
-			return true;
+			return 1;
 		}
 		case DIJKSTRA:
 		{
@@ -122,13 +120,47 @@ bool GeneralData::insert(std::string s) {
 				else arr.back() = arr.back() * 10 + (c - '0');
 			}
 			if (arr.size() != 3) assert(false);
-			std::cout << arr[0] << " " << arr[1] << " " << arr[2] << "\n";
 			dijkstra.add_edge(arr[0], arr[1], arr[2]);
-			return true;
+			return 1;
 		}
+	}
+	return 0;
+}
+
+
+std::vector<void*> GeneralData::search_before_insert(std::string s) {
+	std::vector<void*> ans;
+	switch (selected_ds) {
+	case LINKED_LIST:
+	case HASHMAP_CHAIN:
+	case TRIE:
+	case KRUSKAL:
+	case DIJKSTRA:
+		return ans;
+	case AVL_TREE:
+		return avl_tree.search_before_insert(std::stoi(s));
+	}
+}
+
+bool GeneralData::balance_structure() {
+	switch (selected_ds) {
+	case LINKED_LIST:
+		return false;
+	case HASHMAP_CHAIN:
+		return false;
+	case AVL_TREE:
+		return avl_tree.balance_the_tree();
+	case TRIE:
+		return false;
+	case KRUSKAL:
+		return false;
+	case DIJKSTRA:
+		return false;
 	}
 	return false;
 }
+
+
 bool GeneralData::erase(std::string s) {
 	switch (selected_ds) {
 	case LINKED_LIST:

@@ -88,6 +88,7 @@ void update_graph(bool flag = 1) { // for a single update
 }
 
 void load_kruskal() { // for loading the entire kruskal family
+	anim.force_latest();
 	void* current_ds = ds.get_current_structure();
 	anim.clear_graph();
 	for (int i = 0; ; ++i) {
@@ -100,9 +101,8 @@ void load_kruskal() { // for loading the entire kruskal family
 }
 
 void execute_graph_search(std::vector<void*> searched_nodes) {
+	anim.force_latest();
 	void* current_ds = ds.get_current_structure();
-	for (auto i : searched_nodes) std::cout << i << " ";
-	std::cout << std::endl;
 	for (auto i : searched_nodes) {
 		anim.add_graph(get_graph(i), 0);
 	}
@@ -115,6 +115,8 @@ void load_dijkstra(std::string x, std::string y) {
 	std::vector<int> vertices = dih->get_vertices();
 	if (std::binary_search(vertices.begin(), vertices.end(), u) &&
 		std::binary_search(vertices.begin(), vertices.end(), v)) {
+		anim.force_latest();
+
 		std::vector<std::pair<int, long long>> spread_adventure =
 			dih->run_dijkstra(u, v);
 		
@@ -137,6 +139,73 @@ void load_dijkstra(std::string x, std::string y) {
 	else {
 		spawn_message_box(visualizer, "The two vertices you inputed doesn't exist!");
 		message_time = 0;
+	}
+}
+
+void handle_insertion(std::string s) {
+	void* current_ds = ds.get_current_structure();
+	anim.force_latest();
+	switch (ds.get_current_type()) {
+	case AVL_TREE:
+	{
+		std::vector<void*> searched_nodes = ds.search_before_insert(s);
+		for (auto i : searched_nodes) 
+			anim.add_graph(get_graph(i), 0);
+		ds.insert(s); update_graph(0);
+		if (ds.balance_structure()) update_graph(0);
+		break;
+	}
+	case TRIE:
+	{
+		std::vector<void*> searched_nodes = ds.search(s);
+		for (auto i : searched_nodes)
+			anim.add_graph(get_graph(i), 0);
+		while (true) {
+			int val = ds.insert(s);
+			std::vector<void*> searched_nodes = ds.search(s);
+			if (searched_nodes.back() == nullptr) searched_nodes.pop_back();
+			anim.add_graph(get_graph(searched_nodes.back()), 0);
+			if (val == 1) break;
+		}
+		break;
+	}
+	default:
+	{
+		ds.insert(s); update_graph(0);
+		break;
+	}
+	}
+}
+
+
+
+void handle_deletion(std::string s) {
+	void* current_ds = ds.get_current_structure();
+	switch (ds.get_current_type()) {
+	case LINKED_LIST:
+	case HASHMAP_CHAIN:
+	case TRIE:
+	{
+		std::vector<void*> searched = ds.search(s);
+		execute_graph_search(searched);
+		if (ds.erase(s)) update_graph(0);
+		break;
+	}
+	case AVL_TREE:
+	{
+		std::vector<void*> searched = ds.search(s);
+		execute_graph_search(searched);
+		if (ds.erase(s)) update_graph(0);
+		if (ds.balance_structure()) update_graph(0);
+		break;
+	}
+	case KRUSKAL:
+	case DIJKSTRA:
+	{
+		anim.force_latest();
+		if (ds.erase(s)) update_graph(0);
+		break;
+	}
 	}
 }
 
@@ -232,6 +301,10 @@ void handle_ds_switcher() {
 		despawn_form(visualizer);
 		text_box_mode = ""; 
 		anim.clear_graph();
+
+
+		for (int i = 1; i <= 3; ++i)
+			visualizer.find_button("COMMAND_" + std::string(1, '0' + i))->set_focused(0);
 	}
 }
 
@@ -247,6 +320,10 @@ void execute_command(int command) {
 	despawn_text_box(visualizer);
 	despawn_message_box(visualizer);
 	despawn_form(visualizer);
+
+	for (int i = 1; i <= 3; ++i) 
+		visualizer.find_button("COMMAND_" + std::string(1, '0' + i)) -> set_focused(0);
+	visualizer.find_button("COMMAND_" + std::string(1, '0' + command))->set_focused(1);
 	if (ds.is_drawing_ds()) {
 		text_box_mode = spawn_text_box(visualizer, command_name[command - 1]);
 	}
@@ -268,13 +345,10 @@ void execute_command(int command) {
 
 void text_box_receive(std::string s) {
 	if (text_box_mode == "INSERT") {
-		if (ds.insert(s)) update_graph();
+		handle_insertion(s);
 	}
 	else if (text_box_mode == "ERASE") {
-		std::vector<void*> searched = ds.search(s);
-		execute_graph_search(searched);
-		if (ds.erase(s)) 
-			update_graph(0);
+		handle_deletion(s);
 	}
 	else if (text_box_mode == "SEARCH") {
 		std::vector<void*> searched = ds.search(s);
@@ -314,7 +388,8 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 			despawn_message_box(visualizer);
 			text_box_mode = "";
 		}
-		else if (input_state.get_keyboard_key(TABS) == CLICK && input_state.get_keyboard_key(LSHIFT) != RELEASE) {
+		else if ((input_state.get_keyboard_key(TABS) == CLICK && input_state.get_keyboard_key(LSHIFT) != RELEASE)
+			|| (input_state.get_keyboard_key(LEFT_ARROW) == CLICK)) {
 			Button* cur = visualizer.get_focused_text_box();
 			std::string name = cur->get_name();
 			name.back() = max('1', name.back() - 1);
@@ -323,7 +398,8 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 		}
 		else if (input_state.get_keyboard_key(TABS) == CLICK 
 			|| input_state.get_keyboard_key(ENTER) == CLICK
-			|| input_state.get_keyboard_key(SPACE) == CLICK) {
+			|| input_state.get_keyboard_key(SPACE) == CLICK
+			|| input_state.get_keyboard_key(RIGHT_ARROW) == CLICK) {
 			despawn_message_box(visualizer);
 			if (ds.is_drawing_ds()) {
 				std::string s = visualizer.find_button("TEXT_BOX")->get_string();
@@ -338,6 +414,7 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 				cur->set_focused(0);
 				if (visualizer.find_button(name)) visualizer.find_button(name)->set_focused(1);
 				else {
+					cur->set_focused(1);
 					if (text_box_mode == "INSERT" || text_box_mode == "ERASE") {
 						std::string u = visualizer.find_button("TEXT_BOX_1")->get_string(),
 							v = visualizer.find_button("TEXT_BOX_2")->get_string(),
@@ -345,11 +422,9 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 						if (u.size() && v.size() && w.size()) {
 							bool check = false;
 							if (text_box_mode == "INSERT")
-								check = ds.insert(" " + u + " " + v + " " + w);
+								handle_insertion(" " + u + " " + v + " " + w);
 							if (text_box_mode == "ERASE")
-								check = ds.erase(" " + u + " " + v + " " + w);
-
-							if (check) update_graph();
+								handle_deletion(" " + u + " " + v + " " + w);
 							visualizer.find_button("FORM")->set_focused(0);
 							text_box_mode = "";
 						}
@@ -395,6 +470,7 @@ void handle_textbox_input(Button* cur, UIUnit &visualizer) {
 
 void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuManager& menu_manager) {
 	handle_ds_switcher();
+
 	if (message_time >= 1) {
 		despawn_message_box(visualizer);
 		message_time = 0;

@@ -19,7 +19,7 @@ class Trie {
 public:
     TrieNode* root;
     Trie();
-    void insert(std::string s);
+    int insert(std::string s);
     bool erase(std::string s);
     std::vector<void*> search(std::string s);
     bool exist(std::string s);

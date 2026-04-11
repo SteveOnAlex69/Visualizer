@@ -5,12 +5,13 @@ AnimationUnit::AnimationUnit() {
 	animation_time = 0;
 }
 
+void AnimationUnit::force_latest() {
+	if (is_empty()) animation_time = 0;
+	else animation_time = (history.size() - 1) * ANIMATION_TIME;
+}
 
 void AnimationUnit::add_graph(Graph graph, bool force_update) {
-	if (force_update) {
-		if (is_empty()) animation_time = 0;
-		else animation_time = (history.size() - 1) * ANIMATION_TIME;
-	}
+	if (force_update) force_latest();
 	history.push_back(graph);
 }
 void AnimationUnit::update_timer(float delta) {
