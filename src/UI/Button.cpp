@@ -10,6 +10,25 @@ Button::Button() {
 	alignment = relative_pos = TOP_LEFT;
 	type = TEXT;
 	focused = false;
+
+	tex = nullptr;
+}
+
+
+Button::~Button() {
+	delete tex;
+	tex = nullptr;
+}
+Button::Button(std::string path) {
+	tex = new sf::Texture(path.c_str());
+
+	pos = size = sf::Vector2f(0, 0);
+	bg_color = font_color = accent_color = sf::Color(0, 0, 0);
+	font_size = 0;
+	text = button_name = "";
+	alignment = relative_pos = TOP_LEFT;
+	type = TEXT;
+	focused = false;
 }
 
 
@@ -58,3 +77,7 @@ bool Button::check_hovering(sf::Vector2f mouse_pos) {
 
 void Button::set_focused(bool f) {focused = f;}
 bool Button::get_focused() { return focused;  }
+
+
+bool Button::have_texture() { return (tex != nullptr); }
+sf::Texture* Button::get_texture() { return tex; }

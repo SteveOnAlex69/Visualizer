@@ -48,26 +48,46 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 		btn_color = button->get_font_accent_color();
 	if (button->get_focused())
 		btn_color = button->get_font_accent_color();
+
+	if (button->have_texture()) {
+		sf::Sprite sp(*(button->get_texture()));
+
+		sf::FloatRect spRect = sp.getLocalBounds();
+		float scaleX = (float)size.x / spRect.size.x;
+		float scaleY = (float)size.y / spRect.size.y;
+		sp.setScale(sf::Vector2f(scaleX, scaleY));
+
+		spRect = sp.getLocalBounds();
+		sp.setOrigin(spRect.size * 0.5f + spRect.position);
+		sp.setPosition(pos + size * 0.5f);
+
+		if (btn_color != FIRST_COLOR) {
+			sp.setColor(btn_color);
+		}
+		appwindow->draw(sp);
+	}
+	else {
+		sf::RectangleShape rect;
+		rect.setPosition(pos);
+		rect.setSize(size);
+
+		rect.setFillColor(button->get_bg_color());
+
+		rect.setOutlineThickness(5);
+		rect.setOutlineColor(btn_color);
+		appwindow->draw(rect);
+
+		sf::Text tex(font);
+		tex.setString(button->get_string());
+		tex.setPosition(pos + size * 0.5f);
+		tex.setCharacterSize(button->get_font_size());
+		tex.setFillColor(btn_color);
+
+		sf::FloatRect textRect = tex.getLocalBounds();
+		tex.setOrigin(textRect.size * 0.5f + textRect.position);
+		appwindow->draw(tex);
+	}
 	
-	sf::RectangleShape rect;
-	rect.setPosition(pos);
-	rect.setSize(size);
-
-	rect.setFillColor(button -> get_bg_color());
-
-	rect.setOutlineThickness(5);
-	rect.setOutlineColor(btn_color);
-	appwindow->draw(rect);
-
-	sf::Text tex(font);
-	tex.setString(button -> get_string());
-	tex.setPosition(pos + size * 0.5f);
-	tex.setCharacterSize(button->get_font_size());
-	tex.setFillColor(btn_color);
-
-	sf::FloatRect textRect = tex.getLocalBounds();
-	tex.setOrigin(textRect.size * 0.5f + textRect.position);
-	appwindow->draw(tex);
 }
 
 

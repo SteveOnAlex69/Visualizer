@@ -1,3 +1,9 @@
+// fucked up font size
+// fucked up AVL offset
+// fucked up Trie offset
+// fucked up Kruskal offset
+// fucked up Dijkstra offset
+
 #include <Drawing/DrawingUnit.hpp>
 #include <Helper.hpp>
 
@@ -50,7 +56,7 @@ void DrawingUnit::draw_node(Node i) {
 
 	sf::Text inner(font);
 	inner.setString(i.get_val());
-	inner.setCharacterSize(36);
+	inner.setCharacterSize(40); // 36
 	inner.setFillColor(border_color);
 	inner.setPosition(i.get_pos());
 	sf::FloatRect textRect = inner.getLocalBounds();
@@ -90,7 +96,7 @@ void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity, sf::
 		appwindow->draw(cyka);
 		sf::Text inner(font);
 		inner.setString(val);
-		inner.setCharacterSize(30);
+		inner.setCharacterSize(30); // 30
 		inner.setFillColor(border_color);
 		inner.setPosition((fi + se) * 0.5f);
 		sf::FloatRect textRect = inner.getLocalBounds();
@@ -229,7 +235,7 @@ Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f O
 }
 
 Graph DrawingUnit::get_trie_graph(Trie* tri, sf::Vector2f ROOT, std::vector<void*> highlighted) {
-	sf::Vector2f OFFSET(1800, 180);
+	sf::Vector2f OFFSET(760, 167); // (1800, 800)
 	std::sort(highlighted.begin(), highlighted.end());
 
 	Graph vcl;
@@ -244,7 +250,7 @@ Graph DrawingUnit::get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT, int it) 
 
 	for (int i = 0; i < (int)vertices.size(); ++i) {
 		int y = (i * 5) % 7;
-		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(i * 200.f, y * 120.0f),
+		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(i * 150.f, y * 100.0f),
 			(unsigned long long)vertices[i],
 			CIRCLE, false));
 	}
@@ -300,7 +306,7 @@ Graph DrawingUnit::get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT,
 			node_color = 2;
 		if (std::find(highlight2.begin(), highlight2.end(), vertices[i]) != highlight2.end())
 			node_color = 3;
-		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(i * 200.f, y * 120.f),
+		ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(i * 150.f, y * 100.0f),
 			(unsigned long long)vertices[i],
 			CIRCLE, node_color));
 	}

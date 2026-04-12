@@ -25,6 +25,8 @@ enum Alignment {
 class Button {
 public:
 	Button();
+	~Button();
+	Button(std::string path);
 	void set_bg_color(sf::Color color);
 	void set_string(std::string s);
 	void set_alignment(Alignment align_type);
@@ -56,6 +58,9 @@ public:
 
 	bool check_hovering(sf::Vector2f mouse_pos);
 
+	bool have_texture();
+	sf::Texture *get_texture();
+
 private:
 	sf::Vector2f pos, size;
 	sf::Color bg_color, font_color, accent_color;
@@ -64,6 +69,8 @@ private:
 	Alignment alignment, relative_pos;
 	ButtonType type;
 	bool focused;
+
+	sf::Texture *tex;
 };
 
 #endif

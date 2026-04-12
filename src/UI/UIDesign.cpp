@@ -37,6 +37,23 @@ Button* add_button(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
 	return cur;
 }
 
+
+Button* add_button_with_texture(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,Alignment align_type, Alignment rel_pos,
+	std::string name, std::string path) {
+	Button* cur = new Button(path);
+	cur->set_button_pos(pos);
+	cur->set_button_size(size);
+	cur->set_alignment(align_type);
+	cur->set_relative_pos(rel_pos);
+	cur->set_name(name);
+	cur->set_button_type(BUTTON);
+	cur->set_bg_color(BACKGROUND);
+	cur->set_font_color(FIRST_COLOR);
+	cur->set_font_accent_color(SECOND_COLOR);
+	menu.add_element(cur);
+	return cur;
+}
+
 Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, 
 	int text_size, Alignment align_type, Alignment rel_pos, std::string name) {
 	Button* cur = new Button();
@@ -79,8 +96,8 @@ void setup_about(UIUnit& about) {
 		"BOTTOM_TEXT",
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
 
-	add_button(about, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
-	add_button(about, sf::Vector2f(-30, 30), sf::Vector2f(200, 60), 26, 
+	add_button(about, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
+	add_button(about, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
 		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
 
 
@@ -117,7 +134,7 @@ void setup_about(UIUnit& about) {
 
 void setup_settings(UIUnit& settings) {
 	// set up settings
-	add_button(settings, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
+	add_button(settings, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
 	add_text(settings, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, "SETTINGS", "SETTINGS");
 
 
@@ -126,11 +143,35 @@ void setup_settings(UIUnit& settings) {
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
 }
 
+
+void setup_selection(UIUnit& selection) {
+	add_button(selection, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26,
+		TOP_LEFT, TOP_LEFT, "BACK", "BACK");
+	add_button(selection, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
+		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
+	add_text(selection, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, "SELECT", "SELECT YOUR DATA");
+
+
+	add_button_with_texture(selection, sf::Vector2f(-650, -100), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA1", ART_PATH + "LinkedList.png");
+	add_button_with_texture(selection, sf::Vector2f(0, -100), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA2", ART_PATH + "HashMap.png");
+	add_button_with_texture(selection, sf::Vector2f(650, -100), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA3", ART_PATH + "AVLTree.png");
+
+	add_button_with_texture(selection, sf::Vector2f(-650, 300), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA4", ART_PATH + "Trie.png");
+	add_button_with_texture(selection, sf::Vector2f(0, 300), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA5", ART_PATH + "Kruskal.png");
+	add_button_with_texture(selection, sf::Vector2f(650, 300), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA6", ART_PATH + "Dijkstra.png");
+}
+
 void setup_visualizer(UIUnit& visualizer) {
 	// set up visualizer
-	add_button(visualizer, sf::Vector2f(30, 30), sf::Vector2f(200, 60), 26, 
-		TOP_LEFT, TOP_LEFT, "BACK", "BACK");
-	add_button(visualizer, sf::Vector2f(-30, 30), sf::Vector2f(200, 60), 26, 
+	add_button(visualizer, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26,
+		TOP_LEFT, TOP_LEFT, "SELECT", "SELECT");
+	add_button(visualizer, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
 		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
 
 

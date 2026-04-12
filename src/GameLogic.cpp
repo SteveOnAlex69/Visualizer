@@ -43,7 +43,7 @@ MenuManager menu_manager;
 GeneralData ds;
 std::string text_box_mode = "";
 
-UIUnit menu, settings, about, visualizer;
+UIUnit menu, settings, about, visualizer, selection;
 BackgroundDrawer bg_drawer;
 InputHandler input_state;
 
@@ -140,12 +140,16 @@ void load_dijkstra(std::string x, std::string y) {
 
 		matter = dih->get_shortest_path(u, v);
 
-		for(int i = 1; i < (int) matter.size(); ++i)
-			edges2.push_back(std::make_pair(matter[i-1], matter[i]));
-		Graph cur = drawing_unit.get_dijkstra_graph(
-			dih, GRAPH_ROOT, lmao, matter, edges1, edges2
-		);
-		anim.add_graph(cur, 0);
+		std::vector<int> shortest_path;
+		for (int i = 0; i < (int)matter.size(); ++i) {
+			shortest_path.push_back(matter[i]);
+			if (i > 0)
+				edges2.push_back(std::make_pair(matter[i - 1], matter[i]));
+			Graph cur = drawing_unit.get_dijkstra_graph(
+				dih, GRAPH_ROOT, lmao, shortest_path, edges1, edges2
+			);
+			anim.add_graph(cur, 0);
+		}
 	}
 	else {
 		spawn_message_box(visualizer, "The two vertices you inputed doesn't exist!");
@@ -239,6 +243,7 @@ void setup_menus() {
 	setup_about(about);
 	setup_settings(settings);
 	setup_visualizer(visualizer);
+	setup_selection(selection);
 }
 
 void appStart(sf::RenderWindow& appwindow) {
@@ -254,6 +259,7 @@ void appStart(sf::RenderWindow& appwindow) {
 	settings = UIUnit(&appwindow, font);
 	about = UIUnit(&appwindow, font);
 	visualizer = UIUnit(&appwindow, font);
+	selection = UIUnit(&appwindow, font);
 
 	add_text(visualizer, sf::Vector2f(0, 200), 36, 
 		CENTER_CENTER, TOP_CENTER, "DS_NAME", get_ds_name(ds.get_current_type()));
@@ -268,12 +274,14 @@ void handle_keypress() {
 bool menu_switcher(std::string s) { // true means switching away from the current menu
 	if (s == "BACK")
 		menu_manager.set_current_state(MENU);
-	else if (s == "START")
-		menu_manager.set_current_state(VISUALIZING);
+	else if (s == "START" || s == "SELECT")
+		menu_manager.set_current_state(SELECTION);
 	else if (s == "ABOUT")
 		menu_manager.set_current_state(ABOUT);
 	else if (s == "SETTINGS")
 		menu_manager.set_current_state(SETTINGS);
+	else if (s == "VISUALIZE")
+		menu_manager.set_current_state(VISUALIZING);
 	else return false;
 	return true;
 }
@@ -309,6 +317,24 @@ void handle_about(sf::RenderWindow& appwindow, UIUnit& about, MenuManager& menu_
 	if (input_state.get_mouse_state() == CLICK) {
 		if (cur) {
 			if (menu_switcher(cur->get_name()));
+		}
+	}
+}
+
+
+void handle_selection(sf::RenderWindow& appwindow, UIUnit& selection, MenuManager& menu_manager) {
+	selection.draw(input_state.get_mouse_pos());
+
+	Button* cur = selection.check_hovering(input_state.get_mouse_pos());
+	if (input_state.get_mouse_state() == CLICK) {
+		if (cur) {
+			std::string btn_name = cur->get_name();
+			if (menu_switcher(btn_name));
+			if (btn_name.substr(0, 4) == "DATA") {
+				int threat = btn_name.back() - '1';
+				menu_switcher("VISUALIZE");
+				ds.change_data_structure((DS)threat);
+			}
 		}
 	}
 }
@@ -545,6 +571,7 @@ void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 
 	bg_drawer.draw(input_state.get_mouse_pos(), delta);
 
+	
 	input_state.update_mouse(delta);
 	input_state.update_keyboard(delta);
 
@@ -564,6 +591,10 @@ void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	case VISUALIZING:
 		handle_visualizing(appwindow, visualizer, menu_manager);
 		break;
+	case SELECTION:
+		handle_selection(appwindow, selection, menu_manager);
+		break;
 	}
+	
 	appwindow.display();
 }

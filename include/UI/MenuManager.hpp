@@ -8,7 +8,8 @@ enum MenuState {
 	MENU = 0,
 	VISUALIZING = 1,
 	ABOUT = 2,
-	SETTINGS = 3
+	SETTINGS = 3,
+	SELECTION = 4
 };
 
 class MenuManager { // managing the state of the menu

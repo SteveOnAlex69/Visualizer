@@ -20,6 +20,8 @@ Button* add_text(UIUnit& menu, sf::Vector2f pos, int text_size,
 Button* add_button(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
 	int text_size, Alignment align_type, Alignment rel_pos,
 	std::string name, std::string text);
+Button* add_button_with_texture(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, Alignment align_type, Alignment rel_pos,
+	std::string name, std::string path);
 Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
 	int text_size, Alignment align_type, Alignment rel_pos, std::string name);
 
@@ -27,6 +29,7 @@ void setup_menu(UIUnit& menu);
 void setup_about(UIUnit& about);
 void setup_settings(UIUnit& settings);
 void setup_visualizer(UIUnit& visualizer);
+void setup_selection(UIUnit& selection);
 
 std::string spawn_text_box(UIUnit& scene, std::string category);
 void despawn_text_box(UIUnit& scene);
