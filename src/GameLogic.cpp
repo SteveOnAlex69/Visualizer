@@ -49,10 +49,13 @@ InputHandler input_state;
 
 AnimationUnit anim;
 float message_time = 0;
-Graph get_graph(void* bruno = nullptr) {
+Graph get_graph(void* bruno = nullptr, int cnt = 1) {
 	void* current_ds = ds.get_current_structure();
 	std::vector<void*> search_nodes;
-	if (bruno) search_nodes.push_back(bruno);
+	if (bruno) {
+		while (cnt--)
+			search_nodes.push_back(bruno);
+	}
 
 	switch (ds.get_current_type()) {
 	case LINKED_LIST:
@@ -73,8 +76,9 @@ Graph get_graph(void* bruno = nullptr) {
 		);
 	case DIJKSTRA:
 		std::vector<int> empty_list;
+		std::vector<std::pair<int, int>> empty_edges;
 		return drawing_unit.get_dijkstra_graph(
-			(Dijkstra*)current_ds, GRAPH_ROOT, empty_list, empty_list
+			(Dijkstra*)current_ds, GRAPH_ROOT, empty_list, empty_list, empty_edges, empty_edges
 		);
 
 		break;
@@ -106,6 +110,8 @@ void execute_graph_search(std::vector<void*> searched_nodes) {
 	for (auto i : searched_nodes) {
 		anim.add_graph(get_graph(i), 0);
 	}
+	if (searched_nodes.size() && searched_nodes.back() != nullptr)
+		anim.add_graph(get_graph(searched_nodes.back(), 2), 0);
 }
 
 void load_dijkstra(std::string x, std::string y) {
@@ -117,22 +123,27 @@ void load_dijkstra(std::string x, std::string y) {
 		std::binary_search(vertices.begin(), vertices.end(), v)) {
 		anim.force_latest();
 
-		std::vector<std::pair<int, long long>> spread_adventure =
+		std::vector<std::pair<int, int>> spread_adventure =
 			dih->run_dijkstra(u, v);
 		
 		std::vector<int> lmao;
 		std::vector<int> matter;
+		std::vector<std::pair<int,int>> edges1, edges2;
 		for (auto i : spread_adventure) {
 			lmao.push_back(i.first);
+			edges1.push_back(std::make_pair(i.second, i.first));
 			Graph cur = drawing_unit.get_dijkstra_graph(
-				dih, GRAPH_ROOT, lmao, matter
+				dih, GRAPH_ROOT, lmao, matter, edges1, edges2
 			);
 			anim.add_graph(cur, 0);
 		}
 
 		matter = dih->get_shortest_path(u, v);
+
+		for(int i = 1; i < (int) matter.size(); ++i)
+			edges2.push_back(std::make_pair(matter[i-1], matter[i]));
 		Graph cur = drawing_unit.get_dijkstra_graph(
-			dih, GRAPH_ROOT, lmao, matter
+			dih, GRAPH_ROOT, lmao, matter, edges1, edges2
 		);
 		anim.add_graph(cur, 0);
 	}
@@ -151,6 +162,9 @@ void handle_insertion(std::string s) {
 		std::vector<void*> searched_nodes = ds.search_before_insert(s);
 		for (auto i : searched_nodes) 
 			anim.add_graph(get_graph(i), 0);
+		if (searched_nodes.size() && searched_nodes.back() != nullptr)
+			anim.add_graph(get_graph(searched_nodes.back(), 2), 0);
+
 		ds.insert(s); update_graph(0);
 		if (ds.balance_structure()) update_graph(0);
 		break;
@@ -164,7 +178,7 @@ void handle_insertion(std::string s) {
 			int val = ds.insert(s);
 			std::vector<void*> searched_nodes = ds.search(s);
 			if (searched_nodes.back() == nullptr) searched_nodes.pop_back();
-			anim.add_graph(get_graph(searched_nodes.back()), 0);
+			anim.add_graph(get_graph(searched_nodes.back(), 3 - val), 0);
 			if (val == 1) break;
 		}
 		break;
@@ -188,7 +202,18 @@ void handle_deletion(std::string s) {
 	{
 		std::vector<void*> searched = ds.search(s);
 		execute_graph_search(searched);
-		if (ds.erase(s)) update_graph(0);
+		if (searched.back()) {
+			while (true) {
+				std::vector<void*> searched = ds.search(s);
+				while (searched.size() && searched.back() == nullptr) searched.pop_back();
+				anim.add_graph(get_graph(searched.back(), 2), 0);
+
+				int val = ds.erase(s);
+				update_graph(0);
+				if (val == 0) return;
+			}
+		}
+		
 		break;
 	}
 	case AVL_TREE:

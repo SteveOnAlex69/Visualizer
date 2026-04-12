@@ -62,8 +62,8 @@ Graph AnimationUnit::get_graph_stage1(Graph& graph1, Graph& graph2, float epoch)
 				found = true;
 		}
 		if (found)
-			graph.add_edge(e.first, e.second, e.val, 1);
-		else graph.add_edge(e.first, e.second, e.val, 1 - sigmoid(epoch));
+			graph.add_edge(e.first, e.second, e.val, 1, e.color);
+		else graph.add_edge(e.first, e.second, e.val, 1 - sigmoid(epoch), e.color);
 	}
 	return graph;
 
@@ -100,12 +100,20 @@ Graph AnimationUnit::get_graph_stage2(Graph& graph1, Graph& graph2, float epoch)
 	}
 	for (Edge e : e1) {
 		bool found = false;
+		sf::Color start_c = e.color, end_c = e.color;
 		for (Edge g : e2) {
-			if (e.first == g.first && e.second == g.second && e.val == g.val)
+			if (e.first == g.first && e.second == g.second && e.val == g.val) {
 				found = true;
+				end_c = g.color;
+			}
 		}
+
+		float r = end_c.r - start_c.r, g = end_c.g - start_c.g, b = end_c.b - start_c.b;
+		start_c.r += r * scaling;
+		start_c.g += g * scaling;
+		start_c.b += b * scaling;
 		if (found)
-			graph.add_edge(e.first, e.second, e.val);
+			graph.add_edge(e.first, e.second, e.val, 1, start_c);
 	}
 	return graph;
 }
@@ -134,8 +142,8 @@ Graph AnimationUnit::get_graph_stage3(Graph& graph1, Graph& graph2, float epoch)
 				found = true;
 		}
 		if (found)
-			graph.add_edge(e.first, e.second, e.val, 1);
-		else graph.add_edge(e.first, e.second, e.val, sigmoid(epoch));
+			graph.add_edge(e.first, e.second, e.val, 1, e.color);
+		else graph.add_edge(e.first, e.second, e.val, sigmoid(epoch), e.color);
 	}
 	return graph;
 }
@@ -173,8 +181,10 @@ int get_diff_state(Graph& graph1, Graph& graph2) {
 	for (Edge i : e1) {
 		bool found = false;
 		for (Edge j : e2)
-			if (i.first == j.first && i.second == j.second && i.val == j.val)
+			if (i.first == j.first && i.second == j.second && i.val == j.val) {
 				found = true;
+				if (i.color != j.color) mask |= 2;
+			}
 		if (found == false) mask |= 1;
 	}
 	for (Edge i : e2) {

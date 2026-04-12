@@ -8,11 +8,11 @@
 
 const sf::Vector2u windowSize = sf::Vector2u(1920, 1200);
 const sf::Color BACKGROUND = sf::Color(36, 36, 36);
-const sf::Color FIRST_COLOR = sf::Color(230, 230, 230);
-const sf::Color SECOND_COLOR = sf::Color(120, 120, 220);
-const sf::Color THIRD_COLOR = sf::Color(120, 220, 220);
-const sf::Color FOURTH_COLOR = sf::Color(220, 120, 120);
-const sf::Color FIFTH_COLOR = sf::Color(120, 220, 120);
+const sf::Color FIRST_COLOR = sf::Color(230, 230, 230); // WHITE
+const sf::Color SECOND_COLOR = sf::Color(120, 120, 220); // BLUE
+const sf::Color THIRD_COLOR = sf::Color(120, 220, 220); // CYAN
+const sf::Color FOURTH_COLOR = sf::Color(220, 120, 120); // RED
+const sf::Color FIFTH_COLOR = sf::Color(120, 220, 120); // GREEN
 const std::string FONT_PATH = std::string(PROJECT_DIR) + "assets/Font/Consola.ttf";
 const std::string ART_PATH = std::string(PROJECT_DIR) + "assets/Art";
 const std::string BACKGROUND_PATH = ART_PATH + "/background.png";

@@ -13,6 +13,10 @@ Node::Node(std::string val, sf::Vector2f pos, unsigned long long hash_val, Shape
 	opacity = 1;
 
 	hash_value = hash_val;
+	if (hash_value == 0) {
+		for (auto c : val)
+			hash_value = hash_value * 10 + (c - '0');
+	}
 
 	switch (sp) {
 	case 0:

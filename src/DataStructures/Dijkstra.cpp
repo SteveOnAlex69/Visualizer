@@ -41,9 +41,9 @@ struct compare {
 };
 
 // perform flood fill
-std::vector<std::pair<int, long long>> Dijkstra::run_dijkstra(int u, int v) {
+std::vector<std::pair<int, int>> Dijkstra::run_dijkstra(int u, int v) {
 	std::vector<int> vertices = get_vertices();
-	std::vector<std::pair<int, long long>> ans;
+	std::vector<std::pair<int, int>> ans;
 	int n = vertices.size();
 	std::vector<std::vector<P>> graph(n);
 
@@ -61,10 +61,11 @@ std::vector<std::pair<int, long long>> Dijkstra::run_dijkstra(int u, int v) {
 	pq.push(P(u, 0));
 
 	std::vector<bool> visited(n);
+	std::vector<int> parent(n);
 	while (pq.size()) {
 		P u = pq.top(); pq.pop();
 		if (!visited[u.i]) {
-			ans.push_back(std::make_pair(vertices[u.i], u.w));
+			ans.push_back(std::make_pair(vertices[u.i], vertices[parent[u.i]]));
 		}
 		else continue;
 		visited[u.i] = true;
@@ -72,6 +73,7 @@ std::vector<std::pair<int, long long>> Dijkstra::run_dijkstra(int u, int v) {
 		for (P v : graph[u.i]) {
 			if (dis[v.i] > dis[u.i] + v.w) {
 				dis[v.i] = dis[u.i] + v.w;
+				parent[v.i] = u.i;
 				pq.push(P(v.i, dis[v.i]));
 			}
 		}
@@ -100,7 +102,7 @@ std::vector<int> Dijkstra::get_shortest_path(int u, int v) {
 	pq.push(P(u, 0));
 
 	std::vector<bool> visited(n);
-	std::vector<int> parent(n);
+	std::vector<int> parent(n, -1);
 	while (pq.size()) {
 		P u = pq.top(); pq.pop();
 		if (!visited[u.i]);

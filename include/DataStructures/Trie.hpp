@@ -4,15 +4,15 @@
 #include <string>
 #include <vector>
 #include <set>
-#include <string>
 #include <map>
 #include <utility>
 
 const int ALPHA = 10;
 struct TrieNode {
-    int cnt, sum;
+    int cnt;
     TrieNode* child[ALPHA];
     TrieNode();
+    bool no_bitch();
 };
 
 class Trie {
@@ -20,12 +20,11 @@ public:
     TrieNode* root;
     Trie();
     int insert(std::string s);
-    bool erase(std::string s);
+    int erase(std::string s);
     std::vector<void*> search(std::string s);
     bool exist(std::string s);
     void clear();
 private:
-    bool try_remove(TrieNode*& root, int i, std::string& s);
     void internal_clear(TrieNode* root);
 };
 

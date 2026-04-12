@@ -4,11 +4,12 @@
 #include <vector>
 #include <utility>
 
-Edge::Edge(unsigned long long x, unsigned long long y, std::string s, float o) {
+Edge::Edge(unsigned long long x, unsigned long long y, std::string s, float o, sf::Color c) {
 	first = x;
 	second = y;
 	val = s;
 	opacity = o;
+	color = c;
 }
 
 
@@ -20,11 +21,11 @@ Node Graph::add_node(Node v) {
 	nodes.push_back(v);
 	return v;
 }
-void Graph::add_edge(unsigned long long u, unsigned long long v, std::string s, float opacity) {
-	edges.push_back(Edge(u, v, s, opacity));
+void Graph::add_edge(unsigned long long u, unsigned long long v, std::string s, float opacity, sf::Color color) {
+	edges.push_back(Edge(u, v, s, opacity, color));
 }
-void Graph::add_edge(Node u, Node v, std::string s, float opacity) {
-	edges.push_back(Edge(u.get_hash_val(), v.get_hash_val(), s, opacity));
+void Graph::add_edge(Node u, Node v, std::string s, float opacity, sf::Color color) {
+	add_edge(u.get_hash_val(), v.get_hash_val(), s, opacity, color);
 }
 std::vector<Node> Graph::get_node_list() {
 	return nodes;
@@ -47,10 +48,10 @@ Node Graph::find_node(unsigned long long u) {
 	return Node();
 }
 
-void Graph::add_edge(std::string u, std::string v, std::string s, float opacity) {
+void Graph::add_edge(std::string u, std::string v, std::string s, float opacity, sf::Color color) {
 	Node m1 = find_node(u), m2 = find_node(v);
 	if (m1.get_val() == "null" || m2.get_val() == "null") return;
-	add_edge(m1, m2, s, opacity);
+	add_edge(m1, m2, s, opacity, color);
 }
 
 std::vector<Edge> Graph::get_edges_idx() {

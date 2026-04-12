@@ -58,11 +58,10 @@ void DrawingUnit::draw_node(Node i) {
 	appwindow -> draw(inner);
 }
 
-void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity) {
+void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity, sf::Color color) {
 	if (u.get_val() == "null" || v.get_val() == "null") return;
-	sf::Color border_color = FIRST_COLOR;
+	sf::Color border_color = color;
 	border_color.a = opacity * 255;
-
 
 	sf::Vector2f fi = u.get_pos(), se = v.get_pos();
 	sf::RectangleShape line;
@@ -102,6 +101,9 @@ void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity) {
 
 Graph DrawingUnit::get_linked_list_graph(LinkedList* linked_list, sf::Vector2f ROOT, 
 	std::vector<void*> highlighted) {
+	std::sort(highlighted.begin(), highlighted.end());
+
+
 	std::vector<LLNode*> arr = linked_list->get_array();
 	sf::Vector2f OFFSETX(200, 0);
 	sf::Vector2f OFFSETY(0, 150);
@@ -115,9 +117,15 @@ Graph DrawingUnit::get_linked_list_graph(LinkedList* linked_list, sf::Vector2f R
 		if (y % 2) x = 6 - x;
 		x++;
 
+		int color = 0;
+		int cnt = std::upper_bound(highlighted.begin(), highlighted.end(), arr[i]) -
+			std::lower_bound(highlighted.begin(), highlighted.end(), arr[i]);
+		if (cnt == 1) color = 2;
+		else if (cnt >= 2) color = 3;
+
 		Node cur = vcl.add_node(Node(arr[i]->val, ROOT + OFFSETX * (1.0f * x) + OFFSETY * (1.0f * y),
 			(unsigned long long) arr[i], SQUARE, 
-			2 * (std::find(highlighted.begin(), highlighted.end(), arr[i]) != highlighted.end())
+			color
 		));
 		vcl.add_edge(prev, cur);
 		prev = cur;
@@ -127,6 +135,8 @@ Graph DrawingUnit::get_linked_list_graph(LinkedList* linked_list, sf::Vector2f R
 
 Graph DrawingUnit::get_hash_map_graph(HashMapChaining* hash_map, sf::Vector2f ROOT,
 	std::vector<void*> highlighted){
+	std::sort(highlighted.begin(), highlighted.end());
+
 	sf::Vector2f OFFSETY(0, 120);
 	sf::Vector2f OFFSETX(150, 0);
 
@@ -149,8 +159,15 @@ Graph DrawingUnit::get_hash_map_graph(HashMapChaining* hash_map, sf::Vector2f RO
 Node loadingBST(AVLNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET,
 	std::vector<void*> highlighted) {
 	if (root == nullptr) return Node();
+
+
+	int color = 0;
+	int cnt = std::upper_bound(highlighted.begin(), highlighted.end(), root) -
+		std::lower_bound(highlighted.begin(), highlighted.end(), root);
+	if (cnt == 1) color = 2;
+	else if (cnt >= 2) color = 3;
 	Node cur = graph.add_node(Node(std::to_string(root -> val), ROOT, (unsigned long long) root,
-		CIRCLE, 2 * (std::find(highlighted.begin(), highlighted.end(), root) != highlighted.end())
+		CIRCLE, color
 	));
 	OFFSET.x *= 0.4f;
 	if (root->childL) {
@@ -170,6 +187,7 @@ Node loadingBST(AVLNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFF
 
 Graph DrawingUnit::get_BST_graph(AVL *bst, sf::Vector2f ROOT, std::vector<void*> highlighted) {
 	sf::Vector2f OFFSET(1000, 150);
+	std::sort(highlighted.begin(), highlighted.end());
 
 	Graph vcl;
 	loadingBST(bst -> root, vcl, ROOT, OFFSET, highlighted);
@@ -181,8 +199,15 @@ Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f O
 	std::vector<void*> highlighted) {
 	if (root == nullptr) return Node();
 	if (root == nullptr) return Node();
-	Node cur = graph.add_node(Node(std::to_string(root -> cnt), ROOT, (unsigned long long)root,
-		CIRCLE, (std::find(highlighted.begin(), highlighted.end(), root) != highlighted.end())
+
+
+	int color = 0;
+	int cnt = std::upper_bound(highlighted.begin(), highlighted.end(), root) -
+		std::lower_bound(highlighted.begin(), highlighted.end(), root);
+	if (cnt == 1) color = 2;
+	else if (cnt >= 2) color = 3;
+	Node cur = graph.add_node(Node(std::to_string(root->cnt), ROOT, (unsigned long long)root,
+		CIRCLE, color
 	));
 	int child_cnt = 0;
 	for (int i = 0; i < ALPHA; ++i) if (root->child[i]) child_cnt++;
@@ -205,6 +230,7 @@ Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f O
 
 Graph DrawingUnit::get_trie_graph(Trie* tri, sf::Vector2f ROOT, std::vector<void*> highlighted) {
 	sf::Vector2f OFFSET(1800, 180);
+	std::sort(highlighted.begin(), highlighted.end());
 
 	Graph vcl;
 	loadingTrie(tri->root, vcl, ROOT, OFFSET, highlighted);
@@ -240,8 +266,10 @@ Graph DrawingUnit::get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT, int it) 
 			}
 			else {
 				if (it == 1) {
-					ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
-					ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w));
+					ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w), 
+						1, FOURTH_COLOR);
+					ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w),
+						1, FOURTH_COLOR);
 				}
 				it -= 2;
 			}
@@ -252,13 +280,14 @@ Graph DrawingUnit::get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT, int it) 
 		}
 	}
 
-
+	std::vector<Edge> edging = ans.get_edges_idx();
 	return ans;
 }
 
 
-Graph DrawingUnit::get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT, 
-	std::vector<int> highlight1, std::vector<int> highlight2) {
+Graph DrawingUnit::get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT,
+	std::vector<int> highlight1, std::vector<int> highlight2,
+	std::vector<std::pair<int, int>> edges1, std::vector<std::pair<int, int>> edges2) {
 	Graph ans;
 	std::vector<int> vertices = dik->get_vertices();
 	const int C = 7;
@@ -277,7 +306,12 @@ Graph DrawingUnit::get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT,
 	}
 	std::vector<DijkstraEdge> e = dik->get_edges();
 	for (auto i : e) {
-		ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
+		sf::Color color = FIRST_COLOR;
+		if (std::find(edges1.begin(), edges1.end(), std::make_pair(i.u, i.v)) != edges1.end())
+			color = FOURTH_COLOR;
+		if (std::find(edges2.begin(), edges2.end(), std::make_pair(i.u, i.v)) != edges2.end())
+			color = FIFTH_COLOR;
+		ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w), 1, color);
 	}
 	return ans;
 }
@@ -287,7 +321,7 @@ void DrawingUnit::draw_graph(Graph& graph) {
 	std::vector<Edge> relation = graph.get_edges_idx();
 
 	for (Edge i : relation) {
-		draw_edge(graph.find_node(i.first), graph.find_node(i.second), i.val, i.opacity);
+		draw_edge(graph.find_node(i.first), graph.find_node(i.second), i.val, i.opacity, i.color);
 	}
 	for (auto i : li) {
 		draw_node(i);

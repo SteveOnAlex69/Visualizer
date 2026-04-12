@@ -5,54 +5,55 @@
 #include <utility>
 
 TrieNode::TrieNode() {
-    cnt = sum = 0;
+    cnt = 0;
     for (int i = 0; i < ALPHA; ++i) child[i] = nullptr;
+}
+bool TrieNode::no_bitch() {
+    for (int i = 0; i < ALPHA; ++i) if (child[i]) return false;
+    return true;
 }
 
 Trie::Trie() {
     root = new TrieNode();
-    root->cnt = root->sum = 1;
+    root->cnt = 1;
 }
 
 int Trie::insert(std::string s) {
     TrieNode* cur = root;
     for (char c : s) {
-        cur->sum++;
         if (cur->child[c - '0'] == nullptr) {
             cur->child[c - '0'] = new TrieNode();
             return 2;
         }
         cur = cur->child[c - '0'];
     }
-    cur->sum++;
     cur->cnt++;
     return 1;
 }
 
-bool Trie::erase(std::string s) { // obviously s has to already be in the trie
-    return try_remove(root, 0, s);
-}
-
-bool Trie::try_remove(TrieNode*& root, int i, std::string& s) {
-    if (root == nullptr) return false;
-    bool check = true;
-    if (i < s.size()) {
-        check = try_remove(root->child[s[i] - '0'], i + 1, s);
-    }
-    else {
-        if (root->cnt == 0) return false;
-        root->cnt--; 
-    }
-
-    if (check) {
-        root->sum--;
-        if (root->sum == 0) {
-            delete root;
-            root = nullptr;
+int Trie::erase(std::string s) { // obviously s has to already be in the trie
+    TrieNode* cur = root, *pre = root;
+    for (char c : s) {
+        pre = cur;
+        cur = cur->child[c - '0'];
+        if (cur == nullptr) return 0;
+        if (cur->no_bitch() && cur->cnt == 0) {
+            pre->child[c - '0'] = nullptr;
+            delete cur;
+            return 2;
         }
     }
-    return check;
+    if (cur != nullptr && cur->cnt) {
+        cur->cnt--;
+        if (cur->cnt == 0) {
+            pre->child[s.back() - '0'] = nullptr;
+            delete cur;
+        }
+        return 1;
+    }
+    return 0;
 }
+
 
 std::vector<void*> Trie::search(std::string s) {
     TrieNode* tmp = root;
@@ -75,7 +76,7 @@ void Trie::clear() {
     internal_clear(root);
 
     root = new TrieNode();
-    root->cnt = root->sum = 1;
+    root->cnt = 1;
 }
 
 void Trie::internal_clear(TrieNode* root) {
