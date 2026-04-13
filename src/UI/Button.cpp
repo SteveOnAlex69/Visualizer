@@ -12,6 +12,9 @@ Button::Button() {
 	focused = false;
 
 	tex = nullptr;
+
+	last_update = -1;
+	hovering = 0;
 }
 
 
@@ -81,3 +84,12 @@ bool Button::get_focused() { return focused;  }
 
 bool Button::have_texture() { return (tex != nullptr); }
 sf::Texture* Button::get_texture() { return tex; }
+
+
+float Button::send_update_state(float time, bool h) { 
+	if (hovering != h) {
+		last_update = time;
+		hovering = h;
+	}
+	return time - last_update;
+}

@@ -61,6 +61,7 @@ public:
 	bool have_texture();
 	sf::Texture *get_texture();
 
+	float send_update_state(float time, bool hovering);
 private:
 	sf::Vector2f pos, size;
 	sf::Color bg_color, font_color, accent_color;
@@ -71,6 +72,9 @@ private:
 	bool focused;
 
 	sf::Texture *tex;
+
+	float last_update;
+	bool hovering;
 };
 
 #endif

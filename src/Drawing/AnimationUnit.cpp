@@ -29,12 +29,6 @@ bool AnimationUnit::is_empty() {
 	return history.empty();
 }
 
-float sigmoid(float epoch) {
-	epoch -= ANIMATION_TIME * 0.5F;
-	epoch *= 10 / ANIMATION_TIME;
-	return (float)1 / (1 + std::exp(-epoch));
-}
-
 Graph AnimationUnit::get_graph_stage1(Graph& graph1, Graph& graph2, float epoch) {
 	Graph graph;
 	std::vector<Node> li1 = graph1.get_node_list();
@@ -209,15 +203,17 @@ Graph AnimationUnit::get_graph() {
 	int mask = get_diff_state(graph1, graph2);
 	if (pop_cnt(mask) == 0) return graph2;
 
-	const float STEP = ANIMATION_TIME / pop_cnt(mask);
+	float PAUSE = ANIMATION_TIME * 0.1;
+	float ACTUAL_TIME = ANIMATION_TIME - PAUSE * (pop_cnt(mask) - 1);
+	const float STEP = ACTUAL_TIME / pop_cnt(mask);
 	for (int i = 0; i < 3; ++i) if (GETBIT(mask, i)) {
-		if (tmp <= STEP) {
-			float t = tmp * pop_cnt(mask);
+		if (tmp <= STEP + PAUSE) {
+			float t = std::min(1.0f, tmp / STEP);
 			if (i == 0) return get_graph_stage1(graph1, graph2, t);
 			if (i == 1) return get_graph_stage2(graph1, graph2, t);
 			if (i == 2) return get_graph_stage3(graph1, graph2, t);
 		}
-		tmp -= STEP;
+		tmp -= STEP + PAUSE;
 	}
 	
 	Graph empty_graph;

@@ -3,10 +3,15 @@
 #include <fstream>
 
 
-UIUnit::UIUnit() {}
+UIUnit::UIUnit() { current_time = 0; }
 UIUnit::UIUnit(sf::RenderWindow* window, sf::Font f) {
 	appwindow = window;
 	font = f;
+	current_time = 0;
+}
+
+void UIUnit::update_timer(float delta) {
+	current_time += delta;
 }
 
 void UIUnit::add_element(Button* button) {
@@ -37,17 +42,27 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 	sf::Vector2f size = button->get_button_size();
 	sf::Color btn_color = button->get_font_color();
 
+	if (button->get_button_type() == BUTTON) {
+		float hover_time = button->send_update_state(current_time, button -> check_hovering(mouse_pos));
+		if (button -> check_hovering(mouse_pos))
+			size += size * 0.05f * sigmoid(hover_time * 10);
+		else size += size * 0.05f * (1 - sigmoid(hover_time * 10));
+	}
+
+	if (button->check_hovering(mouse_pos)) {
+		btn_color = button->get_font_accent_color();
+
+	}
+	if (button->get_focused()) {
+		btn_color = button->get_font_accent_color();
+	}
+
 
 	int rel_pos = (int)button->get_relative_pos();
 	pos += sf::Vector2f(screen_center.x * (rel_pos % 3), screen_center.y * (rel_pos / 3));
 
 	int alignment = (int)button->get_alignment();
 	pos -= sf::Vector2f(size.x * 0.5f * (alignment % 3), size.y * 0.5f * (alignment / 3));
-
-	if (button->check_hovering(mouse_pos)) 
-		btn_color = button->get_font_accent_color();
-	if (button->get_focused())
-		btn_color = button->get_font_accent_color();
 
 	if (button->have_texture()) {
 		sf::Sprite sp(*(button->get_texture()));
@@ -92,9 +107,12 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 
 
 Button* UIUnit::check_hovering(sf::Vector2f mouse_pos) {
-	for (auto i : buttons) if (i->check_hovering(mouse_pos))
-		return i;
-	return nullptr;
+	Button* hovering = nullptr;
+	for (auto i : buttons) {
+		if (i->check_hovering(mouse_pos)) hovering = i;
+		i->send_update_state(current_time, i->check_hovering(mouse_pos));
+	}
+	return hovering;
 }
 
 void UIUnit::click(sf::Vector2f mouse_pos) {

@@ -25,24 +25,12 @@ public:
 	DrawingUnit(sf::RenderWindow *window, sf::Font f);
 
 	void draw_node(Node i);
-	void draw_graph(Graph& graph);
 	void draw_edge(Node u, Node v, std::string val, float opacity, sf::Color color);
-
-	Graph get_linked_list_graph(LinkedList* linked_list, sf::Vector2f ROOT, std::vector<void*> highlighted);
-	Graph get_hash_map_graph(HashMapChaining* hash_map, sf::Vector2f ROOT, std::vector<void*> highlighted);
-	Graph get_BST_graph(AVL* bst, sf::Vector2f ROOT, std::vector<void*> highlighted);
-	Graph get_trie_graph(Trie* tri, sf::Vector2f ROOT, std::vector<void*> highlighted);
-
-	Graph get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT, int it = -1);
-	Graph get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT, 
-		std::vector<int> highlight1, std::vector<int> highlight2,
-		std::vector<std::pair<int, int>> edges1, std::vector<std::pair<int, int>> edges2);
+	void draw_graph(Graph& graph);
  // draw between two graph
 private:
 	sf::RenderWindow* appwindow;
 	sf::Font font;
-
-
 };
 
 

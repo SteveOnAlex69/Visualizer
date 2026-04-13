@@ -4,7 +4,11 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 #include <chrono>
+#include <iostream>
 #include <math.h>
+
+#include <vector>
+#include <string>
 
 const sf::Vector2u windowSize = sf::Vector2u(1920, 1200);
 const sf::Color BACKGROUND = sf::Color(36, 36, 36);
@@ -34,6 +38,11 @@ const double PI = atan(1);
 
 const float ANIMATION_TIME = 1.0f;
 
+
+enum UserCommand {
+	NONE = 0, INSERT = 1, ERASE = 2, SEARCH = 3, RUN = 4
+};
+
 #define ll long long
 #define ull unsigned long long
 #define Point2 sf::Vector2f
@@ -58,5 +67,11 @@ std::ostream& operator << (std::ostream& os, Point3 x);
 ll rngesus(ll l, ll r);
 
 bool equal(float a, float b);
+
+void debug_error(std::string message);
+
+std::vector<std::string> split(std::string s, char delimiter = ' ');
+
+float sigmoid(float epoch);
 
 #endif

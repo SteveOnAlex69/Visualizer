@@ -28,12 +28,13 @@ public:
 	void click(sf::Vector2f mouse_pos); 
 	Button* get_focused_text_box();
 
+	void update_timer(float delta);
 private:
 	sf::RenderWindow* appwindow;
 	sf::Font font;
 	std::vector<Button*> buttons;
-
 	void draw_button(Button* button, sf::Vector2f mouse_pos);
+	float current_time;
 };
 
 

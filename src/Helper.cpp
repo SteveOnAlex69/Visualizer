@@ -41,3 +41,27 @@ ll rngesus(ll l, ll r) {
 bool equal(float a, float b) {
 	return std::abs(a - b) <= 1e-6;
 }
+
+void debug_error(std::string message){
+	std::cout << message << std::endl;
+	assert(false);
+}
+
+std::vector<std::string> split(std::string s, char delimiter) {
+	std::vector<std::string> ans;
+	for (char c : s) {
+		if (c == delimiter) ans.emplace_back();
+		else {
+			if (ans.empty()) debug_error("splitting string gone wrong");
+			ans.back().push_back(c);
+		}
+	}
+	return ans;
+}
+
+
+float sigmoid(float epoch) {
+	epoch -= ANIMATION_TIME * 0.5F;
+	epoch *= 10 / ANIMATION_TIME;
+	return (float)1 / (1 + std::exp(-epoch));
+}

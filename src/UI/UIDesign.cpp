@@ -80,11 +80,11 @@ void setup_menu(UIUnit& menu) {
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
 	add_button(menu, sf::Vector2f(0, -100), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
 		"START", "START");
-	add_button(menu, sf::Vector2f(0, 0), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+	add_button(menu, sf::Vector2f(0, 10), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
 		"SETTINGS", "SETTINGS");
-	add_button(menu, sf::Vector2f(0, 100), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+	add_button(menu, sf::Vector2f(0, 120), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
 		"ABOUT", "ABOUT");
-	add_button(menu, sf::Vector2f(0, 200), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+	add_button(menu, sf::Vector2f(0, 230), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
 		"QUIT", "QUIT");
 }
 
@@ -174,7 +174,6 @@ void setup_visualizer(UIUnit& visualizer) {
 	add_button(visualizer, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
 		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
 
-
 	add_text(visualizer, sf::Vector2f(0, -500), 100, 
 		CENTER_CENTER, CENTER_CENTER, "VISUALIZER", "VISUALIZER");
 
@@ -191,15 +190,14 @@ void setup_visualizer(UIUnit& visualizer) {
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
 }
 
-std::string spawn_text_box(UIUnit& scene, std::string category) {
+void spawn_text_box(UIUnit& scene, UserCommand user_command) {
 	despawn_text_box(scene);
 
-	sf::Vector2f pos = sf::Vector2f(250, 700);
-	if (category == "ERASE") pos += sf::Vector2f(0, 90);
-	if (category == "SEARCH") pos += sf::Vector2f(0, 180);
+	sf::Vector2f pos = sf::Vector2f(270, 700);
+	if (user_command == ERASE) pos += sf::Vector2f(0, 90);
+	if (user_command == SEARCH) pos += sf::Vector2f(0, 180);
 	Button* lmao = add_text_box(scene, pos, sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "TEXT_BOX");
 	lmao->set_focused(1);
-	return category;
 }
 
 void despawn_text_box(UIUnit& scene) {
