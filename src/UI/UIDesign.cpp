@@ -177,12 +177,18 @@ void setup_visualizer(UIUnit& visualizer) {
 	add_text(visualizer, sf::Vector2f(0, -500), 100, 
 		CENTER_CENTER, CENTER_CENTER, "VISUALIZER", "VISUALIZER");
 
-	add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, 
-		"COMMAND_1", "INSERT");
-	add_button(visualizer, sf::Vector2f(30, 790), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT,
-		"COMMAND_2", "ERASE");
-	add_button(visualizer, sf::Vector2f(30, 880), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, 
-		"COMMAND_3", "SEARCH");
+	add_button(visualizer, sf::Vector2f(30, 620), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+		"COMMAND_1", "INIT");
+	add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT, 
+		"COMMAND_2", "INSERT");
+	add_button(visualizer, sf::Vector2f(30, 780), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+		"COMMAND_3", "ERASE");
+	add_button(visualizer, sf::Vector2f(30, 860), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+		"COMMAND_4", "SEARCH");
+	add_button(visualizer, sf::Vector2f(30, 940), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+		"COMMAND_5", "CLEAR");
+	add_button(visualizer, sf::Vector2f(30, 1020), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+		"COMMAND_6", "UPDATE");
 
 
 	add_text(visualizer, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
@@ -190,14 +196,26 @@ void setup_visualizer(UIUnit& visualizer) {
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
 }
 
+
+
 void spawn_text_box(UIUnit& scene, UserCommand user_command) {
 	despawn_text_box(scene);
 
-	sf::Vector2f pos = sf::Vector2f(270, 700);
-	if (user_command == ERASE) pos += sf::Vector2f(0, 90);
-	if (user_command == SEARCH) pos += sf::Vector2f(0, 180);
-	Button* lmao = add_text_box(scene, pos, sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "TEXT_BOX");
-	lmao->set_focused(1);
+	if (user_command == INIT) {
+		Button* lmao = add_text_box(scene, sf::Vector2f(220, 620), sf::Vector2f(300, 400), 23,
+				TOP_LEFT, TOP_LEFT, "TEXT_BOX");
+		lmao->set_justify_content(TOP_LEFT);
+		lmao->set_focused(1);
+		lmao->set_line_width(20);
+	}
+	else {
+		sf::Vector2f pos = sf::Vector2f(220, 700);
+		if (user_command == ERASE) pos += sf::Vector2f(0, 80);
+		if (user_command == SEARCH) pos += sf::Vector2f(0, 160);
+		Button* lmao = add_text_box(scene, pos, sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT, "TEXT_BOX");
+		lmao->set_focused(1);
+	}
+
 }
 
 void despawn_text_box(UIUnit& scene) {
@@ -213,14 +231,14 @@ void despawn_message_box(UIUnit& scene) {
 	scene.erase_element(scene.find_button("MESSAGE"));
 }
 
-void spawn_form(UIUnit& scene, int text_field_count) {
+void spawn_form(UIUnit& scene, int text_field_count, std::string name) {
 	despawn_form(scene);
 	Button* form = add_button(scene, sf::Vector2f(0, 0), sf::Vector2f(500, 200), 0, CENTER_CENTER, CENTER_CENTER,
 		"FORM", "");
 	form->set_focused(1);
 
 	add_text(scene, sf::Vector2f(0, -50), 50, CENTER_CENTER, CENTER_CENTER,
-		"FORM_TITLE", "INPUT EDGE");
+		"FORM_TITLE", name);
 
 	if (text_field_count < 1) assert(false);
 	sf::Vector2f ROOT(20, 50);

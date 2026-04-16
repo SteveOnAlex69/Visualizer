@@ -38,6 +38,7 @@ void UIUnit::draw(sf::Vector2f mouse_pos) {
 }
 
 void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
+	if (button->get_visibility() == 0) return;
 	sf::Vector2f pos = button->get_button_pos();
 	sf::Vector2f size = button->get_button_size();
 	sf::Color btn_color = button->get_font_color();
@@ -77,7 +78,7 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 		sp.setPosition(pos + size * 0.5f);
 
 		if (btn_color != FIRST_COLOR) {
-			sp.setColor(btn_color);
+			sp.setColor(SECOND_COLOR);
 		}
 		appwindow->draw(sp);
 	}
@@ -92,14 +93,37 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 		rect.setOutlineColor(btn_color);
 		appwindow->draw(rect);
 
+		Alignment justify_content = button->get_justify_content();
+		int x = (int)justify_content % 3, y = (int)justify_content / 3;
 		sf::Text tex(font);
-		tex.setString(button->get_string());
-		tex.setPosition(pos + size * 0.5f);
+
+		std::vector<std::string> brah = split(" " + button->get_string());
+		int cnt = 0;
+		std::string ans = "";
+		for (auto i : brah) {
+			if (i.empty()) continue;
+			if (cnt == 0 || i == "\n") {
+				ans += i;
+				if (i == "\n") cnt = 0;
+				else cnt = i.size();
+			}
+			else if (cnt + 1 + i.size() > button -> get_line_width()) {
+				ans += "\n" + i;
+				cnt = i.size();
+			}
+			else {
+				ans += " " + i;
+				cnt += 1 + i.size();
+			}
+		}
+		tex.setString(ans);
+		tex.setPosition(pos + size * 0.5f +
+			sf::Vector2f( (size.x * 0.5f - 10) * (x-1), (size.y * 0.5f - 10) * (y-1)));
 		tex.setCharacterSize(button->get_font_size());
 		tex.setFillColor(btn_color);
-
 		sf::FloatRect textRect = tex.getLocalBounds();
-		tex.setOrigin(textRect.size * 0.5f + textRect.position);
+		tex.setOrigin(sf::Vector2f(textRect.size.x * 0.5f * x, textRect.size.y * 0.5f * y)
+			+ textRect.position);
 		appwindow->draw(tex);
 	}
 	
@@ -109,7 +133,7 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 Button* UIUnit::check_hovering(sf::Vector2f mouse_pos) {
 	Button* hovering = nullptr;
 	for (auto i : buttons) {
-		if (i->check_hovering(mouse_pos)) hovering = i;
+		if (i->check_hovering(mouse_pos) && i->get_visibility()) hovering = i;
 		i->send_update_state(current_time, i->check_hovering(mouse_pos));
 	}
 	return hovering;

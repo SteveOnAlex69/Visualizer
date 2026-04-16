@@ -24,6 +24,10 @@ public:
 	void load_dijkstra(std::string x, std::string y);
 	void handle_insertion(std::string s);
 	void handle_deletion(std::string s);
+	void handle_update(std::string x, std::string y);
+
+	void clear_current_ds();
+	void handle_init(std::string s);
 
 	void clear_graph();
 	Graph get_graph();

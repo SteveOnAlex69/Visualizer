@@ -32,6 +32,7 @@ public:
 	void set_alignment(Alignment align_type);
 	void set_button_size(sf::Vector2f size);
 	void set_button_pos(sf::Vector2f pos);
+	void set_justify_content(Alignment justify);
 	void set_relative_pos(Alignment align_type);
 	void set_name(std::string s);
 	void set_button_type(ButtonType type);
@@ -48,6 +49,7 @@ public:
 	std::string get_name();
 	Alignment get_alignment();
 	Alignment get_relative_pos();
+	Alignment get_justify_content();
 	sf::Vector2f get_button_size();
 	sf::Vector2f get_button_pos();
 	ButtonType get_button_type();
@@ -62,12 +64,18 @@ public:
 	sf::Texture *get_texture();
 
 	float send_update_state(float time, bool hovering);
+
+	void set_visibility(bool visibility);
+	bool get_visibility();
+
+	int get_line_width();
+	void set_line_width(int width);
 private:
 	sf::Vector2f pos, size;
 	sf::Color bg_color, font_color, accent_color;
 	int font_size;
 	std::string text, button_name;
-	Alignment alignment, relative_pos;
+	Alignment alignment, relative_pos, content;
 	ButtonType type;
 	bool focused;
 
@@ -75,6 +83,10 @@ private:
 
 	float last_update;
 	bool hovering;
+
+	bool show;
+
+	int line_width;
 };
 
 #endif

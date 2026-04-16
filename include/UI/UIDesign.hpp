@@ -35,7 +35,8 @@ void spawn_text_box(UIUnit& scene, UserCommand user_command);
 void despawn_text_box(UIUnit& scene);
 void spawn_message_box(UIUnit& scene, std::string message);
 void despawn_message_box(UIUnit& scene);
-void spawn_form(UIUnit& scene, int text_field_count);
+void spawn_form(UIUnit& scene, int text_field_count, std::string name);
 void despawn_form(UIUnit& scene);
+
 
 #endif

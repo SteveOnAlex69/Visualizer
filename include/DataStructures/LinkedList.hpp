@@ -21,6 +21,7 @@ public:
 	bool erase(std::string value); // return whether deleted successfully
 	std::vector<void*> search(std::string value); // return the list of every node visited, ending at the desired node
 	bool exist(std::string value);
+	bool update(std::string x, std::string y);
 
 	std::vector<LLNode*> get_array();
 

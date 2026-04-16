@@ -144,6 +144,7 @@ void handle_selection(sf::RenderWindow& appwindow, UIUnit& selection, MenuManage
 				int threat = btn_name.back() - '1';
 				menu_switcher("VISUALIZE");
 				ds.change_data_structure((DS)threat);
+				anim.clear_graph();
 			}
 		}
 	}
@@ -162,41 +163,66 @@ void handle_ds_switcher() {
 		text_box_mode = NONE; 
 		anim.clear_graph();
 
-		for (int i = 1; i <= 3; ++i)
-			visualizer.find_button("COMMAND_" + std::string(1, '0' + i))->set_focused(0);
+		for (int i = 1; ; ++i) {
+			Button* b = visualizer.find_button("COMMAND_" + std::string(1, '0' + i));
+			if (b) b->set_focused(0);
+			else break;
+		}
 	}
 }
 
 
-int command_activated(std::string command) {
-	if (input_state.get_keyboard_key(KEY_I) == CLICK || command == "COMMAND_1") return 1;
-	if (input_state.get_keyboard_key(KEY_E) == CLICK || command == "COMMAND_2") return 2;
-	if (input_state.get_keyboard_key(KEY_S) == CLICK || command == "COMMAND_3") return 3;
-	return 0;
+UserCommand command_activated(std::string command) {
+	if (command == "COMMAND_1") return INIT;
+	if (input_state.get_keyboard_key(KEY_I) == CLICK || command == "COMMAND_2") return INSERT;
+	if (input_state.get_keyboard_key(KEY_E) == CLICK || command == "COMMAND_3") return ERASE;
+	if (input_state.get_keyboard_key(KEY_S) == CLICK || command == "COMMAND_4") return SEARCH;
+	if (input_state.get_keyboard_key(KEY_P) == CLICK || command == "COMMAND_5") return CLEAR;
+	if (ds.get_current_type() == LINKED_LIST &&
+		(input_state.get_keyboard_key(KEY_U) == CLICK || command == "COMMAND_6")) return UPDATE;
+	return NONE;
 }
 
-void execute_command(int command) {
+void execute_command(UserCommand command) {
+	std::cout << "Command activated: " << command << std::endl;
 	despawn_text_box(visualizer);
 	despawn_form(visualizer);
 
-	for (int i = 1; i <= 3; ++i) 
-		visualizer.find_button("COMMAND_" + std::string(1, '0' + i)) -> set_focused(0);
+	for (int i = 1; ; ++i) {
+		Button* b = visualizer.find_button("COMMAND_" + std::string(1, '0' + i));
+		if (b) b->set_focused(0);
+		else break;
+	}
 	visualizer.find_button("COMMAND_" + std::string(1, '0' + command))->set_focused(1);
+	if (command == CLEAR) {
+		anim.clear_current_ds();
+		return;
+	}
 	if (ds.is_drawing_ds()) {
-		spawn_text_box(visualizer, (UserCommand) command);
-		text_box_mode = (UserCommand)command;
+		if (command == UPDATE) {
+			spawn_form(visualizer, 2, "INPUT YOUR UPDATE");
+			text_box_mode = UPDATE;
+		}
+		else {
+			spawn_text_box(visualizer, (UserCommand)command);
+			text_box_mode = (UserCommand)command;
+		}
 	}
 	else {
-		if (command <= 2) {
-			spawn_form(visualizer, 3);		
+		if (command == INIT) {
+			spawn_text_box(visualizer, (UserCommand)command);
+			text_box_mode = (UserCommand)command;
+		}
+		else if (command == INSERT || command == ERASE) {
+			spawn_form(visualizer, 3, "INPUT YOUR EDGE");
 			text_box_mode = (UserCommand)command;
 		}
 		else {
 			if (ds.get_current_type() == KRUSKAL)
 				anim.load_kruskal();
 			else {
-				spawn_form(visualizer, 2);
-				text_box_mode = RUN;
+				spawn_form(visualizer, 2, "INPUT YOUR QUERY");
+				text_box_mode = SEARCH;
 			}
 		}
 	}
@@ -204,33 +230,65 @@ void execute_command(int command) {
 
 void text_box_receive(std::string s) {
 	if (text_box_mode == NONE) debug_error("text box mode is NONE, yet text_box_receive was called");
-	if (text_box_mode == INSERT) 
+	if (text_box_mode == INIT) {
+		anim.handle_init(s);
+	}
+	else if (text_box_mode == INSERT) 
 		anim.handle_insertion(s);
 	else if (text_box_mode == ERASE) 
 		anim.handle_deletion(s);
 	else if (text_box_mode == SEARCH) {
-		std::vector<void*> searched = ds.search(s);
-		anim.execute_graph_search(searched);
+		if (ds.is_drawing_ds()) {
+			std::vector<void*> searched = ds.search(s);
+			anim.execute_graph_search(searched);
+		}
+		else {
+			std::vector<std::string> cur = split(s);
+			if (cur.size() != 2) debug_error("not exactly 2 strings when calling RUN");
+			anim.load_dijkstra(cur[0], cur[1]);
+		}
 	}
-	else if (text_box_mode == RUN) {
+	else if (text_box_mode == UPDATE) {
 		std::vector<std::string> cur = split(s);
-		if (cur.size() != 2) debug_error("not exactly 2 strings when calling RUN");
-		anim.load_dijkstra(cur[0], cur[1]);
+		if (cur.size() != 2) debug_error("not exactly 2 strings when calling UPDATE");
+		anim.handle_update(cur[0], cur[1]);
 	}
 	despawn_text_box(visualizer);
 	despawn_form(visualizer);
 	text_box_mode = NONE;
 }
 
+bool received_text_input() {
+	if (text_box_mode == NONE) debug_error("received text input while there are no textbox");
+	if (input_state.get_keyboard_key(BACKSPACE) == CLICK) return true;
+	for (int j = 0; j < 10; ++j) {
+		if (input_state.get_keyboard_key((InputKey)((int)ZERO + j)) == CLICK)
+			return true;
+	}
+	if (text_box_mode == INIT) {
+		if (input_state.get_keyboard_key(SPACE) == CLICK) return true;
+		if (input_state.get_keyboard_key(ENTER) == CLICK) return true;
+	}
+
+	return false;
+}
+
 std::string handle_text_input(std::string cur) {
 	if (input_state.get_keyboard_key(BACKSPACE) == CLICK) {
 		if (cur.size()) cur.pop_back();
+	}
+	else if (text_box_mode == INIT && input_state.get_keyboard_key(SPACE) == CLICK) {
+		if (cur.size() && cur.back() != ' ') cur.push_back(' ');
+	}
+	else if (text_box_mode == INIT && input_state.get_keyboard_key(ENTER) == CLICK) {
+		cur.push_back('\n');
 	}
 	else {
 		for (int j = 0; j < 10; ++j) {
 			InputKey current = (InputKey)((int)ZERO + j);
 			if (input_state.get_keyboard_key(current) == CLICK) {
-				if (cur.size() < 4) cur.push_back('0' + j);
+				cur.push_back('0' + j);
+				if (check_valid_string(cur) == false) cur.pop_back();
 			}
 		}
 	}
@@ -244,6 +302,16 @@ void handle_textbox_input(UIUnit& visualizer) { // should only be called when th
 		despawn_text_box(visualizer);
 		text_box_mode = NONE;
 	}
+	else if (text_box_mode == INIT && (input_state.get_keyboard_key(ENTER) == CLICK) 
+		&& (input_state.get_keyboard_key(LSHIFT) != RELEASE)) {
+		std::string s = cur->get_string();
+		if (s.size()) text_box_receive(s);
+	}
+	else if (received_text_input()){
+		std::string cur = visualizer.get_focused_text_box()->get_string();
+		cur = handle_text_input(cur);
+		visualizer.get_focused_text_box()->set_string(cur);
+	}
 	else if ((input_state.get_keyboard_key(TABS) == CLICK && input_state.get_keyboard_key(LSHIFT) != RELEASE)
 		|| (input_state.get_keyboard_key(LEFT_ARROW) == CLICK)) {
 		std::string name = cur->get_name();
@@ -256,7 +324,7 @@ void handle_textbox_input(UIUnit& visualizer) { // should only be called when th
 		|| input_state.get_keyboard_key(SPACE) == CLICK
 		|| (input_state.get_keyboard_key(RIGHT_ARROW) == CLICK
 		&& input_state.get_keyboard_key(LSHIFT) == RELEASE)) {
-		if (ds.is_drawing_ds()) {
+		if (cur -> get_name() == "TEXT_BOX") {
 			std::string s = cur->get_string();
 			if (s.size())
 				text_box_receive(s);
@@ -268,26 +336,17 @@ void handle_textbox_input(UIUnit& visualizer) { // should only be called when th
 			if (visualizer.find_button(name)) visualizer.find_button(name)->set_focused(1);
 			else {
 				cur->set_focused(1);
-				if (text_box_mode == INSERT || text_box_mode == ERASE) {
-					std::string u = visualizer.find_button("TEXT_BOX_1")->get_string(),
-						v = visualizer.find_button("TEXT_BOX_2")->get_string(),
-						w = visualizer.find_button("TEXT_BOX_3")->get_string();
-					if (u.size() && v.size() && w.size()) 
-						text_box_receive(" " + u + " " + v + " " + w);
+				std::string ans = "";
+				bool valid = true;
+				for (int i = 1; ; ++i) {
+					Button* cur = visualizer.find_button("TEXT_BOX_" + std::string(1, '0' + i));
+					if (cur == nullptr) break;
+					ans += " " + cur->get_string();
+					if (cur->get_string().empty()) valid = false;
 				}
-				else {
-					std::string u = visualizer.find_button("TEXT_BOX_1")->get_string(),
-						v = visualizer.find_button("TEXT_BOX_2")->get_string();
-					if (u.size() && v.size()) 
-						text_box_receive(" " + u + " " + v);
-				}
+				if (valid) text_box_receive(ans);
 			}
 		}
-	}
-	else {
-		std::string cur = visualizer.get_focused_text_box()->get_string();
-		cur = handle_text_input(cur);
-		visualizer.get_focused_text_box()->set_string(cur);
 	}
 }
 
@@ -329,7 +388,8 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 	}
 
 	visualizer.find_button("DS_NAME")->set_string(get_ds_name( ds.get_current_type() ));
-	visualizer.find_button("COMMAND_3")->set_string((ds.is_drawing_ds())?"SEARCH":"RUN");
+	visualizer.find_button("COMMAND_4")->set_string((ds.is_drawing_ds())?"SEARCH":"RUN");
+	visualizer.find_button("COMMAND_6")->set_visibility(ds.get_current_type() == LINKED_LIST);
 
 	handle_input(visualizer);
 

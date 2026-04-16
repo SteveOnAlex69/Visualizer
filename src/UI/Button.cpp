@@ -8,6 +8,7 @@ Button::Button() {
 	font_size = 0;
 	text = button_name = "";
 	alignment = relative_pos = TOP_LEFT;
+	content = CENTER_CENTER;
 	type = TEXT;
 	focused = false;
 
@@ -15,6 +16,10 @@ Button::Button() {
 
 	last_update = -1;
 	hovering = 0;
+
+	show = true;
+
+	line_width = 1e9;
 }
 
 
@@ -30,8 +35,14 @@ Button::Button(std::string path) {
 	font_size = 0;
 	text = button_name = "";
 	alignment = relative_pos = TOP_LEFT;
+	content = CENTER_CENTER;
 	type = TEXT;
 	focused = false;
+
+	show = true;
+
+
+	line_width = 1e9;
 }
 
 
@@ -39,6 +50,7 @@ void Button::set_bg_color(sf::Color color) { bg_color = color; }
 void Button::set_font_color(sf::Color color) { font_color = color; }
 void Button::set_font_size(int size) { font_size = size; }
 void Button::set_font_accent_color(sf::Color color) { accent_color = color; }
+void Button::set_justify_content(Alignment justify) { content = justify; }
 
 void Button::set_string(std::string s) { text = s; }
 void Button::set_name(std::string s) { button_name = s; }
@@ -57,6 +69,7 @@ std::string Button::get_string() { return text; }
 std::string Button::get_name() {return button_name;}
 Alignment Button::get_alignment() { return alignment; }
 Alignment Button::get_relative_pos() { return relative_pos; }
+Alignment Button::get_justify_content() { return content; }
 sf::Vector2f Button::get_button_size() { return size; }
 sf::Vector2f Button::get_button_pos() { return pos; }
 ButtonType Button::get_button_type() { return type; }
@@ -93,3 +106,15 @@ float Button::send_update_state(float time, bool h) {
 	}
 	return time - last_update;
 }
+
+
+void Button::set_visibility(bool visibility) {
+	show = visibility;
+}
+bool Button::get_visibility() {
+	return show;
+}
+
+
+int Button::get_line_width() { return line_width; }
+void Button::set_line_width(int width) { line_width = width; }

@@ -65,3 +65,13 @@ void LinkedList::clear() {
 		erase(head->nxt->val);
 	}
 }
+
+bool  LinkedList::update(std::string x, std::string y) {
+	std::vector<void*> lmao = search(x);
+	if (lmao.size() && lmao.back() != nullptr) {
+		((LLNode*)lmao.back())->val = y;
+		return true;
+	}
+	return false;
+	
+}

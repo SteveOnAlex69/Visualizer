@@ -13,6 +13,7 @@ struct TrieNode {
     TrieNode* child[ALPHA];
     TrieNode();
     bool no_bitch();
+    int get_leaf_count();
 };
 
 class Trie {

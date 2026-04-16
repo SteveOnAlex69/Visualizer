@@ -4,7 +4,6 @@ Node loadingBST(AVLNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFF
 	std::vector<void*> highlighted) {
 	if (root == nullptr) return Node();
 
-
 	int color = 0;
 	int cnt = std::upper_bound(highlighted.begin(), highlighted.end(), root) -
 		std::lower_bound(highlighted.begin(), highlighted.end(), root);
@@ -13,16 +12,19 @@ Node loadingBST(AVLNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFF
 	Node cur = graph.add_node(Node(std::to_string(root->val), ROOT, (unsigned long long) root,
 		CIRCLE, color
 	));
-	OFFSET.x *= 0.4f;
 	if (root->childL) {
+		int sz = 1;
+		if (root->childL->childR) sz += root->childL->childR->get_tree_size();
 		Node left_child =
-			loadingBST(root->childL, graph, ROOT + sf::Vector2f(-OFFSET.x, OFFSET.y), OFFSET,
+			loadingBST(root->childL, graph, ROOT + sf::Vector2f(-OFFSET.x * sz, OFFSET.y), OFFSET,
 				highlighted);
 		graph.add_edge(cur, left_child);
 	}
 	if (root->childR) {
+		int sz = 1;
+		if (root->childR->childL) sz += root->childR->childL->get_tree_size();
 		Node right_child =
-			loadingBST(root->childR, graph, ROOT + sf::Vector2f(OFFSET.x, OFFSET.y), OFFSET,
+			loadingBST(root->childR, graph, ROOT + sf::Vector2f(OFFSET.x * sz, OFFSET.y), OFFSET,
 				highlighted);
 		graph.add_edge(cur, right_child);
 	}
@@ -33,8 +35,8 @@ Node loadingBST(AVLNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFF
 Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET,
 	std::vector<void*> highlighted) {
 	if (root == nullptr) return Node();
-	if (root == nullptr) return Node();
-
+	
+	float x = ROOT.x - (root->get_leaf_count()) * OFFSET.x * 0.5f;
 
 	int color = 0;
 	int cnt = std::upper_bound(highlighted.begin(), highlighted.end(), root) -
@@ -48,16 +50,13 @@ Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f O
 	for (int i = 0; i < ALPHA; ++i) if (root->child[i]) child_cnt++;
 	if (child_cnt == 0) return cur;
 
-	int cur_child = 0;
-	sf::Vector2f nOFFSET = sf::Vector2f(OFFSET.x / child_cnt, OFFSET.y);
 	for (int i = 0; i < ALPHA; ++i) if (root->child[i]) {
-		cur_child++;
-		sf::Vector2f nROOT = ROOT;
-		nROOT.y += OFFSET.y;
-		nROOT.x += OFFSET.x * (-0.5f + (cur_child - 0.5f) / child_cnt);
+		x += (root->child[i]->get_leaf_count()) * OFFSET.x * 0.5f;
 
-		Node child = loadingTrie(root->child[i], graph, nROOT, nOFFSET, highlighted);
+		Node child = loadingTrie(root->child[i], graph, sf::Vector2f(x, ROOT.y + OFFSET.y), OFFSET, highlighted);
 		graph.add_edge(cur, child, std::string(1, '0' + i));
+
+		x += (root->child[i]->get_leaf_count()) * OFFSET.x * 0.5f;
 	}
 
 	return cur;
@@ -122,9 +121,8 @@ namespace GraphExtractor {
 	}
 
 	Graph get_BST_graph(AVL* bst, sf::Vector2f ROOT, std::vector<void*> highlighted) {
-		sf::Vector2f OFFSET(1000, 150);
+		sf::Vector2f OFFSET(136, 150);
 		std::sort(highlighted.begin(), highlighted.end());
-
 		Graph vcl;
 		loadingBST(bst->root, vcl, ROOT, OFFSET, highlighted);
 		return vcl;
@@ -132,7 +130,7 @@ namespace GraphExtractor {
 
 
 	Graph get_trie_graph(Trie* tri, sf::Vector2f ROOT, std::vector<void*> highlighted) {
-		sf::Vector2f OFFSET(760, 167); // (1800, 800)
+		sf::Vector2f OFFSET(167, 200); 
 		std::sort(highlighted.begin(), highlighted.end());
 
 		Graph vcl;
@@ -143,16 +141,44 @@ namespace GraphExtractor {
 	Graph get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT, int it) {
 		Graph ans;
 		std::vector<int> vertices = kurst->get_vertices();
+		std::vector<KruskalEdge> e = kurst->run_kruskal();
 
-
-		for (int i = 0; i < (int)vertices.size(); ++i) {
-			int y = (i * 5) % 7;
-			ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(i * 150.f, y * 100.0f),
-				(unsigned long long)vertices[i],
-				CIRCLE, false));
+		if (it >= 0 && it > e.size() * 2) return ans;
+		DSU mst(vertices.size());
+		for (int i = 0; i < (it + 1) / 2; ++i) {
+			int u = e[i].u, v = e[i].v;
+			u = std::lower_bound(vertices.begin(), vertices.end(), u) - vertices.begin();
+			v = std::lower_bound(vertices.begin(), vertices.end(), v) - vertices.begin();
+			mst.join_set(u, v);
 		}
 
-		std::vector<KruskalEdge> e = kurst->run_kruskal();
+		sf::Vector2f CIRCLE_CENTER = screen_center;
+		sf::Vector2f ARM = sf::Vector2f(300.0f, 0);			
+		sf::Angle bruh = sf::radians(67), one_rotation = sf::degrees(360.0f / vertices.size());
+		float eccentric = 1.5;
+		
+		for (int i = 0; i < (int)vertices.size(); ++i) {
+			sf::Vector2f DIH = ARM.rotatedBy(bruh + one_rotation * i);
+			DIH.x *= eccentric;
+
+			sf::Vector2f jitter = sf::Vector2f((vertices[i] * 67 + 18) % 36 - 18, 
+				(vertices[i] * 69 + 9) % 36 - 18);
+
+			int u = mst.find_set(i);
+			sf::Color c = FIRST_COLOR;
+			if (it != -1) {
+				if (GETBIT(u, 0)) c.r -= 40;
+				if (GETBIT(u, 1)) c.g -= 40;
+				if (GETBIT(u, 2)) c.b -= 40;
+			}
+
+			Node cur = Node(std::to_string(vertices[i]), CIRCLE_CENTER + DIH + jitter,
+				(unsigned long long)vertices[i],
+				CIRCLE, false);
+			cur.set_color(c);
+
+			ans.add_node(cur);
+		}
 		if (it == -1) {
 			for (auto i : e) {
 				ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
@@ -163,27 +189,37 @@ namespace GraphExtractor {
 			for (auto i : e) {
 				if (it <= 0) break;
 				if (i.flag) {
-					ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w));
-					ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w));
-					it--;
+					if (it == 1) {
+						ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w),
+							1);
+						ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w),
+							1);
+					}
+					else {
+						ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w),
+							1, FIFTH_COLOR);
+						ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w),
+							1, FIFTH_COLOR);
+					}
 				}
 				else {
 					if (it == 1) {
+						ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w),
+							1);
+						ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w),
+							1);
+					}
+					else {
 						ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w),
 							1, FOURTH_COLOR);
 						ans.add_edge(std::to_string(i.v), std::to_string(i.u), std::to_string(i.w),
 							1, FOURTH_COLOR);
 					}
-					it -= 2;
 				}
-			}
-			if (it > 0) {
-				Graph empty_graph;
-				return empty_graph;
+				it -= 2;
 			}
 		}
 
-		std::vector<Edge> edging = ans.get_edges_idx();
 		return ans;
 	}
 
@@ -193,20 +229,30 @@ namespace GraphExtractor {
 		std::vector<std::pair<int, int>> edges1, std::vector<std::pair<int, int>> edges2) {
 		Graph ans;
 		std::vector<int> vertices = dik->get_vertices();
-		const int C = 7;
+
+		sf::Vector2f CIRCLE_CENTER = screen_center;
+		sf::Vector2f ARM = sf::Vector2f(300.0f, 0);
+		sf::Angle bruh = sf::radians(67), one_rotation = sf::degrees(360.0f / vertices.size());
+		float eccentric = 1.5;
 
 		for (int i = 0; i < (int)vertices.size(); ++i) {
-			int y = (i * 5) % 7;
+			sf::Vector2f DIH = ARM.rotatedBy(bruh + one_rotation * i);
+			DIH.x *= eccentric;
+
 
 			int node_color = 0;
 			if (std::find(highlight1.begin(), highlight1.end(), vertices[i]) != highlight1.end())
 				node_color = 2;
 			if (std::find(highlight2.begin(), highlight2.end(), vertices[i]) != highlight2.end())
 				node_color = 3;
-			ans.add_node(Node(std::to_string(vertices[i]), ROOT + sf::Vector2f(i * 150.f, y * 100.0f),
+
+			sf::Vector2f jitter = sf::Vector2f((vertices[i] * 67 + 18) % 36 - 18,
+				(vertices[i] * 69 + 9) % 36 - 18);
+			ans.add_node(Node(std::to_string(vertices[i]), CIRCLE_CENTER + DIH + jitter,
 				(unsigned long long)vertices[i],
 				CIRCLE, node_color));
 		}
+
 		std::vector<DijkstraEdge> e = dik->get_edges();
 		for (auto i : e) {
 			sf::Color color = FIRST_COLOR;

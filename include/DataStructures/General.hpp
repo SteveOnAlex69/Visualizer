@@ -44,7 +44,12 @@ public:
 	bool erase(std::string s);
 	std::vector<void*> search(std::string s);
 
+	bool update(std::string x, std::string y);
+
 	void run();
+	void clear();
+
+	void init(std::string s);
 	
 private:
 	DS selected_ds;

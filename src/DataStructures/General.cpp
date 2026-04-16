@@ -1,5 +1,6 @@
 #include <DataStructures/General.hpp>
 #include <iostream>
+#include <Helper.hpp>
 
 GeneralData::GeneralData() {
 	selected_ds = LINKED_LIST;
@@ -210,10 +211,97 @@ std::vector<void*> GeneralData::search(std::string s) {
 	return empty;
 }
 
+void GeneralData::clear() {
+	switch (selected_ds) {
+	case LINKED_LIST:
+		li.clear();
+		break;
+	case HASHMAP_CHAIN:
+		mp_chain.clear();
+		break;
+	case AVL_TREE:
+		avl_tree.clear();
+		break;
+	case TRIE:
+		tri.clear();
+		break;
+	case KRUSKAL:
+		kruskal.clear();
+		break;
+	case DIJKSTRA:
+		dijkstra.clear();
+		break;
+	}
+}
+
 void GeneralData::run() {
 	
 }
 
 bool GeneralData::is_drawing_ds() {
 	return (int)selected_ds <= 3;
+}
+
+bool GeneralData::update(std::string x, std::string y) {
+	if (selected_ds != LINKED_LIST) debug_error("called UPDATE when the data structure was not LINKED LIST");
+	return li.update(x, y);
+}
+
+void GeneralData::init(std::string s) {
+	switch (selected_ds) {
+	case LINKED_LIST:
+	{
+		li.clear();
+		std::vector<std::string> v = split(" " + s);
+		std::reverse(v.begin(), v.end());
+		for (std::string i : v) if (i.size() && i != "\n") 
+			li.insert(i);
+		break;
+	}
+	case HASHMAP_CHAIN:
+	{
+		mp_chain.clear();
+		std::vector<std::string> v = split(" " + s);
+		std::reverse(v.begin(), v.end());
+		for (std::string i : v) if (i.size() && i != "\n")
+			mp_chain.insert(i);
+		break;
+	}
+	case AVL_TREE:
+	{
+		avl_tree.clear();
+		std::vector<std::string> v = split(" " + s);
+		std::reverse(v.begin(), v.end());
+		for (std::string i : v) if (i.size() && i != "\n")
+			avl_tree.insert(std::stoi(i));
+		break;
+	}
+	case TRIE:
+	{
+		tri.clear();
+		std::vector<std::string> v = split(" " + s);
+		std::reverse(v.begin(), v.end());
+		for (std::string i : v) if (i.size() && i != "\n")
+			tri.insert(i);
+		break;
+	}
+	case KRUSKAL:
+	{
+		kruskal.clear();
+		std::vector<std::vector<std::string>> v = split_to_row(" " + s);
+
+		for (auto i : v) if (i.size() >= 3)
+			kruskal.add_edge(std::stoi(i[0]), std::stoi(i[1]), std::stoi(i[2]));
+		break;
+	}
+	case DIJKSTRA:
+	{
+		dijkstra.clear();
+		std::vector<std::vector<std::string>> v = split_to_row(" " + s);
+
+		for (auto i : v) if (i.size() >= 3)
+			dijkstra.add_edge(std::stoi(i[0]), std::stoi(i[1]), std::stoi(i[2]));
+		break;
+	}
+	}
 }

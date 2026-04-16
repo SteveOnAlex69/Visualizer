@@ -13,9 +13,9 @@
 const sf::Vector2u windowSize = sf::Vector2u(1920, 1200);
 const sf::Color BACKGROUND = sf::Color(36, 36, 36);
 const sf::Color FIRST_COLOR = sf::Color(230, 230, 230); // WHITE
-const sf::Color SECOND_COLOR = sf::Color(170, 170, 230); // BLUE
+const sf::Color SECOND_COLOR = sf::Color(230, 210, 230); // PINK
 const sf::Color THIRD_COLOR = sf::Color(170, 230, 230); // CYAN
-const sf::Color FOURTH_COLOR = sf::Color(230, 120, 120); // RED
+const sf::Color FOURTH_COLOR = sf::Color(200, 100, 100); // RED
 const sf::Color FIFTH_COLOR = sf::Color(120, 230, 120); // GREEN
 const std::string FONT_PATH = std::string(PROJECT_DIR) + "assets/Font/Consola.ttf";
 const std::string ART_PATH = std::string(PROJECT_DIR) + "assets/Art/";
@@ -31,16 +31,14 @@ const sf::Vector2f AVL_POS = BST_POS;
 const sf::Vector2f TRIE_POS = AVL_POS;
 const sf::Vector2f GRAPH_ROOT = sf::Vector2f(500, 350);
 
-const std::string command_name[4] = {"INSERT", "ERASE", "SEARCH", "RUN"};
-
 const int EDGE_WIDTH = 6;
 const double PI = atan(1);
 
-const float ANIMATION_TIME = 1.0f;
+const float ANIMATION_TIME = 0.8f;
 
 
 enum UserCommand {
-	NONE = 0, INSERT = 1, ERASE = 2, SEARCH = 3, RUN = 4
+	NONE = 0, INIT = 1, INSERT = 2, ERASE = 3, SEARCH = 4, CLEAR = 5, UPDATE = 6
 };
 
 #define ll long long
@@ -73,5 +71,10 @@ void debug_error(std::string message);
 std::vector<std::string> split(std::string s, char delimiter = ' ');
 
 float sigmoid(float epoch);
+
+bool check_valid_string(std::string s); // check if whatever in the textbox is properly formatted
+
+std::vector<std::vector<std::string>> split_to_row(std::string s, char delimiter = ' ');
+
 
 #endif

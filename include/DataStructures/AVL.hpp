@@ -15,6 +15,8 @@ struct AVLNode {
 
     int left_child_depth();
     int right_child_depth();
+
+    int get_tree_size();
 };
 
 
@@ -34,6 +36,7 @@ public:
     bool check_correct_depth();
     bool erase(int x);
     void clear();
+
 private:
     void calculate_depth(AVLNode* x);
     int unbalanced(AVLNode* x);

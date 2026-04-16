@@ -75,9 +75,8 @@ void AnimationController::load_dijkstra(std::string x, std::string y) {
 	}
 }
 void AnimationController::handle_insertion(std::string s) {
-
+	anim->force_latest();
 	void* current_ds = ds -> get_current_structure();
-	anim -> force_latest();
 	switch (ds -> get_current_type()) {
 	case AVL_TREE:
 	{
@@ -113,7 +112,7 @@ void AnimationController::handle_insertion(std::string s) {
 	}
 }
 void AnimationController::handle_deletion(std::string s) {
-
+	anim->force_latest();
 	void* current_ds = ds -> get_current_structure();
 	switch (ds -> get_current_type()) {
 	case LINKED_LIST:
@@ -154,12 +153,51 @@ void AnimationController::handle_deletion(std::string s) {
 	case KRUSKAL:
 	case DIJKSTRA:
 	{
-		anim -> force_latest();
 		if (ds -> erase(s)) update_graph(0);
 		break;
 	}
 	}
 }
+
+void AnimationController::handle_update(std::string x, std::string y) {
+	void* current_ds = ds->get_current_structure();
+	switch (ds->get_current_type()) {
+	case LINKED_LIST:
+	{
+		std::vector<void*> searched = ds->search(x);
+		execute_graph_search(searched);
+
+		if (ds->update(x, y)) 
+			anim->add_graph(GraphExtractor::get_graph(*ds, searched.back(), 2), 0);
+
+
+		break;
+	}
+	case HASHMAP_CHAIN:
+	case TRIE:
+	case AVL_TREE:
+	case KRUSKAL:
+	case DIJKSTRA:
+		debug_error("called UPDATE when the data structure was not LINKED LIST");
+		break;
+	}
+}
+
+void AnimationController::clear_current_ds() {
+	anim->force_latest();
+	ds->clear();
+	update_graph(0);
+}
+
+void AnimationController::handle_init(std::string s) {
+	anim->force_latest();
+	ds->clear();
+	update_graph(0);
+
+	ds->init(s);
+	update_graph(0);
+}
+
 
 bool AnimationController::is_empty() { return anim->is_empty(); }
 void AnimationController::clear_graph() { anim->clear_graph(); }

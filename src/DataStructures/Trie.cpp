@@ -13,6 +13,13 @@ bool TrieNode::no_bitch() {
     return true;
 }
 
+int TrieNode::get_leaf_count() {
+    int ans = 1;
+    int tot = 0;
+    for (int i = 0; i < ALPHA; ++i) if (child[i]) tot += child[i]->get_leaf_count();
+    return std::max(ans, tot);
+}
+
 Trie::Trie() {
     root = new TrieNode();
     root->cnt = 1;
@@ -73,9 +80,10 @@ bool Trie::exist(std::string s) {
 }
 
 void Trie::clear() {
-    internal_clear(root);
-
-    root = new TrieNode();
+    for (int i = 0; i < ALPHA; ++i) {
+        internal_clear(root->child[i]);
+        root->child[i] = nullptr;
+    }
     root->cnt = 1;
 }
 

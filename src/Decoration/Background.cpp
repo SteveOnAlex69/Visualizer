@@ -50,7 +50,6 @@ void BackgroundDrawer::draw4(sf::Vector2f mouse_pos, float delta) {
 
 		sf::CircleShape cyka(10000.0f / i.z);
 		cyka.setOrigin(sf::Vector2f(cyka.getLocalBounds().size) * 0.5f);
-		cyka.setRotation(sf::radians(total_time + num % 8));
 		cyka.setFillColor(cur);
 		cyka.setPosition(node_pos);
 		appwindow->draw(cyka);

@@ -7,6 +7,14 @@
 
 AVLNode::AVLNode(int x) { depth = 1; val = x; childL = childR = nullptr; }
 
+
+int AVLNode::get_tree_size() {
+    int ans = 1;
+    if (childL) ans += childL->get_tree_size();
+    if (childR) ans += childR->get_tree_size();
+    return ans;
+}
+
 int AVLNode::left_child_depth() {
     if (childL) return childL->depth;
     return 0;
