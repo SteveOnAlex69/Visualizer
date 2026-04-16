@@ -31,25 +31,23 @@
 
 #include <Decoration/Background.hpp>
 #include <Input/InputHandler.hpp>
-
+#include <StateMachine/AppSetting.hpp>
 
 #define ll long long
 #define GETBIT(mask, i) (((mask) >> (i)) & 1)
 #define ALL(v) (v).begin(), (v).end()
-
 sf::Font font;
 DrawingUnit drawing_unit;
 MenuManager menu_manager;
 
-
 GeneralData ds;
-
 UserCommand text_box_mode = NONE;
-
 UIUnit menu, settings, about, visualizer, selection;
 BackgroundDrawer bg_drawer;
 InputHandler input_state;
 AnimationController anim;
+
+AppSetting appsex;
 
 void setup_menus() {
 	setup_menu(menu);
@@ -112,13 +110,24 @@ void handle_menu(sf::RenderWindow& appwindow, UIUnit &menu, MenuManager &menu_ma
 
 
 void handle_settings(sf::RenderWindow& appwindow, UIUnit& settings, MenuManager& menu_manager) {
-	settings.draw(input_state.get_mouse_pos());
 	Button* cur = settings.check_hovering(input_state.get_mouse_pos());
 	if (input_state.get_mouse_state() == CLICK) {
 		if (cur) {
 			if (menu_switcher(cur->get_name()));
+			else {
+				if (cur->get_name() == "BACKGROUND_BUTTON") {
+					appsex.next_background();
+				}
+				else if (cur -> get_name() == "ANIMATION_BUTTON") {
+					appsex.next_speed();
+				}
+			}
 		}
 	}
+	settings.find_button("BACKGROUND_BUTTON")->set_string(BACKGROUND_NAMES[appsex.get_background()]);
+	settings.find_button("ANIMATION_BUTTON")->set_string(SPEED_MODIFIER_NAMES[appsex.get_speed()]);
+
+	settings.draw(input_state.get_mouse_pos());
 }
 
 void handle_about(sf::RenderWindow& appwindow, UIUnit& about, MenuManager& menu_manager) {
@@ -151,12 +160,25 @@ void handle_selection(sf::RenderWindow& appwindow, UIUnit& selection, MenuManage
 }
 
 void handle_ds_switcher() {
-	if (input_state.get_keyboard_key(LSHIFT) != RELEASE)
-	if (input_state.get_keyboard_key(LEFT_ARROW) == CLICK || input_state.get_keyboard_key(RIGHT_ARROW) == CLICK) {
-		if (input_state.get_keyboard_key(LEFT_ARROW) == CLICK)
+	bool check1 = input_state.get_keyboard_key(LSHIFT) != RELEASE &&
+		(input_state.get_keyboard_key(LEFT_ARROW) == CLICK ||
+			input_state.get_keyboard_key(RIGHT_ARROW) == CLICK);
+
+	std::string highlighted_button = "";
+	if (visualizer.find_button("PREVIOUS")->get_focused()) highlighted_button = "PREVIOUS";
+	if (visualizer.find_button("NEXT")->get_focused()) highlighted_button = "NEXT";
+	bool check2 = (highlighted_button == "PREVIOUS")
+		|| (highlighted_button == "NEXT");
+	if (check1 || check2) {
+		if (input_state.get_keyboard_key(LEFT_ARROW) == CLICK ||
+			(highlighted_button == "PREVIOUS"))
 			ds.previous_data_structure();
-		else if (input_state.get_keyboard_key(RIGHT_ARROW) == CLICK)
+		else if (input_state.get_keyboard_key(RIGHT_ARROW) == CLICK ||
+			(highlighted_button == "NEXT"))
 			ds.next_data_structure();
+
+		visualizer.find_button("PREVIOUS")->set_focused(0);
+		visualizer.find_button("NEXT")->set_focused(0);
 
 		despawn_text_box(visualizer);
 		despawn_form(visualizer);
@@ -413,8 +435,8 @@ int pollEvent(sf::RenderWindow& appwindow) { // if window is closed, return 0
 void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	int cur = pollEvent(appwindow);
 	if (cur == 0) return;
-
-	bg_drawer.draw(input_state.get_mouse_pos(), delta);
+	delta *= SPEED_MODIFIER[appsex.get_speed()];
+	bg_drawer.draw(input_state.get_mouse_pos(), appsex.get_background(), delta);
 
 	input_state.update_mouse(delta);
 	input_state.update_keyboard(delta);

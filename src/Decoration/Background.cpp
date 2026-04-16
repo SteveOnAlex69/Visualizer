@@ -18,13 +18,18 @@ BackgroundDrawer::BackgroundDrawer(sf::RenderWindow* window, sf::Font f) {
 	});
 }
 
-void BackgroundDrawer::draw(sf::Vector2f mouse_pos, float delta) {
+void BackgroundDrawer::draw(sf::Vector2f mouse_pos, int type, float delta) {
 	appwindow->clear(BACKGROUND);
 	total_time += delta;
-	draw1(mouse_pos, delta);
+
+	if (type == 0) draw0(mouse_pos, delta);
+	else if (type == 1) draw1(mouse_pos, delta);
+	else if (type == 2) draw2(mouse_pos, delta);
+	else if (type == 3) draw3(mouse_pos, delta);
+	else debug_error("dude we don't have enough background");
 }
 
-void BackgroundDrawer::draw4(sf::Vector2f mouse_pos, float delta) {
+void BackgroundDrawer::draw3(sf::Vector2f mouse_pos, float delta) {
 	mouse_pos -= screen_center;
 
 	for (sf::Vector3f i : points) {
@@ -57,7 +62,7 @@ void BackgroundDrawer::draw4(sf::Vector2f mouse_pos, float delta) {
 
 }
 
-void BackgroundDrawer::draw3(sf::Vector2f mouse_pos, float delta) {
+void BackgroundDrawer::draw2(sf::Vector2f mouse_pos, float delta) {
 	mouse_pos -= screen_center;
 
 	int cnt = 0;
@@ -85,7 +90,7 @@ void BackgroundDrawer::draw3(sf::Vector2f mouse_pos, float delta) {
 	}
 }
 
-void BackgroundDrawer::draw2(sf::Vector2f mouse_pos, float delta) {
+void BackgroundDrawer::draw1(sf::Vector2f mouse_pos, float delta) {
 	mouse_pos -= screen_center;
 
 	for (sf::Vector3f i : points) {
@@ -118,7 +123,7 @@ void BackgroundDrawer::draw2(sf::Vector2f mouse_pos, float delta) {
 }
 
 
-void BackgroundDrawer::draw1(sf::Vector2f mouse_pos, float delta) {
+void BackgroundDrawer::draw0(sf::Vector2f mouse_pos, float delta) {
 	mouse_pos -= screen_center;
 
 	for (sf::Vector3f i : points) {

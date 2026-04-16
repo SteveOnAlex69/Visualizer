@@ -57,19 +57,17 @@ public:
 
 	void set_focused(bool f);
 	bool get_focused();
-
 	bool check_hovering(sf::Vector2f mouse_pos);
-
 	bool have_texture();
 	sf::Texture *get_texture();
-
 	float send_update_state(float time, bool hovering);
-
 	void set_visibility(bool visibility);
 	bool get_visibility();
-
 	int get_line_width();
 	void set_line_width(int width);
+
+	void set_border_width(int width);
+	int get_border_width();
 private:
 	sf::Vector2f pos, size;
 	sf::Color bg_color, font_color, accent_color;
@@ -85,8 +83,8 @@ private:
 	bool hovering;
 
 	bool show;
-
 	int line_width;
+	int border_width;
 };
 
 #endif

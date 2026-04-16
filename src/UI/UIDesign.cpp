@@ -137,6 +137,21 @@ void setup_settings(UIUnit& settings) {
 	add_button(settings, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
 	add_text(settings, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, "SETTINGS", "SETTINGS");
 
+	Button* bg_text = add_text(settings, sf::Vector2f(-50, -200), 36, CENTER_CENTER, CENTER_CENTER, 
+		"BACKGROUND_TEXT", "Background:");
+	bg_text->set_justify_content(CENTER_RIGHT);
+
+	Button* animation_text = add_text(settings, sf::Vector2f(-50, -100), 36, CENTER_CENTER, CENTER_CENTER,
+		"ANIMATION_TEXT", "Animation Speed:");
+	animation_text->set_justify_content(CENTER_RIGHT);
+
+	Button* bg_button = add_button(settings, sf::Vector2f(50, -200), sf::Vector2f(200, 50), 36, CENTER_LEFT, CENTER_CENTER,
+		"BACKGROUND_BUTTON", "Starry Sky");
+	bg_button->set_border_width(0);
+
+	Button* animation_button = add_button(settings, sf::Vector2f(50, -100), sf::Vector2f(200, 50), 36, CENTER_LEFT, CENTER_CENTER,
+		"ANIMATION_BUTTON", "1x");
+	animation_button->set_border_width(0);
 
 	add_text(settings, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
 		"BOTTOM_TEXT",
@@ -150,6 +165,10 @@ void setup_selection(UIUnit& selection) {
 	add_button(selection, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
 		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
 	add_text(selection, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, "SELECT", "SELECT YOUR DATA");
+
+	add_text(selection, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
+		"BOTTOM_TEXT",
+		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
 
 
 	add_button_with_texture(selection, sf::Vector2f(-650, -100), sf::Vector2f(571, 352),
@@ -177,19 +196,29 @@ void setup_visualizer(UIUnit& visualizer) {
 	add_text(visualizer, sf::Vector2f(0, -500), 100, 
 		CENTER_CENTER, CENTER_CENTER, "VISUALIZER", "VISUALIZER");
 
-	add_button(visualizer, sf::Vector2f(30, 620), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+	add_button(visualizer, sf::Vector2f(30, 540), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_1", "INIT");
-	add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT, 
+	add_button(visualizer, sf::Vector2f(30, 620), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT, 
 		"COMMAND_2", "INSERT");
-	add_button(visualizer, sf::Vector2f(30, 780), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+	add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_3", "ERASE");
-	add_button(visualizer, sf::Vector2f(30, 860), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+	add_button(visualizer, sf::Vector2f(30, 780), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_4", "SEARCH");
-	add_button(visualizer, sf::Vector2f(30, 940), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+	add_button(visualizer, sf::Vector2f(30, 860), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_5", "CLEAR");
-	add_button(visualizer, sf::Vector2f(30, 1020), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+	add_button(visualizer, sf::Vector2f(30, 940), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_6", "UPDATE");
 
+
+
+	Button* nigger1 = add_button(visualizer, sf::Vector2f(30, -30), sf::Vector2f(200, 50), 20, BOTTOM_LEFT, BOTTOM_LEFT,
+		"PREVIOUS", "Previous");
+	nigger1 -> set_border_width(0);
+	nigger1->set_justify_content(CENTER_LEFT);
+	Button* nigger2 = add_button(visualizer, sf::Vector2f(-30, -30), sf::Vector2f(200, 50), 20, BOTTOM_RIGHT, BOTTOM_RIGHT,
+		"NEXT", "Next");
+	nigger2->set_border_width(0);
+	nigger2->set_justify_content(CENTER_RIGHT);
 
 	add_text(visualizer, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
 		"BOTTOM_TEXT",
@@ -202,14 +231,14 @@ void spawn_text_box(UIUnit& scene, UserCommand user_command) {
 	despawn_text_box(scene);
 
 	if (user_command == INIT) {
-		Button* lmao = add_text_box(scene, sf::Vector2f(220, 620), sf::Vector2f(300, 400), 23,
+		Button* lmao = add_text_box(scene, sf::Vector2f(220, 540), sf::Vector2f(300, 400), 23,
 				TOP_LEFT, TOP_LEFT, "TEXT_BOX");
 		lmao->set_justify_content(TOP_LEFT);
 		lmao->set_focused(1);
 		lmao->set_line_width(20);
 	}
 	else {
-		sf::Vector2f pos = sf::Vector2f(220, 700);
+		sf::Vector2f pos = sf::Vector2f(220, 620);
 		if (user_command == ERASE) pos += sf::Vector2f(0, 80);
 		if (user_command == SEARCH) pos += sf::Vector2f(0, 160);
 		Button* lmao = add_text_box(scene, pos, sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT, "TEXT_BOX");

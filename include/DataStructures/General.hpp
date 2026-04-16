@@ -50,7 +50,6 @@ public:
 	void clear();
 
 	void init(std::string s);
-	
 private:
 	DS selected_ds;
 	LinkedList li;

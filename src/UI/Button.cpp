@@ -20,6 +20,7 @@ Button::Button() {
 	show = true;
 
 	line_width = 1e9;
+	border_width = 5;
 }
 
 
@@ -118,3 +119,7 @@ bool Button::get_visibility() {
 
 int Button::get_line_width() { return line_width; }
 void Button::set_line_width(int width) { line_width = width; }
+
+
+int Button::get_border_width() { return border_width; }
+void Button::set_border_width(int width) { border_width= width; }

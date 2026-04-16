@@ -43,12 +43,19 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 	sf::Vector2f size = button->get_button_size();
 	sf::Color btn_color = button->get_font_color();
 
+	float font_size = button->get_font_size();
 	if (button->get_button_type() == BUTTON) {
 		float hover_time = button->send_update_state(current_time, button -> check_hovering(mouse_pos));
-		if (button -> check_hovering(mouse_pos))
+		if (button->check_hovering(mouse_pos)) {
 			size += size * 0.05f * sigmoid(hover_time * 10);
-		else size += size * 0.05f * (1 - sigmoid(hover_time * 10));
+			font_size += font_size * 0.1f * sigmoid(hover_time * 10);
+		}
+		else {
+			size += size * 0.05f * (1 - sigmoid(hover_time * 10));
+			font_size += font_size * 0.1f * (1 - sigmoid(hover_time * 10));
+		}
 	}
+
 
 	if (button->check_hovering(mouse_pos)) {
 		btn_color = button->get_font_accent_color();
@@ -83,15 +90,17 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 		appwindow->draw(sp);
 	}
 	else {
-		sf::RectangleShape rect;
-		rect.setPosition(pos);
-		rect.setSize(size);
+		if (button->get_border_width()) {
+			sf::RectangleShape rect;
+			rect.setPosition(pos);
+			rect.setSize(size);
 
-		rect.setFillColor(button->get_bg_color());
+			rect.setFillColor(button->get_bg_color());
 
-		rect.setOutlineThickness(5);
-		rect.setOutlineColor(btn_color);
-		appwindow->draw(rect);
+			rect.setOutlineThickness(button->get_border_width());
+			rect.setOutlineColor(btn_color);
+			appwindow->draw(rect);
+		}
 
 		Alignment justify_content = button->get_justify_content();
 		int x = (int)justify_content % 3, y = (int)justify_content / 3;
@@ -119,7 +128,7 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 		tex.setString(ans);
 		tex.setPosition(pos + size * 0.5f +
 			sf::Vector2f( (size.x * 0.5f - 10) * (x-1), (size.y * 0.5f - 10) * (y-1)));
-		tex.setCharacterSize(button->get_font_size());
+		tex.setCharacterSize(font_size);
 		tex.setFillColor(btn_color);
 		sf::FloatRect textRect = tex.getLocalBounds();
 		tex.setOrigin(sf::Vector2f(textRect.size.x * 0.5f * x, textRect.size.y * 0.5f * y)
