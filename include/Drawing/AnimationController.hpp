@@ -32,9 +32,18 @@ public:
 	void clear_graph();
 	Graph get_graph();
 	bool is_empty();
+
+	void jump_to_back();
+	void jump_to_front();
+	void jump_back();
+	void jump_front();
+	void toggle_flow();
+
+	int get_flow();
 private:
 	AnimationUnit* anim;
 	GeneralData* ds;
+	int flow;
 };
 
 #endif

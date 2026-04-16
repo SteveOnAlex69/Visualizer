@@ -250,6 +250,38 @@ void execute_command(UserCommand command) {
 	}
 }
 
+int control_activated(std::string s) {
+	if (s.substr(0, 11) == "CONTROLFLOW") {
+		return s.back() - '0';
+	}
+	return 0;
+}
+
+void execute_control(int control) {
+	for (int i = 1; ; ++i) {
+		Button* b = visualizer.find_button("CONTROLFLOW" + std::string(1, '0' + i));
+		if (b) b->set_focused(0);
+		else break;
+	}
+	switch (control) {
+	case 1:
+		anim.jump_to_back();
+		break;
+	case 2:
+		anim.jump_back();
+		break;
+	case 3:
+		anim.toggle_flow();
+		break;
+	case 4:
+		anim.jump_front();
+		break;
+	case 5:
+		anim.jump_to_front();
+		break;
+	}
+}
+
 void text_box_receive(std::string s) {
 	if (text_box_mode == NONE) debug_error("text box mode is NONE, yet text_box_receive was called");
 	if (text_box_mode == INIT) {
@@ -389,8 +421,10 @@ void handle_input(UIUnit &visualizer) {
 		anim.clear_graph();
 		text_box_mode = NONE;
 	}
-	else if (command_activated(pressed_button)) 
+	else if (command_activated(pressed_button))
 		execute_command(command_activated(pressed_button));
+	else if (control_activated(pressed_button))
+		execute_control(control_activated(pressed_button));
 	else if (visualizer.get_focused_text_box()) 
 		handle_textbox_input(visualizer);
 }
@@ -412,6 +446,10 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 	visualizer.find_button("DS_NAME")->set_string(get_ds_name( ds.get_current_type() ));
 	visualizer.find_button("COMMAND_4")->set_string((ds.is_drawing_ds())?"SEARCH":"RUN");
 	visualizer.find_button("COMMAND_6")->set_visibility(ds.get_current_type() == LINKED_LIST);
+
+	visualizer.find_button("CONTROLFLOW3")->set_string(
+		(anim.get_flow()) ? "||" : "[>]"
+	);
 
 	handle_input(visualizer);
 

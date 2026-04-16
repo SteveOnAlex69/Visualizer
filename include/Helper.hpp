@@ -25,7 +25,7 @@ const std::string FOREGROUND_PATH = ART_PATH + "/foreground.png";
 const sf::Vector2f screen_center(windowSize.x * 0.5f, windowSize.y * 0.5f);
 
 const sf::Vector2f LINKED_LIST_POS = sf::Vector2f(300, 400);
-const sf::Vector2f HASH_MAP_POS = sf::Vector2f(500, 350);
+const sf::Vector2f HASH_MAP_POS = sf::Vector2f(400, 310);
 const sf::Vector2f BST_POS = screen_center - sf::Vector2f(0, 300);
 const sf::Vector2f AVL_POS = BST_POS;
 const sf::Vector2f TRIE_POS = AVL_POS;
@@ -34,7 +34,7 @@ const sf::Vector2f GRAPH_ROOT = sf::Vector2f(500, 350);
 const int EDGE_WIDTH = 6;
 const double PI = atan(1);
 
-const float ANIMATION_TIME = 0.8f;
+const float ANIMATION_TIME = 1.0f;
 
 
 enum UserCommand {

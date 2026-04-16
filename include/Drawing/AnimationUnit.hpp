@@ -25,6 +25,12 @@ public:
 	void force_latest();
 
 	Graph get_graph();
+
+
+	void jump_to_back();
+	void jump_to_front();
+	void jump_back();
+	void jump_front();
 private:
 	std::vector<Graph> history;
 	float animation_time;

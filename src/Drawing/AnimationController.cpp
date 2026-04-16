@@ -4,10 +4,10 @@
 AnimationController::AnimationController(AnimationUnit* a, GeneralData* d) {
 	anim = a;
 	ds = d;
-
+	flow = 1;
 }
 void AnimationController::update_timer(float delta) {
-	anim->update_timer(delta);
+	anim->update_timer(delta * flow);
 }
 
 
@@ -202,3 +202,23 @@ void AnimationController::handle_init(std::string s) {
 bool AnimationController::is_empty() { return anim->is_empty(); }
 void AnimationController::clear_graph() { anim->clear_graph(); }
 Graph AnimationController::get_graph() { return anim->get_graph(); }
+
+
+void AnimationController::jump_to_back() {
+	anim->jump_to_back();
+}
+void AnimationController::jump_to_front() {
+	anim->jump_to_front();
+}
+void AnimationController::jump_back() {
+	anim->jump_back();
+}
+void AnimationController::jump_front() {
+	anim->jump_front();
+
+}
+void AnimationController::toggle_flow() {
+	flow = 1 - flow;
+}
+
+int AnimationController::get_flow() { return flow; }

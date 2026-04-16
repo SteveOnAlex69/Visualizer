@@ -224,3 +224,21 @@ bool AnimationUnit::done_animating() {
 	if (is_empty()) return true;
 	return (animation_time >= (history.size() - 1) * ANIMATION_TIME);
 }
+
+
+void AnimationUnit::jump_to_back() {
+	animation_time = 0;
+}
+void AnimationUnit::jump_to_front() {
+	force_latest();
+}
+void AnimationUnit::jump_back() {
+	int current_frame = (animation_time / ANIMATION_TIME) - 1;
+	if (current_frame < 0) current_frame = 0;
+	animation_time = current_frame * ANIMATION_TIME;
+}
+void AnimationUnit::jump_front() {
+	int current_frame = (animation_time / ANIMATION_TIME) + 1;
+	if (current_frame >= history.size()) jump_to_front();
+	else animation_time = current_frame * ANIMATION_TIME;
+}

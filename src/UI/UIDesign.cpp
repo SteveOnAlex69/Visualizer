@@ -220,6 +220,15 @@ void setup_visualizer(UIUnit& visualizer) {
 	nigger2->set_border_width(0);
 	nigger2->set_justify_content(CENTER_RIGHT);
 
+	std::string vcl[] = {"<<", "<", "||", ">", ">>"};
+
+	for (int i = 1; i <= 5; ++i) {
+		Button* BUTTON = add_button(visualizer, sf::Vector2f((i-3) * 170, -50), sf::Vector2f(150, 60), 50, BOTTOM_CENTER, BOTTOM_CENTER,
+			"CONTROLFLOW" + std::string(1, i + '0'), vcl[i-1]);
+		BUTTON->set_border_width(0);
+		BUTTON->set_justify_content(CENTER_CENTER);
+	}
+
 	add_text(visualizer, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
 		"BOTTOM_TEXT",
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
