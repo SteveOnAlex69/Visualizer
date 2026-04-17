@@ -10,9 +10,9 @@ void AnimationUnit::force_latest() {
 	else animation_time = (history.size() - 1) * ANIMATION_TIME;
 }
 
-void AnimationUnit::add_graph(Graph graph, bool force_update) {
+void AnimationUnit::add_state(VisualizerState state, bool force_update) {
 	if (force_update) force_latest();
-	history.push_back(graph);
+	history.push_back(state);
 }
 void AnimationUnit::update_timer(float delta) {
 	if (is_empty()) animation_time = 0;
@@ -143,6 +143,21 @@ Graph AnimationUnit::get_graph_stage3(Graph& graph1, Graph& graph2, float epoch)
 }
 
 
+
+VisualizerState AnimationUnit::get_viz_stage1(VisualizerState& viz1, VisualizerState& viz2, float epoch) {
+	return VisualizerState(get_graph_stage1(viz1.get_graph(), viz2.get_graph(), epoch), 
+		viz1.get_pseudo_code());
+}
+VisualizerState AnimationUnit::get_viz_stage2(VisualizerState& viz1, VisualizerState& viz2, float epoch) {
+	return VisualizerState(get_graph_stage2(viz1.get_graph(), viz2.get_graph(), epoch),
+		viz1.get_pseudo_code());
+}
+VisualizerState AnimationUnit::get_viz_stage3(VisualizerState& viz1, VisualizerState& viz2, float epoch) {
+	return VisualizerState(get_graph_stage3(viz1.get_graph(), viz2.get_graph(), epoch),
+		viz1.get_pseudo_code());
+}
+
+
 int get_diff_state(Graph& graph1, Graph& graph2) {
 	// bit 0 will be true if we have to delete something from graph 1
 	// bit 1 will be true if we have to relocate something that is common across graph 1 and graph 2
@@ -192,16 +207,18 @@ int get_diff_state(Graph& graph1, Graph& graph2) {
 	return mask;
 }
 
-Graph AnimationUnit::get_graph() {
+VisualizerState AnimationUnit::get_state() {
 	if (history.size() == 0) assert(false);
 
 	int idx = animation_time / ANIMATION_TIME;
 	if (idx + 1 == history.size()) return history.back();
 
-	Graph graph1 = history[idx], graph2 = history[idx + 1];
+	VisualizerState state1 = history[idx], state2 = history[idx + 1];
 	float tmp = animation_time - idx * ANIMATION_TIME;
+
+	Graph graph1 = state1.get_graph(), graph2 = state2.get_graph();
 	int mask = get_diff_state(graph1, graph2);
-	if (pop_cnt(mask) == 0) return graph2;
+	if (pop_cnt(mask) == 0) return state2;
 
 	float PAUSE = ANIMATION_TIME * 0.1;
 	float ACTUAL_TIME = ANIMATION_TIME - PAUSE * (pop_cnt(mask) - 1);
@@ -209,15 +226,14 @@ Graph AnimationUnit::get_graph() {
 	for (int i = 0; i < 3; ++i) if (GETBIT(mask, i)) {
 		if (tmp <= STEP + PAUSE) {
 			float t = std::min(1.0f, tmp / STEP);
-			if (i == 0) return get_graph_stage1(graph1, graph2, t);
-			if (i == 1) return get_graph_stage2(graph1, graph2, t);
-			if (i == 2) return get_graph_stage3(graph1, graph2, t);
+			if (i == 0) return get_viz_stage1(state1, state2, t);
+			if (i == 1) return get_viz_stage2(state1, state2, t);
+			if (i == 2) return get_viz_stage3(state1, state2, t);
 		}
 		tmp -= STEP + PAUSE;
 	}
 	
-	Graph empty_graph;
-	return empty_graph;
+	debug_error("Animation went wrong. Function: get_state()");
 }
 
 bool AnimationUnit::done_animating() {

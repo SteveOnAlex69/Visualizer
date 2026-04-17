@@ -5,6 +5,8 @@
 #include <Helper.hpp>
 #include <Drawing/Node.hpp>
 #include <Drawing/Graph.hpp>
+#include <Drawing/Pseudocode.hpp>
+#include <Drawing/VisualizerState.hpp>
 #include <DataStructures/LinkedList.hpp>
 #include <DataStructures/Hashmap.hpp>
 #include <DataStructures/Trie.hpp>
@@ -26,8 +28,9 @@ public:
 
 	void draw_node(Node i);
 	void draw_edge(Node u, Node v, std::string val, float opacity, sf::Color color);
+	void draw_viz_state(VisualizerState& viz_lu);
 	void draw_graph(Graph& graph);
- // draw between two graph
+	void draw_pseudo_code(Pseudocode& sudo_code);
 private:
 	sf::RenderWindow* appwindow;
 	sf::Font font;

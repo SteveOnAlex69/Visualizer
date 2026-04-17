@@ -10,6 +10,7 @@
 #include <Drawing/Graph.hpp>
 #include <Drawing/DrawingUnit.hpp>
 #include <Drawing/AnimationUnit.hpp>
+#include <Drawing/VisualizerState.hpp>
 #include <DataStructures/General.hpp>
 #include <Helper.hpp>
 
@@ -30,7 +31,7 @@ public:
 	void handle_init(std::string s);
 
 	void clear_graph();
-	Graph get_graph();
+	VisualizerState get_state();
 	bool is_empty();
 
 	void jump_to_back();

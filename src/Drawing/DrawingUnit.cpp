@@ -105,6 +105,10 @@ void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity, sf::
 	}
 }
 
+void DrawingUnit::draw_viz_state(VisualizerState& viz_lu) {
+	draw_graph(viz_lu.get_graph());
+	draw_pseudo_code(viz_lu.get_pseudo_code());
+}
 
 void DrawingUnit::draw_graph(Graph& graph) {
 	std::vector<Node> li = graph.get_node_list();
@@ -116,4 +120,41 @@ void DrawingUnit::draw_graph(Graph& graph) {
 	for (auto i : li) {
 		draw_node(i);
 	}
+}
+
+void DrawingUnit::draw_pseudo_code(Pseudocode& sudo_code) {
+	sf::RectangleShape rect(sf::Vector2f(400, 700));
+
+	sf::Vector2f rectsize = rect.getLocalBounds().size;
+	rect.setOrigin(sf::Vector2f(rectsize.x, rectsize.y * 0.5f));
+
+	rect.setPosition(sf::Vector2f(screen_center.x * 2 - 67, screen_center.y));
+	rect.setFillColor(sf::Color(36, 36, 36, 150));
+	rect.setOutlineColor(SECOND_COLOR);
+	rect.setOutlineThickness(4);
+
+	std::string content = sudo_code.get_content();
+	int line_count = 0;
+	for (auto c : content) if (c == '\n')
+		line_count++;
+
+	sf::Text tex(font);
+	tex.setString(sudo_code.get_content());
+	tex.setFillColor(FIRST_COLOR * FIRST_COLOR);
+	tex.setCharacterSize(20);
+	tex.setPosition(sf::Vector2f(screen_center.x * 2 - 67 - 370, screen_center.y - 340));
+
+	std::string line_indices;
+	for (int i = 1; i <= line_count + 1; ++i)
+		line_indices += std::to_string(i) + "\n";
+	sf::Text shit(font);
+	shit.setString(line_indices);
+	shit.setFillColor(FIRST_COLOR);
+	shit.setCharacterSize(20);
+	shit.setPosition(sf::Vector2f(screen_center.x * 2 - 67 - 390, screen_center.y - 340));
+
+
+	appwindow->draw(rect);
+	appwindow->draw(tex);
+	appwindow->draw(shit);
 }

@@ -21,6 +21,7 @@ const std::string FONT_PATH = std::string(PROJECT_DIR) + "assets/Font/Consola.tt
 const std::string ART_PATH = std::string(PROJECT_DIR) + "assets/Art/";
 const std::string BACKGROUND_PATH = ART_PATH + "/background.png";
 const std::string FOREGROUND_PATH = ART_PATH + "/foreground.png";
+const std::string PSEUDOCODE_PATH = std::string(PROJECT_DIR) + "assets/PseudoCode/";
 
 const sf::Vector2f screen_center(windowSize.x * 0.5f, windowSize.y * 0.5f);
 

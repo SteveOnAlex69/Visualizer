@@ -23,7 +23,8 @@
 #include <Drawing/Graph.hpp>
 #include <Drawing/Node.hpp>
 #include <Drawing/GraphExtractor.hpp>
-#include <Drawing/AnimationController.hpp>>
+#include <Drawing/AnimationController.hpp>
+#include <Drawing/Pseudocode.hpp>
 
 #include <UI/MenuManager.hpp>
 #include <UI/UIDesign.hpp>
@@ -454,7 +455,7 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 	handle_input(visualizer);
 
 	if (anim.is_empty()) anim.update_graph();
-	drawing_unit.draw_graph(anim.get_graph());
+	drawing_unit.draw_viz_state(anim.get_state());
 	visualizer.draw(input_state.get_mouse_pos());
 }
 

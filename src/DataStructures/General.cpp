@@ -272,8 +272,10 @@ void GeneralData::init(std::string s) {
 		avl_tree.clear();
 		std::vector<std::string> v = split(" " + s);
 		std::reverse(v.begin(), v.end());
-		for (std::string i : v) if (i.size() && i != "\n")
+		for (std::string i : v) if (i.size() && i != "\n") {
 			avl_tree.insert(std::stoi(i));
+			avl_tree.balance_the_tree();
+		}
 		break;
 	}
 	case TRIE:

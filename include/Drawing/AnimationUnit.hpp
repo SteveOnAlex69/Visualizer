@@ -8,14 +8,14 @@
 #include <utility>
 #include <Drawing/Node.hpp>
 #include <Drawing/Graph.hpp>
-#include <Drawing/DrawingUnit.hpp>
+#include <Drawing/VisualizerState.hpp>
 #include <Helper.hpp>
 
 class AnimationUnit{
 public:
 	AnimationUnit();
 	
-	void add_graph(Graph graph, bool force_update = 1);
+	void add_state(VisualizerState graph, bool force_update = 1);
 	void update_timer(float delta);
 
 	void clear_graph();
@@ -24,7 +24,7 @@ public:
 
 	void force_latest();
 
-	Graph get_graph();
+	VisualizerState get_state();
 
 
 	void jump_to_back();
@@ -32,12 +32,17 @@ public:
 	void jump_back();
 	void jump_front();
 private:
-	std::vector<Graph> history;
+	std::vector<VisualizerState> history;
 	float animation_time;
 
 	Graph get_graph_stage1(Graph& graph1, Graph& graph2, float epoch);
 	Graph get_graph_stage2(Graph& graph1, Graph& graph2, float epoch);
 	Graph get_graph_stage3(Graph& graph1, Graph& graph2, float epoch);
+
+
+	VisualizerState get_viz_stage1(VisualizerState& graph1, VisualizerState& graph2, float epoch);
+	VisualizerState get_viz_stage2(VisualizerState& graph1, VisualizerState& graph2, float epoch);
+	VisualizerState get_viz_stage3(VisualizerState& graph1, VisualizerState& graph2, float epoch);
 };
 
 #endif

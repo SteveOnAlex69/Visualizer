@@ -10,12 +10,14 @@ void AnimationController::update_timer(float delta) {
 	anim->update_timer(delta * flow);
 }
 
-
 void AnimationController::update_graph(bool flag) {
-	anim -> add_graph(GraphExtractor::get_graph(*ds), flag);
+	Pseudocode current_sudo = Pseudocode((int)ds->get_current_type() + 1, 1);
+	anim -> add_state(VisualizerState(GraphExtractor::get_graph(*ds), current_sudo), 
+		flag);
 }
 
 void AnimationController::load_kruskal() {
+	Pseudocode current_sudo = Pseudocode((int)ds->get_current_type() + 1, 1);
 	anim -> force_latest();
 	void* current_ds = ds -> get_current_structure();
 	anim -> clear_graph();
@@ -24,19 +26,23 @@ void AnimationController::load_kruskal() {
 			(Kruskal*)current_ds, GRAPH_ROOT, i
 		);
 		if (cur.get_node_list().size() == 0) break;
-		anim -> add_graph(cur, 0);
+		anim -> add_state(VisualizerState(cur, current_sudo), 0);
 	}
 }
 void AnimationController::execute_graph_search(std::vector<void*> searched_nodes) {
+	Pseudocode current_sudo = Pseudocode((int)ds->get_current_type() + 1, 1);
 	anim->force_latest();
 	void* current_ds = ds->get_current_structure();
 	for (auto i : searched_nodes) {
-		anim->add_graph(GraphExtractor::get_graph(*ds, i), 0);
+		anim->add_state(VisualizerState(GraphExtractor::get_graph(*ds, i), current_sudo), 
+			0);
 	}
 	if (searched_nodes.size() && searched_nodes.back() != nullptr)
-		anim->add_graph(GraphExtractor::get_graph(*ds, searched_nodes.back(), 2), 0);
+		anim->add_state(VisualizerState(
+			GraphExtractor::get_graph(*ds, searched_nodes.back(), 2), current_sudo), 0);
 }
 void AnimationController::load_dijkstra(std::string x, std::string y) {
+	Pseudocode current_sudo = Pseudocode((int)ds->get_current_type() + 1, 1);
 	int u = std::stoi(x), v = std::stoi(y);
 
 	Dijkstra* dih = (Dijkstra*)ds -> get_current_structure();
@@ -57,7 +63,7 @@ void AnimationController::load_dijkstra(std::string x, std::string y) {
 			Graph cur = GraphExtractor::get_dijkstra_graph(
 				dih, GRAPH_ROOT, lmao, matter, edges1, edges2
 			);
-			anim -> add_graph(cur, 0);
+			anim -> add_state(VisualizerState(cur, current_sudo), 0);
 		}
 
 		matter = dih->get_shortest_path(u, v);
@@ -70,11 +76,13 @@ void AnimationController::load_dijkstra(std::string x, std::string y) {
 			Graph cur = GraphExtractor::get_dijkstra_graph(
 				dih, GRAPH_ROOT, lmao, shortest_path, edges1, edges2
 			);
-			anim -> add_graph(cur, 0);
+			anim->add_state(VisualizerState(cur, current_sudo), 0);
 		}
 	}
 }
 void AnimationController::handle_insertion(std::string s) {
+	Pseudocode current_sudo = Pseudocode((int)ds->get_current_type() + 1, 1);
+
 	anim->force_latest();
 	void* current_ds = ds -> get_current_structure();
 	switch (ds -> get_current_type()) {
@@ -82,9 +90,11 @@ void AnimationController::handle_insertion(std::string s) {
 	{
 		std::vector<void*> searched_nodes = ds -> search_before_insert(s);
 		for (auto i : searched_nodes)
-			anim -> add_graph(GraphExtractor::get_graph(*ds, i), 0);
+			anim -> add_state(VisualizerState(GraphExtractor::get_graph(*ds, i), current_sudo)
+				, 0);
 		if (searched_nodes.size() && searched_nodes.back() != nullptr)
-			anim -> add_graph(GraphExtractor::get_graph(*ds, searched_nodes.back(), 2), 0);
+			anim ->add_state(VisualizerState(GraphExtractor::get_graph(*ds, searched_nodes.back(), 2), current_sudo)
+				, 0);
 
 		ds -> insert(s); update_graph(0);
 		if (ds -> balance_structure()) update_graph(0);
@@ -94,12 +104,13 @@ void AnimationController::handle_insertion(std::string s) {
 	{
 		std::vector<void*> searched_nodes = ds -> search(s);
 		for (auto i : searched_nodes)
-			anim -> add_graph(GraphExtractor::get_graph(*ds, i), 0);
+			anim -> add_state(VisualizerState(GraphExtractor::get_graph(*ds, i), current_sudo), 0);
 		while (true) {
 			int val = ds -> insert(s);
 			std::vector<void*> searched_nodes = ds -> search(s);
 			if (searched_nodes.back() == nullptr) searched_nodes.pop_back();
-			anim -> add_graph(GraphExtractor::get_graph(*ds, searched_nodes.back(), 3 - val), 0);
+			anim ->add_state(VisualizerState(GraphExtractor::get_graph(*ds, searched_nodes.back(), 3 - val), current_sudo), 
+				0);
 			if (val == 1) break;
 		}
 		break;
@@ -112,6 +123,8 @@ void AnimationController::handle_insertion(std::string s) {
 	}
 }
 void AnimationController::handle_deletion(std::string s) {
+	Pseudocode current_sudo = Pseudocode((int)ds->get_current_type() + 1, 1);
+
 	anim->force_latest();
 	void* current_ds = ds -> get_current_structure();
 	switch (ds -> get_current_type()) {
@@ -132,7 +145,8 @@ void AnimationController::handle_deletion(std::string s) {
 			while (true) {
 				std::vector<void*> searched = ds -> search(s);
 				while (searched.size() && searched.back() == nullptr) searched.pop_back();
-				anim -> add_graph(GraphExtractor::get_graph(*ds, searched.back(), 2), 0);
+				anim -> add_state(VisualizerState(GraphExtractor::get_graph(*ds, searched.back(), 2), current_sudo)
+					, 0);
 
 				int val = ds -> erase(s);
 				update_graph(0);
@@ -160,6 +174,8 @@ void AnimationController::handle_deletion(std::string s) {
 }
 
 void AnimationController::handle_update(std::string x, std::string y) {
+	Pseudocode current_sudo = Pseudocode((int)ds->get_current_type() + 1, 1);
+
 	void* current_ds = ds->get_current_structure();
 	switch (ds->get_current_type()) {
 	case LINKED_LIST:
@@ -168,7 +184,9 @@ void AnimationController::handle_update(std::string x, std::string y) {
 		execute_graph_search(searched);
 
 		if (ds->update(x, y)) 
-			anim->add_graph(GraphExtractor::get_graph(*ds, searched.back(), 2), 0);
+			anim->add_state(VisualizerState(
+				GraphExtractor::get_graph(*ds, searched.back(), 2), current_sudo)
+				, 0);
 
 
 		break;
@@ -201,7 +219,7 @@ void AnimationController::handle_init(std::string s) {
 
 bool AnimationController::is_empty() { return anim->is_empty(); }
 void AnimationController::clear_graph() { anim->clear_graph(); }
-Graph AnimationController::get_graph() { return anim->get_graph(); }
+VisualizerState AnimationController::get_state() { return anim->get_state(); }
 
 
 void AnimationController::jump_to_back() {
