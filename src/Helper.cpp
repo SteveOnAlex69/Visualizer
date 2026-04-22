@@ -83,7 +83,7 @@ std::vector<std::vector<std::string>> split_to_row(std::string s, char delimiter
 
 float sigmoid(float epoch) {
 	epoch -= ANIMATION_TIME * 0.5F;
-	epoch *= 10 / ANIMATION_TIME;
+	epoch *= 10;
 	return (float)1 / (1 + std::exp(-epoch));
 }
 

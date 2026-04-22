@@ -25,6 +25,7 @@ public:
     std::vector<void*> search(std::string s);
     bool exist(std::string s);
     void clear();
+    int get_count(std::string s);
 private:
     void internal_clear(TrieNode* root);
 };

@@ -15,6 +15,7 @@
 
 const int TOTAL_DS_COUNT = 6;
 enum DS {
+	NOBRO = -1,
 	LINKED_LIST = 0,
 	HASHMAP_CHAIN = 1,
 	AVL_TREE = 2,

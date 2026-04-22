@@ -12,6 +12,11 @@ struct DijkstraEdge {
 	DijkstraEdge(int u = -1, int v = -1, int w = -1) : u(u), v(v), w(w) {}
 };
 
+struct GraphState { // what changes since the last states
+	int type;
+	std::vector<int> vertices;
+	std::vector<std::pair<int, int>> edges;
+};
 
 class Dijkstra {
 public:
@@ -21,7 +26,7 @@ public:
 	bool del_edge(int u, int v, int w);
 	std::vector<int> get_vertices();
 	std::vector<DijkstraEdge> get_edges();
-	std::vector<std::pair<int, int>> run_dijkstra(int u, int v);
+	std::vector<GraphState> run_dijkstra(int u, int v);
 	// get all the vertices in order of visited when finding the shortest path from u to v
 	std::vector<int> get_shortest_path(int u, int v);
 	// get the shortest path from u to v

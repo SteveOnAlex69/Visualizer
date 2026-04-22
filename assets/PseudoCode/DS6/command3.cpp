@@ -1,24 +1,17 @@
-func search(u, v):
+func search(s, t):
   dis = array(INF)
-  dis[u] = 0
+  pq = MinHeap()
   
-  while true:
-    minD = INF
-    nxt = null
-    
-    for e in edges:
-      if dis[e.v] != INF:
-        continue
-      d = dis[e.u] + e.w
-      if d < minD:
-        minD = d
-        nxt = e.v
+  dis[s] = 0
+  pq.push((0, s))
+  
+  while not pq.empty():
+    d, u = pq.pop()
+    if u == t:
+      return d
+    for v, w in adj[u]:
+      if d+w < dis[v]:
+        dis[v] = d+w
+        pq.push((d+w, v))
         
-    if minD == INF:
-      break
-    if nxt == v:
-      return minD
-      
-    dis[nxt] = minD
-    
   return INF

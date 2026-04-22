@@ -15,7 +15,7 @@ class AnimationUnit{
 public:
 	AnimationUnit();
 	
-	void add_state(VisualizerState graph, bool force_update = 1);
+	void add_state(VisualizerState graph);
 	void update_timer(float delta);
 
 	void clear_graph();

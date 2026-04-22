@@ -4,6 +4,6 @@ func erase(x):
     nxt = cur.next
     if nxt.val == x:
       cur.next = nxt.next
-      free(nxt)
+      delete(nxt)
       break
     cur = nxt

@@ -52,10 +52,6 @@ int Trie::erase(std::string s) { // obviously s has to already be in the trie
     }
     if (cur != nullptr && cur->cnt) {
         cur->cnt--;
-        if (cur->cnt == 0) {
-            pre->child[s.back() - '0'] = nullptr;
-            delete cur;
-        }
         return 1;
     }
     return 0;
@@ -73,6 +69,17 @@ std::vector<void*> Trie::search(std::string s) {
     ans.push_back(tmp);
     if (tmp != nullptr && tmp -> cnt == 0) ans.push_back(nullptr);
     return ans;
+}
+
+
+int Trie::get_count(std::string s) {
+    TrieNode* tmp = root;
+    for (char c : s) {
+        tmp = tmp->child[c - '0'];        
+        if (tmp == nullptr) return 0;
+    }
+    return tmp -> cnt;
+    
 }
 
 bool Trie::exist(std::string s) {

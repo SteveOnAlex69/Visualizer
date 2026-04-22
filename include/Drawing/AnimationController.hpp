@@ -18,13 +18,12 @@ class AnimationController {
 public:
 	AnimationController(AnimationUnit* a = nullptr, GeneralData* d = nullptr);
 	void update_timer(float delta);
-
-	void update_graph(bool flag = 1);
+	void update_graph(int stage = -1);
 	void load_kruskal();
-	void execute_graph_search(std::vector<void*> searched_nodes);
 	void load_dijkstra(std::string x, std::string y);
 	void handle_insertion(std::string s);
 	void handle_deletion(std::string s);
+	void handle_search(std::string s);
 	void handle_update(std::string x, std::string y);
 
 	void clear_current_ds();
@@ -45,6 +44,9 @@ private:
 	AnimationUnit* anim;
 	GeneralData* ds;
 	int flow;
+	int current_command;
+
+	void execute_graph_search(std::vector<void*> searched_nodes);
 };
 
 #endif

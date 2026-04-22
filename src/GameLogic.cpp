@@ -294,8 +294,7 @@ void text_box_receive(std::string s) {
 		anim.handle_deletion(s);
 	else if (text_box_mode == SEARCH) {
 		if (ds.is_drawing_ds()) {
-			std::vector<void*> searched = ds.search(s);
-			anim.execute_graph_search(searched);
+			anim.handle_search(s);
 		}
 		else {
 			std::vector<std::string> cur = split(s);

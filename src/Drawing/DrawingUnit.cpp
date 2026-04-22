@@ -132,29 +132,43 @@ void DrawingUnit::draw_pseudo_code(Pseudocode& sudo_code) {
 	rect.setFillColor(sf::Color(36, 36, 36, 150));
 	rect.setOutlineColor(SECOND_COLOR);
 	rect.setOutlineThickness(4);
+	appwindow->draw(rect);
 
 	std::string content = sudo_code.get_content();
-	int line_count = 0;
-	for (auto c : content) if (c == '\n')
-		line_count++;
-
+	sf::Vector2f ROOT_POS(screen_center.x * 2 - 67 - 370, screen_center.y - 340);
 	sf::Text tex(font);
 	tex.setString(sudo_code.get_content());
-	tex.setFillColor(FIRST_COLOR * FIRST_COLOR);
+	tex.setFillColor(FIRST_COLOR * FIRST_COLOR * FIRST_COLOR);
 	tex.setCharacterSize(20);
-	tex.setPosition(sf::Vector2f(screen_center.x * 2 - 67 - 370, screen_center.y - 340));
+	tex.setPosition(ROOT_POS);
+	appwindow->draw(tex);
+
+	std::vector<std::string> s; s.emplace_back();
+	for (char c : content) {
+		if (c == '\n') s.emplace_back();
+		else s.back().push_back(c);
+	}
+	if (s.back().empty()) s.pop_back();
+
+	std::vector<int> highlighted_line = sudo_code.get_highlighted();
+	for(int h: highlighted_line) {
+		sf::Text high_tex(font);
+		high_tex.setString(std::string(h - 1, '\n') + s[h - 1]);
+		high_tex.setFillColor(THIRD_COLOR);
+		high_tex.setCharacterSize(20);
+		high_tex.setPosition(ROOT_POS);
+		appwindow->draw(high_tex);
+	}
+	
 
 	std::string line_indices;
-	for (int i = 1; i <= line_count + 1; ++i)
+	for (int i = 1; i <= s.size(); ++i)
 		line_indices += std::to_string(i) + "\n";
+
 	sf::Text shit(font);
 	shit.setString(line_indices);
 	shit.setFillColor(FIRST_COLOR);
 	shit.setCharacterSize(20);
-	shit.setPosition(sf::Vector2f(screen_center.x * 2 - 67 - 390, screen_center.y - 340));
-
-
-	appwindow->draw(rect);
-	appwindow->draw(tex);
+	shit.setPosition(ROOT_POS - sf::Vector2f(20, 0));
 	appwindow->draw(shit);
 }

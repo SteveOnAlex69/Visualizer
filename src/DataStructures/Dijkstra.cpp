@@ -1,5 +1,6 @@
 #include <DataStructures/Dijkstra.hpp>
 #include <queue>
+#include <iostream>
 
 Dijkstra::Dijkstra() {
 }
@@ -41,9 +42,10 @@ struct compare {
 };
 
 // perform flood fill
-std::vector<std::pair<int, int>> Dijkstra::run_dijkstra(int u, int v) {
+std::vector<GraphState> Dijkstra::run_dijkstra(int u, int v) {
 	std::vector<int> vertices = get_vertices();
-	std::vector<std::pair<int, int>> ans;
+	vertices.push_back(1e9);
+	std::vector<GraphState> ans;
 	int n = vertices.size();
 	std::vector<std::vector<P>> graph(n);
 
@@ -61,22 +63,38 @@ std::vector<std::pair<int, int>> Dijkstra::run_dijkstra(int u, int v) {
 	pq.push(P(u, 0));
 
 	std::vector<bool> visited(n);
-	std::vector<int> parent(n);
+	std::vector<int> parent(n, vertices.size() - 1);
+
+	int cnt = 0;
 	while (pq.size()) {
 		P u = pq.top(); pq.pop();
 		if (!visited[u.i]) {
-			ans.push_back(std::make_pair(vertices[u.i], vertices[parent[u.i]]));
+			GraphState gs;
+			gs.type = 1;
+			if (cnt == 0) {
+				cnt++;
+				gs.vertices.push_back(vertices[u.i]);
+			}
+			gs.vertices.push_back(vertices[u.i]);
+			gs.edges.push_back(std::make_pair(vertices[parent[u.i]], vertices[u.i]));
+			ans.push_back(gs);
 		}
 		else continue;
 		visited[u.i] = true;
 		if (u.i == v) break;
+
+		GraphState gs;
+		gs.type = 2;
 		for (P v : graph[u.i]) {
+			gs.edges.push_back(std::make_pair(vertices[u.i], vertices[v.i]));
+			if (dis[v.i] == 1e18) gs.vertices.push_back(vertices[v.i]);
 			if (dis[v.i] > dis[u.i] + v.w) {
 				dis[v.i] = dis[u.i] + v.w;
 				parent[v.i] = u.i;
 				pq.push(P(v.i, dis[v.i]));
 			}
 		}
+		ans.push_back(gs);
 	}
 	return ans;
 }

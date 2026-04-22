@@ -25,6 +25,15 @@ int AVLNode::right_child_depth() {
     return 0;
 }
 
+int AVLNode::check_unbalanced() {
+    return (abs(left_child_depth() - right_child_depth()) >= 2);
+}
+
+int AVLNode::get_min() {
+    if (childL == nullptr) return val;
+    return childL->get_min();
+}
+
 
 AVL::AVL(bool is_self_balanced) {
     root = nullptr;
@@ -118,6 +127,23 @@ std::vector<void*> AVL::search_before_insert(int x) {
     
     return ans;
 }
+std::vector<bool> AVL::search_before_insert_direction(int x) {
+    std::vector<bool> ans;
+    if (root == nullptr) return ans;
+    AVLNode* tmp = root;
+    while (tmp != nullptr) {
+        if (x < tmp->val) {
+            ans.push_back(0);
+            tmp = tmp->childL;
+        }
+        else {
+            ans.push_back(1);
+            tmp = tmp->childR;
+        }
+    }
+
+    return ans;
+}
 
 void AVL::insert(int x) {
     insert(root, x);
@@ -129,39 +155,57 @@ void AVL::insert(AVLNode*& root, int x) {
     }
     if (x < root->val) insert(root->childL, x);
     else insert(root->childR, x);
+
+    calculate_depth(root);
 }
 
 
 bool AVL::balance_the_tree() {
+    bool check = false;
+    while (balance_deepest_node()) check = true;
+    return check;
+}
+bool AVL::balance_deepest_node() {
     return balance_the_tree(root);
 }
 bool AVL::balance_the_tree(AVLNode*& root) {
     if (root == nullptr) 
         return false;
 
-    bool ans = 0;
-    ans = ans || balance_the_tree(root->childL);
-    ans = ans || balance_the_tree(root->childR);
-
-    ans = ans || correct(root);
+    if (balance_the_tree(root->childL)) return true;
+    if (balance_the_tree(root->childR)) return true;
+    bool ans = correct(root);
     calculate_depth(root);
     return ans;
 }
 
 
+
 std::vector<void*> AVL::search(int x) {
     std::vector<void*> ans;
-    locate(root, x, ans);
+    AVLNode* tmp = root;
+
+    while (true) {
+        ans.push_back(tmp);
+        if (tmp == nullptr || tmp->val == x) break;
+        if (x < tmp->val) tmp = tmp->childL;
+        else tmp = tmp->childR;
+    }
+    return ans;
+}
+std::vector<bool> AVL::search_direction(int x) {
+    std::vector<bool> ans;
+    AVLNode* tmp = root;
+
+    while (true) {
+        if (tmp == nullptr || tmp->val == x) break;
+        ans.push_back(x > (tmp->val));
+        if (x < tmp->val) tmp = tmp->childL;
+        else tmp = tmp->childR;
+    }
     return ans;
 }
 
-void AVL::locate(AVLNode* root, int x, std::vector<void*> &ans) {
-    ans.push_back(root);
-    if (root == nullptr) return;
-    if (root->val == x) return;
-    if (x < root->val) locate(root->childL, x, ans);
-    else locate(root->childR, x, ans);
-}
 
 bool AVL::exist(int x) {
     return search(x).back() != nullptr;
@@ -182,6 +226,7 @@ bool AVL::erase(AVLNode*& root, int x) {
             
             delete root;
             root = val;
+            calculate_depth(root);
         }
         else {
             AVLNode* tmp = root;
@@ -193,17 +238,21 @@ bool AVL::erase(AVLNode*& root, int x) {
     bool check = false;
     if (x < root->val) check = erase(root->childL, x);
     else check = erase(root->childR, x);
+
+    calculate_depth(root);
     return check;
 }
 
 AVLNode* AVL::delete_left_most(AVLNode*& root) {
     if (root->childL) {
         AVLNode* ans = delete_left_most(root->childL);
+        calculate_depth(root);
         return ans;
     }
     else {
         AVLNode* tmp = root;
         root = root->childR;
+        calculate_depth(root);
         return tmp;
     }
 }
@@ -230,7 +279,22 @@ bool AVL::check_correct_depth() {
 bool AVL::check_correct_depth(AVLNode* root) {
     if (root == nullptr) return true;
     int cur = root->depth;
+    bool ans = check_correct_depth(root->childL) && check_correct_depth(root->childR);
+    calculate_depth(root);
+    if (root->depth != cur) ans = false;
+    return ans;
+}
+
+
+bool AVL::check_unbalanced() {
+    return check_unbalanced(root);
+}
+
+bool AVL::check_unbalanced(AVLNode* root) {
+    if (root == nullptr) return true;
+    int cur = root->depth;
     calculate_depth(root);
     if (root->depth != cur) return false;
-    return check_correct_depth(root->childL) && check_correct_depth(root->childR);
+    if (abs(root->left_child_depth() - root->right_child_depth()) >= 2) return false;
+    return check_unbalanced(root->childL) && check_unbalanced(root->childR);
 }

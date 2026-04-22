@@ -1,12 +1,19 @@
 #include <Drawing/GraphExtractor.hpp>
 
+
+template <class T>
+int count_occurence(std::vector<T>& a, T b) {
+	return std::upper_bound(a.begin(), a.end(), b) -
+		std::lower_bound(a.begin(), a.end(), b);
+}
+
+
 Node loadingBST(AVLNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFFSET,
 	std::vector<void*> highlighted) {
 	if (root == nullptr) return Node();
 
 	int color = 0;
-	int cnt = std::upper_bound(highlighted.begin(), highlighted.end(), root) -
-		std::lower_bound(highlighted.begin(), highlighted.end(), root);
+	int cnt = count_occurence(highlighted, (void*)root);
 	if (cnt == 1) color = 2;
 	else if (cnt >= 2) color = 3;
 	Node cur = graph.add_node(Node(std::to_string(root->val), ROOT, (unsigned long long) root,
@@ -38,9 +45,8 @@ Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f O
 	
 	float x = ROOT.x - (root->get_leaf_count()) * OFFSET.x * 0.5f;
 
-	int color = 0;
-	int cnt = std::upper_bound(highlighted.begin(), highlighted.end(), root) -
-		std::lower_bound(highlighted.begin(), highlighted.end(), root);
+	int color = 0;	
+	int cnt = count_occurence(highlighted, (void*)root);
 	if (cnt == 1) color = 2;
 	else if (cnt >= 2) color = 3;
 	Node cur = graph.add_node(Node(std::to_string(root->cnt), ROOT, (unsigned long long)root,
@@ -63,6 +69,8 @@ Node loadingTrie(TrieNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f O
 }
 
 namespace GraphExtractor {
+
+
 	Graph get_linked_list_graph(LinkedList* linked_list, sf::Vector2f ROOT,
 		std::vector<void*> highlighted) {
 		std::sort(highlighted.begin(), highlighted.end());
@@ -145,7 +153,7 @@ namespace GraphExtractor {
 
 		if (it >= 0 && it > e.size() * 2) return ans;
 		DSU mst(vertices.size());
-		for (int i = 0; i < (it + 1) / 2; ++i) {
+		for (int i = 0; i < it / 2; ++i) {
 			int u = e[i].u, v = e[i].v;
 			u = std::lower_bound(vertices.begin(), vertices.end(), u) - vertices.begin();
 			v = std::lower_bound(vertices.begin(), vertices.end(), v) - vertices.begin();
@@ -166,11 +174,7 @@ namespace GraphExtractor {
 
 			int u = mst.find_set(i);
 			sf::Color c = FIRST_COLOR;
-			if (it != -1) {
-				if (GETBIT(u, 0)) c.r -= 40;
-				if (GETBIT(u, 1)) c.g -= 40;
-				if (GETBIT(u, 2)) c.b -= 40;
-			}
+			if (mst.get_size(i) > 1) c = FIFTH_COLOR;
 
 			Node cur = Node(std::to_string(vertices[i]), CIRCLE_CENTER + DIH + jitter,
 				(unsigned long long)vertices[i],
@@ -225,8 +229,10 @@ namespace GraphExtractor {
 
 
 	Graph get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT,
-		std::vector<int> highlight1, std::vector<int> highlight2,
-		std::vector<std::pair<int, int>> edges1, std::vector<std::pair<int, int>> edges2) {
+		std::vector<int> highlight1, std::vector<std::pair<int, int>> edges1) {
+		std::sort(highlight1.begin(), highlight1.end());
+		std::sort(edges1.begin(), edges1.end());
+
 		Graph ans;
 		std::vector<int> vertices = dik->get_vertices();
 
@@ -241,10 +247,9 @@ namespace GraphExtractor {
 
 
 			int node_color = 0;
-			if (std::find(highlight1.begin(), highlight1.end(), vertices[i]) != highlight1.end())
-				node_color = 2;
-			if (std::find(highlight2.begin(), highlight2.end(), vertices[i]) != highlight2.end())
-				node_color = 3;
+			if (count_occurence(highlight1, vertices[i]) == 1) node_color = 2;
+			if (count_occurence(highlight1, vertices[i]) == 2) node_color = 3;
+			if (count_occurence(highlight1, vertices[i]) > 2) node_color = 1;
 
 			sf::Vector2f jitter = sf::Vector2f((vertices[i] * 67 + 18) % 36 - 18,
 				(vertices[i] * 69 + 9) % 36 - 18);
@@ -256,10 +261,10 @@ namespace GraphExtractor {
 		std::vector<DijkstraEdge> e = dik->get_edges();
 		for (auto i : e) {
 			sf::Color color = FIRST_COLOR;
-			if (std::find(edges1.begin(), edges1.end(), std::make_pair(i.u, i.v)) != edges1.end())
-				color = FOURTH_COLOR;
-			if (std::find(edges2.begin(), edges2.end(), std::make_pair(i.u, i.v)) != edges2.end())
-				color = FIFTH_COLOR;
+
+			if (count_occurence(edges1, std::make_pair(i.u, i.v)) == 1) color = FOURTH_COLOR;
+			if (count_occurence(edges1, std::make_pair(i.u, i.v)) == 2) color = FIFTH_COLOR;
+			if (count_occurence(edges1, std::make_pair(i.u, i.v)) > 2) color = THIRD_COLOR;
 			ans.add_edge(std::to_string(i.u), std::to_string(i.v), std::to_string(i.w), 1, color);
 		}
 		return ans;
@@ -295,9 +300,8 @@ namespace GraphExtractor {
 			std::vector<int> empty_list;
 			std::vector<std::pair<int, int>> empty_edges;
 			return get_dijkstra_graph(
-				(Dijkstra*)current_ds, GRAPH_ROOT, empty_list, empty_list, empty_edges, empty_edges
+				(Dijkstra*)current_ds, GRAPH_ROOT, empty_list, empty_edges
 			);
-
 			break;
 		}
 		Graph empty_graph;

@@ -4,7 +4,7 @@ func insert(rt, x):
     return
   if x < rt.val:
     insert(rt.L, x)
-  else:
+  if x >= rt.val:
     insert(rt.R, x)
   if unbalanced(rt):
     rotate(rt)

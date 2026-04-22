@@ -4,11 +4,13 @@ func erase(s):
   for c in s:
     idx = c - '0'
     cur = cur.ch[idx]
-    if cur is null: return
     path.push(cur)
+    if cur is null: 
+      return
 
   cur.cnt--
-  if cur.cnt > 0: return
+  if cur.cnt > 0: 
+    return
 
   for i = len(s) down to 1:
     if hasChild(path[i]):

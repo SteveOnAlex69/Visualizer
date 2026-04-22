@@ -35,6 +35,8 @@ struct DSU {
 		}
 		return false;
 	}
+
+	int get_size(int u) { return sz[find_set(u)]; }
 };
 
 class Kruskal {

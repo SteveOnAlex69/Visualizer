@@ -10,8 +10,7 @@ void AnimationUnit::force_latest() {
 	else animation_time = (history.size() - 1) * ANIMATION_TIME;
 }
 
-void AnimationUnit::add_state(VisualizerState state, bool force_update) {
-	if (force_update) force_latest();
+void AnimationUnit::add_state(VisualizerState state) {
 	history.push_back(state);
 }
 void AnimationUnit::update_timer(float delta) {
@@ -145,16 +144,22 @@ Graph AnimationUnit::get_graph_stage3(Graph& graph1, Graph& graph2, float epoch)
 
 
 VisualizerState AnimationUnit::get_viz_stage1(VisualizerState& viz1, VisualizerState& viz2, float epoch) {
+	Pseudocode sudo_code = viz2.get_pseudo_code();
+	sudo_code.get_stage(1);
 	return VisualizerState(get_graph_stage1(viz1.get_graph(), viz2.get_graph(), epoch), 
-		viz1.get_pseudo_code());
+		sudo_code);
 }
 VisualizerState AnimationUnit::get_viz_stage2(VisualizerState& viz1, VisualizerState& viz2, float epoch) {
+	Pseudocode sudo_code = viz2.get_pseudo_code();
+	sudo_code.get_stage(2);
 	return VisualizerState(get_graph_stage2(viz1.get_graph(), viz2.get_graph(), epoch),
-		viz1.get_pseudo_code());
+		sudo_code);
 }
 VisualizerState AnimationUnit::get_viz_stage3(VisualizerState& viz1, VisualizerState& viz2, float epoch) {
+	Pseudocode sudo_code = viz2.get_pseudo_code();
+	sudo_code.get_stage(3);
 	return VisualizerState(get_graph_stage3(viz1.get_graph(), viz2.get_graph(), epoch),
-		viz1.get_pseudo_code());
+		sudo_code);
 }
 
 
@@ -211,21 +216,21 @@ VisualizerState AnimationUnit::get_state() {
 	if (history.size() == 0) assert(false);
 
 	int idx = animation_time / ANIMATION_TIME;
-	if (idx + 1 == history.size()) return history.back();
+	if (idx + 1 == history.size()) return get_viz_stage3(history.back(), history.back(), ANIMATION_TIME);
 
 	VisualizerState state1 = history[idx], state2 = history[idx + 1];
 	float tmp = animation_time - idx * ANIMATION_TIME;
 
 	Graph graph1 = state1.get_graph(), graph2 = state2.get_graph();
 	int mask = get_diff_state(graph1, graph2);
-	if (pop_cnt(mask) == 0) return state2;
+	if (pop_cnt(mask) == 0) return get_viz_stage3(state2, state2, ANIMATION_TIME);
 
-	float PAUSE = ANIMATION_TIME * 0.1;
+	float PAUSE = ANIMATION_TIME * 0.0;
 	float ACTUAL_TIME = ANIMATION_TIME - PAUSE * (pop_cnt(mask) - 1);
 	const float STEP = ACTUAL_TIME / pop_cnt(mask);
 	for (int i = 0; i < 3; ++i) if (GETBIT(mask, i)) {
 		if (tmp <= STEP + PAUSE) {
-			float t = std::min(1.0f, tmp / STEP);
+			float t = std::min(ANIMATION_TIME, tmp / STEP);
 			if (i == 0) return get_viz_stage1(state1, state2, t);
 			if (i == 1) return get_viz_stage2(state1, state2, t);
 			if (i == 2) return get_viz_stage3(state1, state2, t);
@@ -240,7 +245,6 @@ bool AnimationUnit::done_animating() {
 	if (is_empty()) return true;
 	return (animation_time >= (history.size() - 1) * ANIMATION_TIME);
 }
-
 
 void AnimationUnit::jump_to_back() {
 	animation_time = 0;

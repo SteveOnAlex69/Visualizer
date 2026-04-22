@@ -5,4 +5,5 @@ func search(rt, x):
     return rt
   if x < rt.val:
     return search(rt.L, x)
-  return search(rt.R, x)
+  if x >= rt.val:
+    return search(rt.R, x)
