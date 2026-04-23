@@ -253,6 +253,8 @@ void GeneralData::init(std::string s) {
 	{
 		li.clear();
 		std::vector<std::string> v = split(" " + s);
+		for (auto& i : v) if (i.size() > 4) 
+			i.resize(4);
 		std::reverse(v.begin(), v.end());
 		for (std::string i : v) if (i.size() && i != "\n") 
 			li.insert(i);
@@ -262,6 +264,8 @@ void GeneralData::init(std::string s) {
 	{
 		mp_chain.clear();
 		std::vector<std::string> v = split(" " + s);
+		for (auto& i : v) if (i.size() > 4)
+			i.resize(4);
 		std::reverse(v.begin(), v.end());
 		for (std::string i : v) if (i.size() && i != "\n")
 			mp_chain.insert(i);
@@ -271,6 +275,8 @@ void GeneralData::init(std::string s) {
 	{
 		avl_tree.clear();
 		std::vector<std::string> v = split(" " + s);
+		for (auto& i : v) if (i.size() > 4)
+			i.resize(4);
 		std::reverse(v.begin(), v.end());
 		for (std::string i : v) if (i.size() && i != "\n") {
 			avl_tree.insert(std::stoi(i));
@@ -282,15 +288,21 @@ void GeneralData::init(std::string s) {
 	{
 		tri.clear();
 		std::vector<std::string> v = split(" " + s);
+		for (auto& i : v) if (i.size() > 4)
+			i.resize(4);
 		std::reverse(v.begin(), v.end());
+
 		for (std::string i : v) if (i.size() && i != "\n")
-			tri.insert(i);
+			tri.proper_insert(i);
 		break;
 	}
 	case KRUSKAL:
 	{
 		kruskal.clear();
 		std::vector<std::vector<std::string>> v = split_to_row(" " + s);
+		for (auto& i : v)
+			for (auto& j : i) if (j.size() > 4)
+				j.resize(4);
 
 		for (auto i : v) if (i.size() >= 3)
 			kruskal.add_edge(std::stoi(i[0]), std::stoi(i[1]), std::stoi(i[2]));
@@ -300,6 +312,9 @@ void GeneralData::init(std::string s) {
 	{
 		dijkstra.clear();
 		std::vector<std::vector<std::string>> v = split_to_row(" " + s);
+		for (auto& i : v)
+			for (auto& j : i) if (j.size() > 4)
+				j.resize(4);
 
 		for (auto i : v) if (i.size() >= 3)
 			dijkstra.add_edge(std::stoi(i[0]), std::stoi(i[1]), std::stoi(i[2]));

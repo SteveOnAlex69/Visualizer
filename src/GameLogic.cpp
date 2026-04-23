@@ -33,6 +33,8 @@
 #include <Decoration/Background.hpp>
 #include <Input/InputHandler.hpp>
 #include <StateMachine/AppSetting.hpp>
+#include <FileReader/FileHandler.hpp>
+
 
 #define ll long long
 #define GETBIT(mask, i) (((mask) >> (i)) & 1)
@@ -196,16 +198,18 @@ void handle_ds_switcher() {
 
 
 UserCommand command_activated(std::string command) {
-	if (command == "COMMAND_1") return INIT;
-	if (input_state.get_keyboard_key(KEY_I) == CLICK || command == "COMMAND_2") return INSERT;
-	if (input_state.get_keyboard_key(KEY_E) == CLICK || command == "COMMAND_3") return ERASE;
-	if (input_state.get_keyboard_key(KEY_S) == CLICK || command == "COMMAND_4") return SEARCH;
-	if (input_state.get_keyboard_key(KEY_P) == CLICK || command == "COMMAND_5") return CLEAR;
+	if (input_state.get_keyboard_key(KEY_L) == CLICK || command == "COMMAND_" + std::string(1, '0' + (int)LOAD)) return LOAD;
+	if (command == "COMMAND_" + std::string(1, '0' + (int)INIT)) return INIT;
+	if (input_state.get_keyboard_key(KEY_I) == CLICK || command == "COMMAND_" + std::string(1, '0' + (int)INSERT)) return INSERT;
+	if (input_state.get_keyboard_key(KEY_E) == CLICK || command == "COMMAND_" + std::string(1, '0' + (int)ERASE)) return ERASE;
+	if (input_state.get_keyboard_key(KEY_S) == CLICK || command == "COMMAND_" + std::string(1, '0' + (int)SEARCH)) return SEARCH;
+	if (input_state.get_keyboard_key(KEY_P) == CLICK || command == "COMMAND_" + std::string(1, '0' + (int)CLEAR)) return CLEAR;
 	if (ds.get_current_type() == LINKED_LIST &&
-		(input_state.get_keyboard_key(KEY_U) == CLICK || command == "COMMAND_6")) return UPDATE;
+		(input_state.get_keyboard_key(KEY_U) == CLICK || command == "COMMAND_" + std::string(1, '0' + (int)UPDATE))) return UPDATE;
 	return NONE;
 }
 
+void text_box_receive(std::string s);
 void execute_command(UserCommand command) {
 	std::cout << "Command activated: " << command << std::endl;
 	despawn_text_box(visualizer);
@@ -219,6 +223,20 @@ void execute_command(UserCommand command) {
 	visualizer.find_button("COMMAND_" + std::string(1, '0' + command))->set_focused(1);
 	if (command == CLEAR) {
 		anim.clear_current_ds();
+		return;
+	}
+	if (command == LOAD) {
+		std::string loaded = loadTextFile();
+		if (loaded.size()) {
+			text_box_mode = (UserCommand)INIT;
+			std::string input = "";
+			for (char i : loaded) {
+				if (i == ' ' || i == '\n' || ('0' <= i && i <= '9')) 
+					input.push_back(i);
+				else input.push_back('\n');
+			}
+			text_box_receive(input);
+		}
 		return;
 	}
 	if (ds.is_drawing_ds()) {
@@ -444,8 +462,8 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 	}
 
 	visualizer.find_button("DS_NAME")->set_string(get_ds_name( ds.get_current_type() ));
-	visualizer.find_button("COMMAND_4")->set_string((ds.is_drawing_ds())?"SEARCH":"RUN");
-	visualizer.find_button("COMMAND_6")->set_visibility(ds.get_current_type() == LINKED_LIST);
+	visualizer.find_button("COMMAND_" + std::string(1, '0' + (int) SEARCH))->set_string((ds.is_drawing_ds()) ? "SEARCH" : "RUN");
+	visualizer.find_button("COMMAND_" + std::string(1, '0' + (int) UPDATE))->set_visibility(ds.get_current_type() == LINKED_LIST);
 
 	visualizer.find_button("CONTROLFLOW3")->set_string(
 		(anim.get_flow()) ? "||" : "[>]"
@@ -480,6 +498,10 @@ void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	input_state.update_keyboard(delta);
 
 	anim.update_timer(delta);
+
+	if (input_state.get_keyboard_key(KEY_L) == CLICK) {
+		loadTextFile();
+	}
 
 	switch (menu_manager.get_current_state()) {
 	case MENU:

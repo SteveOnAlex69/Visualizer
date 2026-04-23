@@ -134,6 +134,25 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 		tex.setOrigin(sf::Vector2f(textRect.size.x * 0.5f * x, textRect.size.y * 0.5f * y)
 			+ textRect.position);
 		appwindow->draw(tex);
+
+		if (button->get_button_type() == TEXTBOX && button->get_focused()) {
+			sf::Text tuff(font);
+			tuff.setString("|");
+			tuff.setCharacterSize(font_size);
+			tuff.setFillColor(button->get_font_color());
+			int str_sz = tex.getString().getSize();
+			sf::Vector2f caretPos = tex.findCharacterPos(str_sz);
+			if (str_sz == 0) {
+				caretPos = tex.getPosition();
+				sf::FloatRect flightreact = tuff.getLocalBounds();
+				tuff.setOrigin(sf::Vector2f(flightreact.size.x * 0.5f * x, flightreact.size.y * 0.5f * y)
+					+ flightreact.position);
+			}
+			tuff.setPosition(caretPos);
+			
+			appwindow->draw(tuff);
+		}
+
 	}
 	
 }

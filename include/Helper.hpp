@@ -39,7 +39,7 @@ const float ANIMATION_TIME = 1.5f;
 
 
 enum UserCommand {
-	NONE = 0, INIT = 1, INSERT = 2, ERASE = 3, SEARCH = 4, CLEAR = 5, UPDATE = 6
+	NONE = 0, LOAD = 1, INIT = 2, INSERT = 3, ERASE = 4, SEARCH = 5, CLEAR = 6, UPDATE = 7
 };
 
 #define ll long long

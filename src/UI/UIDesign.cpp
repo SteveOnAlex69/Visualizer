@@ -196,18 +196,20 @@ void setup_visualizer(UIUnit& visualizer) {
 	add_text(visualizer, sf::Vector2f(0, -500), 100, 
 		CENTER_CENTER, CENTER_CENTER, "VISUALIZER", "VISUALIZER");
 
+	add_button(visualizer, sf::Vector2f(30, 460), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+		"COMMAND_1", "LOAD");
 	add_button(visualizer, sf::Vector2f(30, 540), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
-		"COMMAND_1", "INIT");
+		"COMMAND_2", "INIT");
 	add_button(visualizer, sf::Vector2f(30, 620), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT, 
-		"COMMAND_2", "INSERT");
+		"COMMAND_3", "INSERT");
 	add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
-		"COMMAND_3", "ERASE");
+		"COMMAND_4", "ERASE");
 	add_button(visualizer, sf::Vector2f(30, 780), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
-		"COMMAND_4", "SEARCH");
+		"COMMAND_5", "SEARCH");
 	add_button(visualizer, sf::Vector2f(30, 860), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
-		"COMMAND_5", "CLEAR");
+		"COMMAND_6", "CLEAR");
 	add_button(visualizer, sf::Vector2f(30, 940), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
-		"COMMAND_6", "UPDATE");
+		"COMMAND_7", "UPDATE");
 
 
 

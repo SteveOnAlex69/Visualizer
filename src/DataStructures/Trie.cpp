@@ -38,6 +38,11 @@ int Trie::insert(std::string s) {
     return 1;
 }
 
+void Trie::proper_insert(std::string s) {
+    while (insert(s) == 2);
+    
+}
+
 int Trie::erase(std::string s) { // obviously s has to already be in the trie
     TrieNode* cur = root, *pre = root;
     for (char c : s) {
