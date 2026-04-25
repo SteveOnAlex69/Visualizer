@@ -16,9 +16,11 @@ Node loadingBST(AVLNode* root, Graph& graph, sf::Vector2f ROOT, sf::Vector2f OFF
 	int cnt = count_occurence(highlighted, (void*)root);
 	if (cnt == 1) color = 2;
 	else if (cnt >= 2) color = 3;
-	Node cur = graph.add_node(Node(std::to_string(root->val), ROOT, (unsigned long long) root,
+	Node cur(std::to_string(root->val), ROOT, (unsigned long long) root,
 		CIRCLE, color
-	));
+	);
+	cur.set_weight(std::to_string(root -> depth));
+	graph.add_node(cur);
 	if (root->childL) {
 		int sz = 1;
 		if (root->childL->childR) sz += root->childL->childR->get_tree_size();
@@ -173,13 +175,13 @@ namespace GraphExtractor {
 				(vertices[i] * 69 + 9) % 36 - 18);
 
 			int u = mst.find_set(i);
-			sf::Color c = FIRST_COLOR;
-			if (mst.get_size(i) > 1) c = FIFTH_COLOR;
+			int sp = 0;
+			if (mst.get_size(i) > 1) sp = 3;
 
 			Node cur = Node(std::to_string(vertices[i]), CIRCLE_CENTER + DIH + jitter,
 				(unsigned long long)vertices[i],
 				CIRCLE, false);
-			cur.set_color(c);
+			cur.set_special(sp);
 
 			ans.add_node(cur);
 		}
@@ -229,12 +231,15 @@ namespace GraphExtractor {
 
 
 	Graph get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT,
-		std::vector<int> highlight1, std::vector<std::pair<int, int>> edges1) {
+		std::vector<int> highlight1, std::vector<std::pair<int, int>> edges1, std::vector<long long> dih) {
+
 		std::sort(highlight1.begin(), highlight1.end());
 		std::sort(edges1.begin(), edges1.end());
 
 		Graph ans;
 		std::vector<int> vertices = dik->get_vertices();
+
+		while (dih.size() < vertices.size()) dih.push_back(1e18);
 
 		sf::Vector2f CIRCLE_CENTER = screen_center;
 		sf::Vector2f ARM = sf::Vector2f(300.0f, 0);
@@ -253,9 +258,13 @@ namespace GraphExtractor {
 
 			sf::Vector2f jitter = sf::Vector2f((vertices[i] * 67 + 18) % 36 - 18,
 				(vertices[i] * 69 + 9) % 36 - 18);
-			ans.add_node(Node(std::to_string(vertices[i]), CIRCLE_CENTER + DIH + jitter,
+
+			Node cur(std::to_string(vertices[i]), CIRCLE_CENTER + DIH + jitter,
 				(unsigned long long)vertices[i],
-				CIRCLE, node_color));
+				CIRCLE, node_color);
+			if (dih[i] == 1e18) cur.set_weight("oo");
+			else cur.set_weight(std::to_string(dih[i]));
+			ans.add_node(cur);
 		}
 
 		std::vector<DijkstraEdge> e = dik->get_edges();
@@ -299,8 +308,9 @@ namespace GraphExtractor {
 		case DIJKSTRA:
 			std::vector<int> empty_list;
 			std::vector<std::pair<int, int>> empty_edges;
+			std::vector<long long> empty_dih;
 			return get_dijkstra_graph(
-				(Dijkstra*)current_ds, GRAPH_ROOT, empty_list, empty_edges
+				(Dijkstra*)current_ds, GRAPH_ROOT, empty_list, empty_edges, empty_dih
 			);
 			break;
 		}

@@ -28,6 +28,7 @@ private:
 	void draw1(sf::Vector2f mouse_position, float delta = 0);
 	void draw2(sf::Vector2f mouse_position, float delta = 0);
 	void draw3(sf::Vector2f mouse_position, float delta = 0);
+	void draw4(sf::Vector2f mouse_position, float delta = 0);
 
 
 };

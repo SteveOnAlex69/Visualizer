@@ -17,6 +17,7 @@ const sf::Color SECOND_COLOR = sf::Color(220, 180, 220); // PINK
 const sf::Color THIRD_COLOR = sf::Color(170, 230, 230); // CYAN
 const sf::Color FOURTH_COLOR = sf::Color(200, 100, 100); // RED
 const sf::Color FIFTH_COLOR = sf::Color(120, 230, 120); // GREEN
+const sf::Color SIXTH_COLOR = sf::Color(230, 230, 120); // YELLOW
 const std::string FONT_PATH = std::string(PROJECT_DIR) + "assets/Font/Consola.ttf";
 const std::string ART_PATH = std::string(PROJECT_DIR) + "assets/Art/";
 const std::string BACKGROUND_PATH = ART_PATH + "/background.png";

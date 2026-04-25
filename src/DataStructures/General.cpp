@@ -277,7 +277,6 @@ void GeneralData::init(std::string s) {
 		std::vector<std::string> v = split(" " + s);
 		for (auto& i : v) if (i.size() > 4)
 			i.resize(4);
-		std::reverse(v.begin(), v.end());
 		for (std::string i : v) if (i.size() && i != "\n") {
 			avl_tree.insert(std::stoi(i));
 			avl_tree.balance_the_tree();
@@ -290,7 +289,6 @@ void GeneralData::init(std::string s) {
 		std::vector<std::string> v = split(" " + s);
 		for (auto& i : v) if (i.size() > 4)
 			i.resize(4);
-		std::reverse(v.begin(), v.end());
 
 		for (std::string i : v) if (i.size() && i != "\n")
 			tri.proper_insert(i);

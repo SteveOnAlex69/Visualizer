@@ -25,7 +25,7 @@ namespace GraphExtractor {
 
 	Graph get_kruskal_graph(Kruskal* kurst, sf::Vector2f ROOT, int it = -1);
 	Graph get_dijkstra_graph(Dijkstra* dik, sf::Vector2f ROOT,
-		std::vector<int> highlight1, std::vector<std::pair<int, int>> edges1);
+		std::vector<int> highlight1, std::vector<std::pair<int, int>> edges1, std::vector<long long> dih);
 
 	Graph get_graph(GeneralData& ds, void* highlighted = nullptr, int cnt = 1);
 }

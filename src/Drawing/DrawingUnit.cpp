@@ -15,11 +15,17 @@ DrawingUnit::DrawingUnit(sf::RenderWindow *window, sf::Font f) {
 	font = f;
 }
 
-void DrawingUnit::draw_node(Node i) {
+void DrawingUnit::draw_node(Node i, bool flag) {
 	float opacity = i.get_opacity();
 	sf::Color border_color = i.get_color();
+	sf::Color background_color = i.get_background_color();
+	sf::Color font_color = i.get_font_color();
+	sf::Color weight_color = SIXTH_COLOR;
 
 	border_color.a = opacity * 255;
+	background_color.a = opacity * 255;
+	font_color.a = opacity * 255;
+	weight_color.a = opacity * 255;
 	if (i.get_shape() == NO) {
 	}
 	else if (i.get_shape() == CIRCLE) {
@@ -28,7 +34,7 @@ void DrawingUnit::draw_node(Node i) {
 		cyka.setOrigin(sf::Vector2f(cyka.getLocalBounds().size) * 0.5f);
 		cyka.setOutlineThickness(6);
 		cyka.setOutlineColor(border_color);
-		cyka.setFillColor(BACKGROUND);
+		cyka.setFillColor(background_color);
 		appwindow -> draw(cyka);
 	}
 	else if (i.get_shape() == SQUARE || i.get_shape() == DIAMOND) {
@@ -40,7 +46,7 @@ void DrawingUnit::draw_node(Node i) {
 		rect.setOrigin(sf::Vector2f(rect.getLocalBounds().size) * 0.5f);
 		rect.setOutlineThickness(6);
 		rect.setOutlineColor(border_color);
-		rect.setFillColor(BACKGROUND);
+		rect.setFillColor(background_color);
 		appwindow -> draw(rect);
 	}
 	else if (i.get_shape() == TRIANGLE) {
@@ -50,18 +56,29 @@ void DrawingUnit::draw_node(Node i) {
 			+ sf::Vector2f(0, cyka.getLocalBounds().size.y * 0.1f));
 		cyka.setOutlineThickness(6);
 		cyka.setOutlineColor(border_color);
-		cyka.setFillColor(BACKGROUND);
+		cyka.setFillColor(background_color);
 		appwindow -> draw(cyka);
 	}
 
 	sf::Text inner(font);
 	inner.setString(i.get_val());
-	inner.setCharacterSize(40); // 36
-	inner.setFillColor(border_color);
+	inner.setCharacterSize(36); // 36
+	inner.setFillColor(font_color);
 	inner.setPosition(i.get_pos());
-	sf::FloatRect textRect = inner.getLocalBounds();
-	inner.setOrigin(textRect.size * 0.5f + textRect.position);
+	sf::FloatRect innertextRect = inner.getLocalBounds();
+	inner.setOrigin(innertextRect.size * 0.5f + innertextRect.position);
 	appwindow -> draw(inner);
+
+	if (flag) {
+		sf::Text outer(font);
+		outer.setString(i.get_weight());
+		outer.setCharacterSize(24); // 36
+		outer.setFillColor(weight_color);
+		outer.setPosition(i.get_pos() + sf::Vector2f(0, 80));
+		sf::FloatRect outertextRect = outer.getLocalBounds();
+		outer.setOrigin(outertextRect.size * 0.5f + outertextRect.position);
+		appwindow->draw(outer);
+	}
 }
 
 void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity, sf::Color color) {
@@ -105,12 +122,12 @@ void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity, sf::
 	}
 }
 
-void DrawingUnit::draw_viz_state(VisualizerState& viz_lu) {
-	draw_graph(viz_lu.get_graph());
+void DrawingUnit::draw_viz_state(VisualizerState& viz_lu, bool flag) {
+	draw_graph(viz_lu.get_graph(), flag);
 	draw_pseudo_code(viz_lu.get_pseudo_code());
 }
 
-void DrawingUnit::draw_graph(Graph& graph) {
+void DrawingUnit::draw_graph(Graph& graph, bool flag) {
 	std::vector<Node> li = graph.get_node_list();
 	std::vector<Edge> relation = graph.get_edges_idx();
 
@@ -118,7 +135,7 @@ void DrawingUnit::draw_graph(Graph& graph) {
 		draw_edge(graph.find_node(i.first), graph.find_node(i.second), i.val, i.opacity, i.color);
 	}
 	for (auto i : li) {
-		draw_node(i);
+		draw_node(i, flag);
 	}
 }
 

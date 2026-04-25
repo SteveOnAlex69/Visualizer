@@ -16,6 +16,7 @@ struct GraphState { // what changes since the last states
 	int type;
 	std::vector<int> vertices;
 	std::vector<std::pair<int, int>> edges;
+	std::vector<long long> dih;
 };
 
 class Dijkstra {

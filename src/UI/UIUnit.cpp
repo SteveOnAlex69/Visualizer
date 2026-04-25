@@ -42,10 +42,12 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 	sf::Vector2f pos = button->get_button_pos();
 	sf::Vector2f size = button->get_button_size();
 	sf::Color btn_color = button->get_font_color();
+	sf::Color font_color = button->get_font_color();
+	sf::Color background_color = button->get_bg_color();
 
 	float font_size = button->get_font_size();
 	if (button->get_button_type() == BUTTON) {
-		float hover_time = button->send_update_state(current_time, button -> check_hovering(mouse_pos));
+		float hover_time = button->send_update_state(current_time, button->check_hovering(mouse_pos));
 		if (button->check_hovering(mouse_pos)) {
 			size += size * 0.05f * sigmoid(hover_time * 10);
 			font_size += font_size * 0.1f * sigmoid(hover_time * 10);
@@ -59,13 +61,19 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 
 	if (button->check_hovering(mouse_pos)) {
 		btn_color = button->get_font_accent_color();
-
+		font_color = btn_color;
 	}
 	if (button->get_focused()) {
-		btn_color = button->get_font_accent_color();
+		if (button->get_button_type() == BUTTON) {
+			btn_color = button->get_font_accent_color();
+			font_color = background_color;
+			background_color = btn_color;
+		}
+		else {
+			btn_color = button->get_font_accent_color();
+			font_color = btn_color;
+		}
 	}
-
-
 	int rel_pos = (int)button->get_relative_pos();
 	pos += sf::Vector2f(screen_center.x * (rel_pos % 3), screen_center.y * (rel_pos / 3));
 
@@ -95,17 +103,15 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 			rect.setPosition(pos);
 			rect.setSize(size);
 
-			rect.setFillColor(button->get_bg_color());
+			rect.setFillColor(background_color);
 
 			rect.setOutlineThickness(button->get_border_width());
 			rect.setOutlineColor(btn_color);
 			appwindow->draw(rect);
 		}
-
 		Alignment justify_content = button->get_justify_content();
 		int x = (int)justify_content % 3, y = (int)justify_content / 3;
 		sf::Text tex(font);
-
 		std::vector<std::string> brah = split(" " + button->get_string());
 		int cnt = 0;
 		std::string ans = "";
@@ -129,7 +135,7 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 		tex.setPosition(pos + size * 0.5f +
 			sf::Vector2f( (size.x * 0.5f - 10) * (x-1), (size.y * 0.5f - 10) * (y-1)));
 		tex.setCharacterSize(font_size);
-		tex.setFillColor(btn_color);
+		tex.setFillColor(font_color);
 		sf::FloatRect textRect = tex.getLocalBounds();
 		tex.setOrigin(sf::Vector2f(textRect.size.x * 0.5f * x, textRect.size.y * 0.5f * y)
 			+ textRect.position);

@@ -56,6 +56,11 @@ void InputHandler::update_keyboard(float delta) {
 		transform(key_press[(int)RSHIFT], sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift));
 	key_press[(int)SPACE] =
 		transform(key_press[(int)SPACE], sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space));
+
+	key_press[(int)LCTRL] =
+		transform(key_press[(int)LCTRL], sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl));
+	key_press[(int)RCTRL] =
+		transform(key_press[(int)RCTRL], sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RControl));
 }
 
 InputState InputHandler::get_keyboard_key(InputKey key) {

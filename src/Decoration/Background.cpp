@@ -26,7 +26,13 @@ void BackgroundDrawer::draw(sf::Vector2f mouse_pos, int type, float delta) {
 	else if (type == 1) draw1(mouse_pos, delta);
 	else if (type == 2) draw2(mouse_pos, delta);
 	else if (type == 3) draw3(mouse_pos, delta);
-	else debug_error("dude we don't have enough background");
+	else draw4(mouse_pos, delta);
+}
+
+
+void BackgroundDrawer::draw4(sf::Vector2f mouse_pos, float delta) {
+	mouse_pos -= screen_center;
+
 }
 
 void BackgroundDrawer::draw3(sf::Vector2f mouse_pos, float delta) {

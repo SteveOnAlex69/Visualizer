@@ -64,16 +64,13 @@ void AnimationController::load_dijkstra(std::string x, std::string y) {
 		std::vector<GraphState> spread_adventure =
 			dih->run_dijkstra(u, v);
 
-
-
-
 		std::vector<int> lmao;
 		std::vector<std::pair<int, int>> edges1;
 
-
+		std::vector<long long> charlie_kirk_dikdik(vertices.size(), 1e18);
 		Pseudocode sudo = Pseudocode((int)ds->get_current_type() + 1, current_command);
 		Graph cur = GraphExtractor::get_dijkstra_graph(
-			dih, GRAPH_ROOT, lmao, edges1
+			dih, GRAPH_ROOT, lmao, edges1, charlie_kirk_dikdik
 		);
 		anim->add_state(VisualizerState(cur, sudo));
 
@@ -85,7 +82,7 @@ void AnimationController::load_dijkstra(std::string x, std::string y) {
 			if (i.type != 1) val = 3;
 			Pseudocode sudo1 = Pseudocode((int)ds->get_current_type() + 1, current_command, val);
 			Graph cur = GraphExtractor::get_dijkstra_graph(
-				dih, GRAPH_ROOT, lmao, edges1
+				dih, GRAPH_ROOT, lmao, edges1, i.dih
 			);
 			anim->add_state(VisualizerState(cur, sudo1));
 
@@ -97,7 +94,7 @@ void AnimationController::load_dijkstra(std::string x, std::string y) {
 
 				Pseudocode sudo1 = Pseudocode((int)ds->get_current_type() + 1, current_command, 1);
 				Graph cur = GraphExtractor::get_dijkstra_graph(
-					dih, GRAPH_ROOT, lmao, edges1
+					dih, GRAPH_ROOT, lmao, edges1, i.dih
 				);
 				anim->add_state(VisualizerState(cur, sudo1));
 
@@ -112,6 +109,8 @@ void AnimationController::load_dijkstra(std::string x, std::string y) {
 		Pseudocode sudo4 = Pseudocode((int)ds->get_current_type() + 1, current_command, 2);
 		std::vector<int> matter = dih->get_shortest_path(u, v);
 
+		charlie_kirk_dikdik = spread_adventure.back().dih;
+
 		for (int i = 0; i < (int)matter.size(); ++i) {
 			lmao.push_back(matter[i]);
 			lmao.push_back(matter[i]);
@@ -120,7 +119,7 @@ void AnimationController::load_dijkstra(std::string x, std::string y) {
 				edges1.push_back(std::make_pair(matter[i - 1], matter[i]));
 			}
 			Graph cur = GraphExtractor::get_dijkstra_graph(
-				dih, GRAPH_ROOT, lmao, edges1
+				dih, GRAPH_ROOT, lmao, edges1, charlie_kirk_dikdik
 			);
 			anim->add_state(VisualizerState(cur, sudo4));
 		}
@@ -144,7 +143,6 @@ void AnimationController::handle_insertion(std::string s) {
 		std::vector<void*> searched_nodes = ((AVL*)current_ds)->search_before_insert(std::stoi(s));
 		std::vector<bool> sec = ((AVL*)current_ds)->search_before_insert_direction(std::stoi(s));
 		int idx = 0;
-		std::cout << sec.size() << std::endl;
 		for (auto i : searched_nodes) {
 			Pseudocode sudosudo = Pseudocode((int)ds->get_current_type() + 1, current_command, 1 + sec[idx++]);
 			anim->add_state(VisualizerState(GraphExtractor::get_graph(*ds, i), sudosudo));
@@ -159,15 +157,18 @@ void AnimationController::handle_insertion(std::string s) {
 		searched_nodes = ((AVL*)current_ds)->search_before_insert(std::stoi(s));
 		std::reverse(searched_nodes.begin(), searched_nodes.end());
 		for (auto i : searched_nodes) {
+			((AVL*)current_ds)->check_correct_depth();
 			Pseudocode sudosudo = Pseudocode((int)ds->get_current_type() + 1, current_command, 5);
 			anim->add_state(VisualizerState(GraphExtractor::get_graph(*ds, i), sudosudo));
 
 			if (((AVLNode*)i)->check_unbalanced()) {
 				((AVL*)current_ds)->balance_deepest_node();
-
+				((AVL*)current_ds)->check_correct_depth();
 				update_graph(6);
 			}
 		}
+
+		update_graph();
 		break;
 	}
 	case TRIE:
@@ -297,12 +298,11 @@ void AnimationController::handle_deletion(std::string s) {
 		}
 
 		if (ds->erase(s)) {
+			((AVL*)ds->get_current_structure())->check_correct_depth();
 			update_graph(mode);
 			if (mode == 7) {
 				searched = ((AVL*)ds->get_current_structure())->search_before_insert(pima);
 			}
-
-			((AVL*)ds->get_current_structure())->check_correct_depth();
 
 			std::reverse(searched.begin(), searched.end());
 			for (auto i : searched) {
@@ -311,10 +311,13 @@ void AnimationController::handle_deletion(std::string s) {
 				
 
 				if (((AVLNode*)i)->check_unbalanced()) {
-					((AVL*)current_ds)->balance_deepest_node();
+					((AVL*)current_ds)->balance_deepest_node();			
+					((AVL*)current_ds)->check_correct_depth();
+
 					update_graph(6);
 				}
 			}
+			update_graph();
 		}
 		else {
 			update_graph(3);

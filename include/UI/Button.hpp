@@ -7,7 +7,8 @@
 enum ButtonType {
 	TEXT = 0, 
 	BUTTON = 1,
-	TEXTBOX = 2
+	TEXTBOX = 2,
+	RECTANGLE = 3
 };
 
 enum Alignment {

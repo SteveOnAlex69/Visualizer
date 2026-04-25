@@ -41,6 +41,7 @@ struct compare {
 	bool operator () (P a, P b) { return a.w > b.w; }
 };
 
+
 // perform flood fill
 std::vector<GraphState> Dijkstra::run_dijkstra(int u, int v) {
 	std::vector<int> vertices = get_vertices();
@@ -77,6 +78,7 @@ std::vector<GraphState> Dijkstra::run_dijkstra(int u, int v) {
 			}
 			gs.vertices.push_back(vertices[u.i]);
 			gs.edges.push_back(std::make_pair(vertices[parent[u.i]], vertices[u.i]));
+			gs.dih = dis;
 			ans.push_back(gs);
 		}
 		else continue;
@@ -94,6 +96,7 @@ std::vector<GraphState> Dijkstra::run_dijkstra(int u, int v) {
 				pq.push(P(v.i, dis[v.i]));
 			}
 		}
+		gs.dih = dis;
 		ans.push_back(gs);
 	}
 	return ans;

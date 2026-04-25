@@ -26,10 +26,10 @@ public:
 	DrawingUnit();
 	DrawingUnit(sf::RenderWindow *window, sf::Font f);
 
-	void draw_node(Node i);
+	void draw_node(Node i, bool flag = false);
 	void draw_edge(Node u, Node v, std::string val, float opacity, sf::Color color);
-	void draw_viz_state(VisualizerState& viz_lu);
-	void draw_graph(Graph& graph);
+	void draw_viz_state(VisualizerState& viz_lu, bool flag);
+	void draw_graph(Graph& graph, bool flag);
 	void draw_pseudo_code(Pseudocode& sudo_code);
 private:
 	sf::RenderWindow* appwindow;

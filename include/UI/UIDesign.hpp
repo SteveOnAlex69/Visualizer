@@ -25,6 +25,10 @@ Button* add_button_with_texture(UIUnit& menu, sf::Vector2f pos, sf::Vector2f siz
 Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
 	int text_size, Alignment align_type, Alignment rel_pos, std::string name);
 
+Button* add_rectangle(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
+	int text_size, Alignment align_type, Alignment rel_pos,
+	std::string name, std::string text);
+
 void setup_menu(UIUnit& menu);
 void setup_about(UIUnit& about);
 void setup_settings(UIUnit& settings);

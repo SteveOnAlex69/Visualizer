@@ -54,8 +54,9 @@ Button* add_button_with_texture(UIUnit& menu, sf::Vector2f pos, sf::Vector2f siz
 	return cur;
 }
 
-Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size, 
-	int text_size, Alignment align_type, Alignment rel_pos, std::string name) {
+Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
+	int text_size, Alignment align_type, Alignment rel_pos,
+	std::string name) {
 	Button* cur = new Button();
 	cur->set_button_pos(pos);
 	cur->set_button_size(size);
@@ -63,8 +64,27 @@ Button* add_text_box(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
 	cur->set_alignment(align_type);
 	cur->set_relative_pos(rel_pos);
 	cur->set_name(name);
-	cur->set_string("");
 	cur->set_button_type(TEXTBOX);
+	cur->set_bg_color(BACKGROUND);
+	cur->set_font_color(FIRST_COLOR);
+	cur->set_font_accent_color(SECOND_COLOR);
+	menu.add_element(cur);
+	return cur;
+}
+
+
+Button* add_rectangle(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
+	int text_size, Alignment align_type, Alignment rel_pos,
+	std::string name, std::string text) {
+	Button* cur = new Button();
+	cur->set_button_pos(pos);
+	cur->set_button_size(size);
+	cur->set_font_size(text_size);
+	cur->set_alignment(align_type);
+	cur->set_relative_pos(rel_pos);
+	cur->set_name(name);
+	cur->set_string(text);
+	cur->set_button_type(RECTANGLE);
 	cur->set_bg_color(BACKGROUND);
 	cur->set_font_color(FIRST_COLOR);
 	cur->set_font_accent_color(SECOND_COLOR);
@@ -110,11 +130,13 @@ void setup_about(UIUnit& about) {
 	lines.push_back("This was created on 31st of March.");
 	lines.push_back("It's just a random college project.");
 	lines.push_back("I procrastinated this like crazy. Life is tough");
-	lines.push_back("At least we managed to push this out, cool I guess.");
+	lines.push_back("At least I managed to push this out, cool I guess.");
 	lines.push_back("===========");
 	lines.push_back("HOW TO USE:");
-	lines.push_back("There are five data structures, namely AVL Tree, BST, Trie, Linked List and Hash map");
-	lines.push_back("You can insert, erase, or search for an element and see what happens.");
+	lines.push_back("There are four data structures, namely Linked List, Hashmap, AVL Tree, Trie");
+	lines.push_back("You can load from file, init, insert, erase, search, or update for an element and see what happens.");
+	lines.push_back("There are also two graph algorithms, namely Kruskal and Dijkstra");
+	lines.push_back("You can load from file, init, insert, erase, run the algorithm and see what happens.");
 	lines.push_back("That's it!");
 	lines.push_back("===========");
 	lines.push_back("DEV LOGS:");
@@ -140,18 +162,29 @@ void setup_settings(UIUnit& settings) {
 	Button* bg_text = add_text(settings, sf::Vector2f(-50, -200), 36, CENTER_CENTER, CENTER_CENTER, 
 		"BACKGROUND_TEXT", "Background:");
 	bg_text->set_justify_content(CENTER_RIGHT);
-
 	Button* animation_text = add_text(settings, sf::Vector2f(-50, -100), 36, CENTER_CENTER, CENTER_CENTER,
 		"ANIMATION_TEXT", "Animation Speed:");
 	animation_text->set_justify_content(CENTER_RIGHT);
+	Button* bg_speed_text = add_text(settings, sf::Vector2f(-50, 0), 36, CENTER_CENTER, CENTER_CENTER,
+		"BG_SPEED_TEXT", "Background Speed:");
+	bg_speed_text->set_justify_content(CENTER_RIGHT);
+	Button* info_text = add_text(settings, sf::Vector2f(-50, 100), 36, CENTER_CENTER, CENTER_CENTER,
+		"INFO_DISPLAY_TEXT", "Display Info:");
+	info_text->set_justify_content(CENTER_RIGHT);
 
 	Button* bg_button = add_button(settings, sf::Vector2f(50, -200), sf::Vector2f(200, 50), 36, CENTER_LEFT, CENTER_CENTER,
 		"BACKGROUND_BUTTON", "Starry Sky");
 	bg_button->set_border_width(0);
-
 	Button* animation_button = add_button(settings, sf::Vector2f(50, -100), sf::Vector2f(200, 50), 36, CENTER_LEFT, CENTER_CENTER,
 		"ANIMATION_BUTTON", "1x");
 	animation_button->set_border_width(0);
+	Button* bg_speed_button = add_button(settings, sf::Vector2f(50, 0), sf::Vector2f(200, 50), 36, CENTER_LEFT, CENTER_CENTER,
+		"BG_SPEED_BUTTON", "1x");
+	bg_speed_button->set_border_width(0);
+	Button* info_button = add_button(settings, sf::Vector2f(50, 100), sf::Vector2f(200, 50), 36, CENTER_LEFT, CENTER_CENTER,
+		"INFO_DISPLAY_BUTTON", "Yes");
+	info_button->set_border_width(0);
+
 
 	add_text(settings, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
 		"BOTTOM_TEXT",
@@ -210,7 +243,6 @@ void setup_visualizer(UIUnit& visualizer) {
 		"COMMAND_6", "CLEAR");
 	add_button(visualizer, sf::Vector2f(30, 940), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_7", "UPDATE");
-
 
 
 	Button* nigger1 = add_button(visualizer, sf::Vector2f(30, -30), sf::Vector2f(200, 50), 20, BOTTOM_LEFT, BOTTOM_LEFT,
@@ -273,7 +305,7 @@ void despawn_message_box(UIUnit& scene) {
 
 void spawn_form(UIUnit& scene, int text_field_count, std::string name) {
 	despawn_form(scene);
-	Button* form = add_button(scene, sf::Vector2f(0, 0), sf::Vector2f(500, 200), 0, CENTER_CENTER, CENTER_CENTER,
+	Button* form = add_rectangle(scene, sf::Vector2f(0, 0), sf::Vector2f(500, 200), 0, CENTER_CENTER, CENTER_CENTER,
 		"FORM", "");
 	form->set_focused(1);
 

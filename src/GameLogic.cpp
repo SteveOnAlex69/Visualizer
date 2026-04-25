@@ -124,11 +124,19 @@ void handle_settings(sf::RenderWindow& appwindow, UIUnit& settings, MenuManager&
 				else if (cur -> get_name() == "ANIMATION_BUTTON") {
 					appsex.next_speed();
 				}
+				else if (cur->get_name() == "BG_SPEED_BUTTON") {
+					appsex.next_bg_speed();
+				}
+				else if (cur->get_name() == "INFO_DISPLAY_BUTTON") {
+					appsex.next_info_display();
+				}
 			}
 		}
 	}
 	settings.find_button("BACKGROUND_BUTTON")->set_string(BACKGROUND_NAMES[appsex.get_background()]);
 	settings.find_button("ANIMATION_BUTTON")->set_string(SPEED_MODIFIER_NAMES[appsex.get_speed()]);
+	settings.find_button("BG_SPEED_BUTTON")->set_string(BACKGROUND_SPEED_NAMES[appsex.get_bg_speed()]);
+	settings.find_button("INFO_DISPLAY_BUTTON")->set_string(INFO_DISPLAY_NAMES[appsex.get_info_display()]);
 
 	settings.draw(input_state.get_mouse_pos());
 }
@@ -332,6 +340,8 @@ void text_box_receive(std::string s) {
 
 bool received_text_input() {
 	if (text_box_mode == NONE) debug_error("received text input while there are no textbox");
+	if (input_state.get_keyboard_key(KEY_V) == CLICK && input_state.get_keyboard_key(LCTRL) != RELEASE)
+		return true;
 	if (input_state.get_keyboard_key(BACKSPACE) == CLICK) return true;
 	for (int j = 0; j < 10; ++j) {
 		if (input_state.get_keyboard_key((InputKey)((int)ZERO + j)) == CLICK)
@@ -346,8 +356,29 @@ bool received_text_input() {
 }
 
 std::string handle_text_input(std::string cur) {
+	if (input_state.get_keyboard_key(KEY_V) == CLICK && input_state.get_keyboard_key(LCTRL) != RELEASE) {
+		sf::String pastedText = sf::Clipboard::getString();
+		std::string parge = (std::string)pastedText;
+		if (parge.size()) {
+			if (text_box_mode != INIT) cur.clear();
+			std::vector<std::string> s = split(" " + parge);
+			for (auto i : s) if (i.size()) {
+				if (i.size() > 4) i.resize(4);
+				if (cur.size() && cur.back() != ' ') cur.push_back(' ');
+				cur += i;
+
+				if (text_box_mode != INIT) break;
+			}
+		}
+	}
 	if (input_state.get_keyboard_key(BACKSPACE) == CLICK) {
-		if (cur.size()) cur.pop_back();
+		if (input_state.get_keyboard_key(LCTRL) == RELEASE) {
+			if (cur.size()) cur.pop_back();
+		}
+		else {
+			if (cur.size()) cur.pop_back();
+			while (cur.size() && cur.back() != ' ' && cur.back() != '\n') cur.pop_back();
+		}
 	}
 	else if (text_box_mode == INIT && input_state.get_keyboard_key(SPACE) == CLICK) {
 		if (cur.size() && cur.back() != ' ') cur.push_back(' ');
@@ -472,7 +503,7 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 	handle_input(visualizer);
 
 	if (anim.is_empty()) anim.update_graph();
-	drawing_unit.draw_viz_state(anim.get_state());
+	drawing_unit.draw_viz_state(anim.get_state(), appsex.get_info_display());
 	visualizer.draw(input_state.get_mouse_pos());
 }
 
@@ -492,7 +523,8 @@ void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	int cur = pollEvent(appwindow);
 	if (cur == 0) return;
 	delta *= SPEED_MODIFIER[appsex.get_speed()];
-	bg_drawer.draw(input_state.get_mouse_pos(), appsex.get_background(), delta);
+	bg_drawer.draw(input_state.get_mouse_pos(), appsex.get_background(), 
+		delta * BACKGROUND_SPEED[appsex.get_bg_speed()]);
 
 	input_state.update_mouse(delta);
 	input_state.update_keyboard(delta);

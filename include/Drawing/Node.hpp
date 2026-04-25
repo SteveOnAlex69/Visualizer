@@ -21,14 +21,22 @@ public:
 	void set_pos(sf::Vector2f pos);
 	Shape get_shape();
 	int is_special();
+	void set_special(int sp);
 
 	void set_opacity(float o);
 	float get_opacity();
 
 	void set_color(sf::Color color);
 	sf::Color get_color();
+	void set_font_color(sf::Color color);
+	sf::Color get_font_color();
+	void set_background_color(sf::Color color);
+	sf::Color get_background_color();
 
 	unsigned long long get_hash_val();
+
+	void set_weight(std::string w);
+	std::string get_weight();
 
 	#define OPEDEF(o) bool operator o (const Node& x) const;
 	OPEDEF(>);
@@ -46,7 +54,8 @@ private:
 
 	unsigned long long hash_value;
 
-	sf::Color node_color;
+	sf::Color node_color, font_color, bg_color;
+	std::string weight;
 };
 
 #endif

@@ -61,6 +61,17 @@ Graph AnimationUnit::get_graph_stage1(Graph& graph1, Graph& graph2, float epoch)
 	return graph;
 
 }
+
+sf::Color trans_color(sf::Color color_start, sf::Color color_end, float epoch) {
+	float scaling = sigmoid(epoch);
+
+	float r = color_end.r - color_start.r, g = color_end.g - color_start.g,
+		b = color_end.b - color_start.b;
+	r *= scaling; g *= scaling; b *= scaling;
+
+	return sf::Color(color_start.r + r, color_start.g + g, color_start.b + b);
+}
+
 Graph AnimationUnit::get_graph_stage2(Graph& graph1, Graph& graph2, float epoch) {
 	Graph graph;
 	std::vector<Node> li1 = graph1.get_node_list();
@@ -73,20 +84,23 @@ Graph AnimationUnit::get_graph_stage2(Graph& graph1, Graph& graph2, float epoch)
 	for (Node i : li1) {
 		sf::Vector2f pos_start = i.get_pos(), pos_end = i.get_pos();
 		sf::Color color_start = i.get_color(), color_end = i.get_color();
+		sf::Color color_font_start = i.get_font_color(), color_font_end = i.get_font_color();
+		sf::Color color_bg_start = i.get_background_color(), color_bg_end = i.get_background_color();
 		bool found = false;
 		for (Node j : li2)
 			if (i.get_hash_val() == j.get_hash_val()) {
 				pos_end = j.get_pos();
 				color_end = j.get_color();
+				color_font_end = j.get_font_color();
+				color_bg_end = j.get_background_color();
 				found = true;
 			}
 		if (found) {
 			sf::Vector2f pos = pos_start + (pos_end - pos_start) * scaling;
-			float r = color_end.r - color_start.r, g = color_end.g - color_start.g,
-				b = color_end.b - color_start.b;
-			r *= scaling; g *= scaling; b *= scaling;
 			i.set_pos(pos);
-			i.set_color(sf::Color(color_start.r + r, color_start.g + g, color_start.b + b));
+			i.set_color(trans_color(color_start, color_end, epoch));
+			i.set_font_color(trans_color(color_font_start, color_font_end, epoch));
+			i.set_background_color(trans_color(color_bg_start, color_bg_end, epoch));
 
 			graph.add_node(i);
 		}
