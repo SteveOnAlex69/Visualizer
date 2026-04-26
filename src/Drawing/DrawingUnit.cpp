@@ -22,6 +22,8 @@ void DrawingUnit::draw_node(Node i, bool flag) {
 	sf::Color font_color = i.get_font_color();
 	sf::Color weight_color = SIXTH_COLOR;
 
+	sf::Vector2f node_pos = (i.get_pos() - root) * scaling;
+
 	border_color.a = opacity * 255;
 	background_color.a = opacity * 255;
 	font_color.a = opacity * 255;
@@ -30,7 +32,8 @@ void DrawingUnit::draw_node(Node i, bool flag) {
 	}
 	else if (i.get_shape() == CIRCLE) {
 		sf::CircleShape cyka(6 * 7);
-		cyka.setPosition(i.get_pos());
+		cyka.setPosition(node_pos);
+		cyka.setScale(sf::Vector2f(scaling, scaling));
 		cyka.setOrigin(sf::Vector2f(cyka.getLocalBounds().size) * 0.5f);
 		cyka.setOutlineThickness(6);
 		cyka.setOutlineColor(border_color);
@@ -42,7 +45,9 @@ void DrawingUnit::draw_node(Node i, bool flag) {
 		if (i.get_shape() == DIAMOND) {
 			rect.setRotation(sf::Vector2f(1, 1).angle());
 		}
-		rect.setPosition(i.get_pos());
+		rect.setPosition(node_pos);		
+		rect.setScale(sf::Vector2f(scaling, scaling));
+
 		rect.setOrigin(sf::Vector2f(rect.getLocalBounds().size) * 0.5f);
 		rect.setOutlineThickness(6);
 		rect.setOutlineColor(border_color);
@@ -51,7 +56,8 @@ void DrawingUnit::draw_node(Node i, bool flag) {
 	}
 	else if (i.get_shape() == TRIANGLE) {
 		sf::CircleShape cyka(67, 3);
-		cyka.setPosition(i.get_pos());
+		cyka.setPosition(node_pos);		
+		cyka.setScale(sf::Vector2f(scaling, scaling));
 		cyka.setOrigin(cyka.getLocalBounds().size * 0.5f + cyka.getLocalBounds().position
 			+ sf::Vector2f(0, cyka.getLocalBounds().size.y * 0.1f));
 		cyka.setOutlineThickness(6);
@@ -64,7 +70,8 @@ void DrawingUnit::draw_node(Node i, bool flag) {
 	inner.setString(i.get_val());
 	inner.setCharacterSize(36); // 36
 	inner.setFillColor(font_color);
-	inner.setPosition(i.get_pos());
+	inner.setPosition(node_pos);
+	inner.setScale(sf::Vector2f(scaling, scaling));
 	sf::FloatRect innertextRect = inner.getLocalBounds();
 	inner.setOrigin(innertextRect.size * 0.5f + innertextRect.position);
 	appwindow -> draw(inner);
@@ -74,7 +81,8 @@ void DrawingUnit::draw_node(Node i, bool flag) {
 		outer.setString(i.get_weight());
 		outer.setCharacterSize(24); // 36
 		outer.setFillColor(weight_color);
-		outer.setPosition(i.get_pos() + sf::Vector2f(0, 80));
+		outer.setPosition(node_pos + sf::Vector2f(0, 80 * scaling));
+		outer.setScale(sf::Vector2f(scaling, scaling));
 		sf::FloatRect outertextRect = outer.getLocalBounds();
 		outer.setOrigin(outertextRect.size * 0.5f + outertextRect.position);
 		appwindow->draw(outer);
@@ -86,7 +94,7 @@ void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity, sf::
 	sf::Color border_color = color;
 	border_color.a = opacity * 255;
 
-	sf::Vector2f fi = u.get_pos(), se = v.get_pos();
+	sf::Vector2f fi = (u.get_pos() - root) * scaling, se = (v.get_pos() - root) * scaling;
 	sf::RectangleShape line;
 	line.setSize(Point2((fi - se).length(), EDGE_WIDTH));
 	line.setOrigin(Point2(0, EDGE_WIDTH / 2));
@@ -96,7 +104,7 @@ void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity, sf::
 	appwindow->draw(line);
 
 	// draw arrow
-	sf::Vector2f arrow_pos = se + sf::Vector2f(50, 0).rotatedBy((fi - se).angle());
+	sf::Vector2f arrow_pos = se + sf::Vector2f(50 * scaling, 0).rotatedBy((fi - se).angle());
 	sf::CircleShape arrow(18, 3);
 	arrow.setRotation((se - fi).angle() + sf::Vector2f(0, 1).angle());
 	arrow.setPosition(arrow_pos);
@@ -188,4 +196,19 @@ void DrawingUnit::draw_pseudo_code(Pseudocode& sudo_code) {
 	shit.setCharacterSize(20);
 	shit.setPosition(ROOT_POS - sf::Vector2f(20, 0));
 	appwindow->draw(shit);
+}
+
+void DrawingUnit::shift_canvas(sf::Vector2f v) {
+	root -= v / scaling;
+}
+
+void DrawingUnit::scale_canvas(sf::Vector2f mouse_pos, int delta) {
+	if (delta) {
+		sf::Vector2f diff = mouse_pos - root;
+
+		float cur_scaling = std::exp((float)delta / 10);
+		scaling *= cur_scaling;
+		diff /= cur_scaling;
+		root = mouse_pos - diff;
+	}
 }

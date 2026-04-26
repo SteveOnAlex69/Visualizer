@@ -43,12 +43,19 @@ public:
 	sf::Vector2f get_mouse_pos();
 	void update_mouse(float delta);
 	void update_keyboard(float delta);
+    void set_scroll_delta(int delta);
+    int get_scroll_delta();
 	InputState get_keyboard_key(InputKey key);
+
+    sf::Vector2f get_mouse_delta();
 private:
 	InputState mouse;
 	InputState key_press[MAX_INPUT_KEY];
 
 	sf::RenderWindow* appwindow;
+    sf::Vector2f prev_mouse_pos, cur_mouse_pos;
+
+    int scroll_delta;
 };
 
 #endif

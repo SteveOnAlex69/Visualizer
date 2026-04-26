@@ -495,7 +495,6 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 	visualizer.find_button("DS_NAME")->set_string(get_ds_name( ds.get_current_type() ));
 	visualizer.find_button("COMMAND_" + std::string(1, '0' + (int) SEARCH))->set_string((ds.is_drawing_ds()) ? "SEARCH" : "RUN");
 	visualizer.find_button("COMMAND_" + std::string(1, '0' + (int) UPDATE))->set_visibility(ds.get_current_type() == LINKED_LIST);
-
 	visualizer.find_button("CONTROLFLOW3")->set_string(
 		(anim.get_flow()) ? "||" : "[>]"
 	);
@@ -503,17 +502,27 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 	handle_input(visualizer);
 
 	if (anim.is_empty()) anim.update_graph();
+	if (input_state.get_mouse_state() == HOLD)
+		drawing_unit.shift_canvas(input_state.get_mouse_delta());
+	drawing_unit.scale_canvas(input_state.get_mouse_pos(), input_state.get_scroll_delta());
 	drawing_unit.draw_viz_state(anim.get_state(), appsex.get_info_display());
 	visualizer.draw(input_state.get_mouse_pos());
 }
 
 int pollEvent(sf::RenderWindow& appwindow) { // if window is closed, return 0
-	int return_val = 1;
+	int return_val = 1;				
+	input_state.set_scroll_delta(0);
+
 	while (const std::optional event = appwindow.pollEvent()) {
 		if (event->is <sf::Event::Closed>()) {
 			std::cerr << "Closing the window" << std::endl;
 			appwindow.close();
 			return 0;
+		}
+		if (const auto* mouseScroll = event->getIf<sf::Event::MouseWheelScrolled>()) {
+			if (mouseScroll->wheel == sf::Mouse::Wheel::Vertical) {
+				input_state.set_scroll_delta(mouseScroll->delta);
+			}
 		}
 	}
 	return return_val;

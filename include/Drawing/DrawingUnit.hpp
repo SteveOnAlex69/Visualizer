@@ -31,9 +31,15 @@ public:
 	void draw_viz_state(VisualizerState& viz_lu, bool flag);
 	void draw_graph(Graph& graph, bool flag);
 	void draw_pseudo_code(Pseudocode& sudo_code);
+
+	void shift_canvas(sf::Vector2f v);
+	void scale_canvas(sf::Vector2f mouse_pos, int delta);
 private:
 	sf::RenderWindow* appwindow;
 	sf::Font font;
+	
+	float scaling = 1;
+	sf::Vector2f root = sf::Vector2f(0, 0);
 };
 
 

@@ -26,6 +26,12 @@ sf::Vector2f InputHandler::get_mouse_pos() {
 
 void InputHandler::update_mouse(float delta) {
 	mouse = transform(mouse, sf::Mouse::isButtonPressed(sf::Mouse::Button::Left));
+	prev_mouse_pos = cur_mouse_pos;
+	cur_mouse_pos = get_mouse_pos();
+}
+
+sf::Vector2f InputHandler::get_mouse_delta() {
+	return cur_mouse_pos - prev_mouse_pos;
 }
 
 
@@ -65,4 +71,12 @@ void InputHandler::update_keyboard(float delta) {
 
 InputState InputHandler::get_keyboard_key(InputKey key) {
 	return key_press[(int)key];
+}
+
+
+void InputHandler::set_scroll_delta(int delta) {
+	scroll_delta = delta;
+}
+int InputHandler::get_scroll_delta() {
+	return scroll_delta;
 }

@@ -131,7 +131,7 @@ namespace GraphExtractor {
 	}
 
 	Graph get_BST_graph(AVL* bst, sf::Vector2f ROOT, std::vector<void*> highlighted) {
-		sf::Vector2f OFFSET(136, 150);
+		sf::Vector2f OFFSET(100, 136);
 		std::sort(highlighted.begin(), highlighted.end());
 		Graph vcl;
 		loadingBST(bst->root, vcl, ROOT, OFFSET, highlighted);
@@ -140,7 +140,7 @@ namespace GraphExtractor {
 
 
 	Graph get_trie_graph(Trie* tri, sf::Vector2f ROOT, std::vector<void*> highlighted) {
-		sf::Vector2f OFFSET(167, 200); 
+		sf::Vector2f OFFSET(167, 167); 
 		std::sort(highlighted.begin(), highlighted.end());
 
 		Graph vcl;
