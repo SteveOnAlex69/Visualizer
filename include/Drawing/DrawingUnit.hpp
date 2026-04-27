@@ -28,8 +28,8 @@ public:
 
 	void draw_node(Node i, bool flag = false);
 	void draw_edge(Node u, Node v, std::string val, float opacity, sf::Color color);
-	void draw_viz_state(VisualizerState& viz_lu, bool flag);
-	void draw_graph(Graph& graph, bool flag);
+	void draw_viz_state(VisualizerState& viz_lu, bool flag1, bool flag2);
+	void draw_graph(Graph& graph, bool flag1);
 	void draw_pseudo_code(Pseudocode& sudo_code);
 
 	void shift_canvas(sf::Vector2f v);

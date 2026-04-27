@@ -21,6 +21,9 @@ Button::Button() {
 
 	line_width = 1e9;
 	border_width = 5;
+
+	trans = FADE;
+	transition_strength = 5;
 }
 
 
@@ -41,6 +44,9 @@ Button::Button(std::string path) {
 	focused = false;
 
 	show = true;
+
+	trans = FADE;
+	transition_strength = 5;
 
 
 	line_width = 1e9;
@@ -123,3 +129,19 @@ void Button::set_line_width(int width) { line_width = width; }
 
 int Button::get_border_width() { return border_width; }
 void Button::set_border_width(int width) { border_width= width; }
+
+
+TransitionType Button::get_transition_type() {
+	return trans;
+}
+void Button::set_transition_type(TransitionType t) {
+	trans = t;
+}
+
+
+void Button::set_transition_strength(float s) {
+	transition_strength = s;
+}
+float Button::get_transition_strength() {
+	return transition_strength;
+}

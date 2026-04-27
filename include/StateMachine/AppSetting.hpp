@@ -9,6 +9,7 @@ const int BACKGROUND_CYCLE = 5;
 const int SPEED_CYCLE = 4;
 const int BACKGROUND_SPEED_CYCLE = 5;
 const int INFO_DISPLAY_CYCLE = 2;
+const int PSEUDOCODE_DISPLAY_CYCLE = 2;
 
 const std::string BACKGROUND_NAMES[] = {
 	"Starry Sky",
@@ -35,6 +36,9 @@ const std::string BACKGROUND_SPEED_NAMES[] = {
 const std::string INFO_DISPLAY_NAMES[] = {
 	"No", "Yes"
 };
+const std::string PSEUDOCODE_DISPLAY_NAMES[] = {
+	"No", "Yes"
+};
 
 class AppSetting {
 public:
@@ -47,16 +51,20 @@ public:
 	int get_bg_speed();
 	void set_info_display(int s);
 	int get_info_display();
+	void set_pseudocode_display(int s);
+	int get_pseudocode_display();
 
 	void next_background();
 	void next_speed();
 	void next_bg_speed();
 	void next_info_display();
+	void next_pseudocode_display();
 private: 
 	int background_number;
 	int speed_number;
 	int background_speed;
 	int info_display;
+	int pseudocode_display;
 };
 
 #endif

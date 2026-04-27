@@ -434,7 +434,10 @@ void AnimationController::handle_init(std::string s) {
 
 
 bool AnimationController::is_empty() { return anim->is_empty(); }
-void AnimationController::clear_graph() { anim->clear_graph(); }
+void AnimationController::clear_graph() { 
+	current_command = 0;
+	anim->clear_graph(); 
+}
 VisualizerState AnimationController::get_state() { return anim->get_state(); }
 
 

@@ -18,7 +18,7 @@
 #include <Helper.hpp>
 
 namespace GraphExtractor {
-	Graph get_linked_list_graph(LinkedList* linked_list, sf::Vector2f ROOT, std::vector<void*> highlighted);
+	Graph get_linked_list_graph(LinkedList* linked_list, sf::Vector2f ROOT, std::vector<void*> highlighted, int mod = 7);
 	Graph get_hash_map_graph(HashMapChaining* hash_map, sf::Vector2f ROOT, std::vector<void*> highlighted);
 	Graph get_BST_graph(AVL* bst, sf::Vector2f ROOT, std::vector<void*> highlighted);
 	Graph get_trie_graph(Trie* tri, sf::Vector2f ROOT, std::vector<void*> highlighted);

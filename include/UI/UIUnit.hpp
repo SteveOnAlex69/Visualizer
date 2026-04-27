@@ -29,6 +29,8 @@ public:
 	Button* get_focused_text_box();
 
 	void update_timer(float delta);
+
+	void kick_start();
 private:
 	sf::RenderWindow* appwindow;
 	sf::Font font;

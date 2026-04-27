@@ -77,23 +77,30 @@ void appStart(sf::RenderWindow& appwindow) {
 
 	anim = AnimationController(new AnimationUnit(), &ds);
 
-	add_text(visualizer, sf::Vector2f(0, 200), 36, 
-		CENTER_CENTER, TOP_CENTER, "DS_NAME", get_ds_name(ds.get_current_type()));
-
 	setup_menus();
 }
 
 bool menu_switcher(std::string s) { // true means switching away from the current menu
-	if (s == "BACK")
+	if (s == "BACK") {
+		//menu.kick_start();
 		menu_manager.set_current_state(MENU);
-	else if (s == "START" || s == "SELECT")
+	}
+	else if (s == "START" || s == "SELECT") {
+		//selection.kick_start();
 		menu_manager.set_current_state(SELECTION);
-	else if (s == "ABOUT")
+	}
+	else if (s == "ABOUT") {
+		//about.kick_start();
 		menu_manager.set_current_state(ABOUT);
-	else if (s == "SETTINGS")
+	}
+	else if (s == "SETTINGS") {
+		//settings.kick_start();
 		menu_manager.set_current_state(SETTINGS);
-	else if (s == "VISUALIZE")
+	}
+	else if (s == "VISUALIZE") {
+		//visualizer.kick_start();
 		menu_manager.set_current_state(VISUALIZING);
+	}
 	else return false;
 	return true;
 }
@@ -130,6 +137,9 @@ void handle_settings(sf::RenderWindow& appwindow, UIUnit& settings, MenuManager&
 				else if (cur->get_name() == "INFO_DISPLAY_BUTTON") {
 					appsex.next_info_display();
 				}
+				else if (cur->get_name() == "PSEUDOCODE_DISPLAY_BUTTON") {
+					appsex.next_pseudocode_display();
+				}
 			}
 		}
 	}
@@ -137,7 +147,7 @@ void handle_settings(sf::RenderWindow& appwindow, UIUnit& settings, MenuManager&
 	settings.find_button("ANIMATION_BUTTON")->set_string(SPEED_MODIFIER_NAMES[appsex.get_speed()]);
 	settings.find_button("BG_SPEED_BUTTON")->set_string(BACKGROUND_SPEED_NAMES[appsex.get_bg_speed()]);
 	settings.find_button("INFO_DISPLAY_BUTTON")->set_string(INFO_DISPLAY_NAMES[appsex.get_info_display()]);
-
+	settings.find_button("PSEUDOCODE_DISPLAY_BUTTON")->set_string(PSEUDOCODE_DISPLAY_NAMES[appsex.get_pseudocode_display()]);
 	settings.draw(input_state.get_mouse_pos());
 }
 
@@ -476,6 +486,10 @@ void handle_input(UIUnit &visualizer) {
 		execute_control(control_activated(pressed_button));
 	else if (visualizer.get_focused_text_box()) 
 		handle_textbox_input(visualizer);
+	else if (pressed_button == "TOGGLE_PSEUDOCODE") {
+		appsex.next_pseudocode_display();
+		visualizer.find_button("TOGGLE_PSEUDOCODE")->set_focused(0);
+	}
 }
 
 void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuManager& menu_manager) {
@@ -498,14 +512,14 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 	visualizer.find_button("CONTROLFLOW3")->set_string(
 		(anim.get_flow()) ? "||" : "[>]"
 	);
+	visualizer.find_button("TOGGLE_PSEUDOCODE")->set_string((appsex.get_pseudocode_display()) ? ">" : "<");
 
 	handle_input(visualizer);
-
 	if (anim.is_empty()) anim.update_graph();
 	if (input_state.get_mouse_state() == HOLD)
 		drawing_unit.shift_canvas(input_state.get_mouse_delta());
 	drawing_unit.scale_canvas(input_state.get_mouse_pos(), input_state.get_scroll_delta());
-	drawing_unit.draw_viz_state(anim.get_state(), appsex.get_info_display());
+	drawing_unit.draw_viz_state(anim.get_state(), appsex.get_info_display(), appsex.get_pseudocode_display());
 	visualizer.draw(input_state.get_mouse_pos());
 }
 

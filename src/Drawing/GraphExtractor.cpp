@@ -74,7 +74,7 @@ namespace GraphExtractor {
 
 
 	Graph get_linked_list_graph(LinkedList* linked_list, sf::Vector2f ROOT,
-		std::vector<void*> highlighted) {
+		std::vector<void*> highlighted, int mod) {
 		std::sort(highlighted.begin(), highlighted.end());
 
 
@@ -86,8 +86,8 @@ namespace GraphExtractor {
 		Node prev = vcl.add_node(Node("", ROOT, (unsigned long long)arr[0], SQUARE, 1));
 
 		for (int i = 1; i < (int)arr.size(); ++i) {
-			int y = (i - 1) / 7;
-			int x = (i - 1) % 7;
+			int y = (i - 1) / mod;
+			int x = (i - 1) % mod;
 			if (y % 2) x = 6 - x;
 			x++;
 
@@ -116,14 +116,18 @@ namespace GraphExtractor {
 
 		Graph vcl;
 		for (int i = 0; i < hash_map->get_size(); ++i) {
-			vcl.add_node(Node(std::to_string(i), ROOT + OFFSETY * (1.0f * i), 0, NO));
+			vcl.add_node(Node(std::to_string(i), ROOT, 0, NO));
 			Graph single_line = get_linked_list_graph(&(hash_map->buckets[i]),
-				ROOT + OFFSETY * (1.0f * i) + OFFSETX, highlighted);
+				ROOT + OFFSETX, highlighted);
 
 			std::vector<Node> vertices = single_line.get_node_list();
 			std::vector<Edge> edges = single_line.get_edges_idx();
 
-			for (Node j : vertices) vcl.add_node(j);
+			for (Node j : vertices) {
+				vcl.add_node(j);
+				ROOT.y = std::max(ROOT.y, j.get_pos().y);
+			}
+			ROOT += OFFSETY;
 			for (Edge e : edges)
 				vcl.add_edge(e.first, e.second, e.val);
 		}

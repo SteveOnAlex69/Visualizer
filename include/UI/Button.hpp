@@ -23,6 +23,14 @@ enum Alignment {
 	BOTTOM_RIGHT = 8
 };
 
+enum TransitionType {
+	FADE = 0,
+	UP = 1,
+	DOWN = 2,
+	LEFT = 3,
+	RIGHT = 4
+};
+
 class Button {
 public:
 	Button();
@@ -69,6 +77,13 @@ public:
 
 	void set_border_width(int width);
 	int get_border_width();
+
+	TransitionType get_transition_type();
+	void set_transition_type(TransitionType t);
+
+	void set_transition_strength(float s);
+	float get_transition_strength();
+	
 private:
 	sf::Vector2f pos, size;
 	sf::Color bg_color, font_color, accent_color;
@@ -76,6 +91,7 @@ private:
 	std::string text, button_name;
 	Alignment alignment, relative_pos, content;
 	ButtonType type;
+	TransitionType trans;
 	bool focused;
 
 	sf::Texture *tex;
@@ -86,6 +102,8 @@ private:
 	bool show;
 	int line_width;
 	int border_width;
+
+	float transition_strength;
 };
 
 #endif

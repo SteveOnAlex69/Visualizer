@@ -10,6 +10,10 @@ UIUnit::UIUnit(sf::RenderWindow* window, sf::Font f) {
 	current_time = 0;
 }
 
+void UIUnit::kick_start() {
+	current_time = 0;
+}
+
 void UIUnit::update_timer(float delta) {
 	current_time += delta;
 }
@@ -44,6 +48,34 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 	sf::Color btn_color = button->get_font_color();
 	sf::Color font_color = button->get_font_color();
 	sf::Color background_color = button->get_bg_color();
+
+	float transition_strength = button->get_transition_strength();
+	float transition_state = std::exp(-current_time * transition_strength);
+
+	float opacity = 1;
+	sf::Vector2f dumb_pos(0, 0);
+	switch (button->get_transition_type()) {
+	case FADE:
+		opacity -= transition_state;
+		break;
+	case UP:
+		dumb_pos.y += transition_state * screen_center.y * 2;
+		break;
+	case DOWN:
+		dumb_pos.y -= transition_state * screen_center.y * 2;
+		break;
+	case LEFT:
+		dumb_pos.x -= transition_state * screen_center.x * 2;
+		break;
+	case RIGHT:
+		dumb_pos.x += transition_state * screen_center.x * 2;
+		break;
+	}
+
+
+	btn_color.a *= opacity;
+	font_color.a *= opacity;
+	background_color.a *= opacity;
 
 	float font_size = button->get_font_size();
 	if (button->get_button_type() == BUTTON) {
@@ -80,6 +112,10 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 	int alignment = (int)button->get_alignment();
 	pos -= sf::Vector2f(size.x * 0.5f * (alignment % 3), size.y * 0.5f * (alignment / 3));
 
+	pos += dumb_pos;
+
+
+
 	if (button->have_texture()) {
 		sf::Sprite sp(*(button->get_texture()));
 
@@ -91,10 +127,7 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 		spRect = sp.getLocalBounds();
 		sp.setOrigin(spRect.size * 0.5f + spRect.position);
 		sp.setPosition(pos + size * 0.5f);
-
-		if (btn_color != FIRST_COLOR) {
-			sp.setColor(SECOND_COLOR);
-		}
+		sp.setColor(btn_color);
 		appwindow->draw(sp);
 	}
 	else {

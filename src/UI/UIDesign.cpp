@@ -94,35 +94,56 @@ Button* add_rectangle(UIUnit& menu, sf::Vector2f pos, sf::Vector2f size,
 
 void setup_menu(UIUnit& menu) {
 	// set up menu
-	add_text(menu, sf::Vector2f(0, -300), 100, CENTER_CENTER, CENTER_CENTER, "TITLE", "DATA VISUALIZER");
+	Button* title = 
+		add_text(menu, sf::Vector2f(0, -300), 100, CENTER_CENTER, CENTER_CENTER, "TITLE", "DATA VISUALIZER");
+	title->set_transition_type(DOWN);
+	title->set_transition_strength(10);
+
 	add_text(menu, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
 		"BOTTOM_TEXT",
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
-	add_button(menu, sf::Vector2f(0, -100), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
-		"START", "START");
-	add_button(menu, sf::Vector2f(0, 10), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
-		"SETTINGS", "SETTINGS");
-	add_button(menu, sf::Vector2f(0, 120), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
-		"ABOUT", "ABOUT");
-	add_button(menu, sf::Vector2f(0, 230), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
-		"QUIT", "QUIT");
-}
 
+	Button* start = add_button(menu, sf::Vector2f(0, -100), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+		"START", "START");
+	Button* settings = add_button(menu, sf::Vector2f(0, 10), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+		"SETTINGS", "SETTINGS");
+	Button* about = add_button(menu, sf::Vector2f(0, 120), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+		"ABOUT", "ABOUT");
+	Button* quit = add_button(menu, sf::Vector2f(0, 230), sf::Vector2f(300, 80), 36, CENTER_CENTER, CENTER_CENTER,
+		"QUIT", "QUIT");
+
+	start->set_transition_type(UP);
+	start->set_transition_strength(7);
+	settings->set_transition_type(UP);
+	settings->set_transition_strength(6);
+	about->set_transition_type(UP);
+	about->set_transition_strength(5);
+	quit->set_transition_type(UP);
+	quit->set_transition_strength(4);
+}
 
 void setup_about(UIUnit& about) {
 	// set up about
 
-	add_text(about, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
+	Button* bottom_text = add_text(about, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
 		"BOTTOM_TEXT",
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
 
-	add_button(about, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
-	add_button(about, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
+	Button* back = add_button(about, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
+	Button* settings = add_button(about, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
 		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
 
-
-	add_text(about, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, 
+	Button* about_text = add_text(about, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER,
 		"ABOUT", "ABOUT");
+
+	back->set_transition_type(LEFT);
+	settings->set_transition_type(RIGHT);
+	about_text->set_transition_type(RIGHT);
+	back->set_transition_strength(7);
+	settings->set_transition_strength(7);
+	about_text->set_transition_strength(7);
+
+
 
 	std::vector<std::string> lines;
 	lines.push_back("This project (Data structure visualizer) was made by Le Kien Thanh - 25125035");
@@ -150,16 +171,24 @@ void setup_about(UIUnit& about) {
 	for (int i = 0; i < (int)lines.size(); ++i) {
 		sf::Vector2f po(0, 200);
 		po += sf::Vector2f(0, 36) * (i * 1.0f);
-		add_text(about, po, 30, CENTER_CENTER, TOP_CENTER, "AHH", lines[i]);
+		Button* line_text = add_text(about, po, 30, CENTER_CENTER, TOP_CENTER, "AHH", lines[i]);
+		line_text->set_transition_type(UP);
+		line_text->set_transition_strength(10 * exp(-i * 0.1));
 	}
 }
 
 void setup_settings(UIUnit& settings) {
 	// set up settings
-	add_button(settings, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
-	add_text(settings, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, "SETTINGS", "SETTINGS");
+	Button* back = add_button(settings, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26, TOP_LEFT, TOP_LEFT, "BACK", "BACK");
+	Button* settings_title = add_text(settings, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, "SETTINGS", "SETTINGS");
 
-	Button* bg_text = add_text(settings, sf::Vector2f(-50, -200), 36, CENTER_CENTER, CENTER_CENTER, 
+
+	back->set_transition_type(LEFT);
+	settings_title->set_transition_type(DOWN);
+	back->set_transition_strength(7);
+	settings_title->set_transition_strength(7);
+
+	Button* bg_text = add_text(settings, sf::Vector2f(-50, -200), 36, CENTER_CENTER, CENTER_CENTER,
 		"BACKGROUND_TEXT", "Background:");
 	bg_text->set_justify_content(CENTER_RIGHT);
 	Button* animation_text = add_text(settings, sf::Vector2f(-50, -100), 36, CENTER_CENTER, CENTER_CENTER,
@@ -171,6 +200,9 @@ void setup_settings(UIUnit& settings) {
 	Button* info_text = add_text(settings, sf::Vector2f(-50, 100), 36, CENTER_CENTER, CENTER_CENTER,
 		"INFO_DISPLAY_TEXT", "Display Info:");
 	info_text->set_justify_content(CENTER_RIGHT);
+	Button* pseudocode_text = add_text(settings, sf::Vector2f(-50, 200), 36, CENTER_CENTER, CENTER_CENTER,
+		"PSEUDOCODE_DISPLAY_TEXT", "Display Pseudocode:");
+	pseudocode_text->set_justify_content(CENTER_RIGHT);
 
 	Button* bg_button = add_button(settings, sf::Vector2f(50, -200), sf::Vector2f(200, 50), 36, CENTER_LEFT, CENTER_CENTER,
 		"BACKGROUND_BUTTON", "Starry Sky");
@@ -184,88 +216,154 @@ void setup_settings(UIUnit& settings) {
 	Button* info_button = add_button(settings, sf::Vector2f(50, 100), sf::Vector2f(200, 50), 36, CENTER_LEFT, CENTER_CENTER,
 		"INFO_DISPLAY_BUTTON", "Yes");
 	info_button->set_border_width(0);
+	Button* pseudocode_button = add_button(settings, sf::Vector2f(50, 200), sf::Vector2f(200, 50), 36, CENTER_LEFT, CENTER_CENTER,
+		"PSEUDOCODE_DISPLAY_BUTTON", "Yes");
+	pseudocode_button->set_border_width(0);
 
+	bg_text->set_transition_type(LEFT);
+	animation_text->set_transition_type(LEFT);
+	bg_speed_text->set_transition_type(LEFT);
+	info_text->set_transition_type(LEFT);
+	pseudocode_text->set_transition_type(LEFT);
 
-	add_text(settings, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
+	bg_button->set_transition_type(RIGHT);
+	animation_button->set_transition_type(RIGHT);
+	bg_speed_button->set_transition_type(RIGHT);
+	info_button->set_transition_type(RIGHT);
+	pseudocode_button->set_transition_type(RIGHT);
+
+	Button* bottom_text = add_text(settings, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
 		"BOTTOM_TEXT",
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
-}
-
-
-void setup_selection(UIUnit& selection) {
-	add_button(selection, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26,
-		TOP_LEFT, TOP_LEFT, "BACK", "BACK");
-	add_button(selection, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
-		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
-	add_text(selection, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, "SELECT", "SELECT YOUR DATA");
-
-	add_text(selection, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
-		"BOTTOM_TEXT",
-		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
-
-
-	add_button_with_texture(selection, sf::Vector2f(-650, -100), sf::Vector2f(571, 352),
-		CENTER_CENTER, CENTER_CENTER, "DATA1", ART_PATH + "LinkedList.png");
-	add_button_with_texture(selection, sf::Vector2f(0, -100), sf::Vector2f(571, 352),
-		CENTER_CENTER, CENTER_CENTER, "DATA2", ART_PATH + "HashMap.png");
-	add_button_with_texture(selection, sf::Vector2f(650, -100), sf::Vector2f(571, 352),
-		CENTER_CENTER, CENTER_CENTER, "DATA3", ART_PATH + "AVLTree.png");
-
-	add_button_with_texture(selection, sf::Vector2f(-650, 300), sf::Vector2f(571, 352),
-		CENTER_CENTER, CENTER_CENTER, "DATA4", ART_PATH + "Trie.png");
-	add_button_with_texture(selection, sf::Vector2f(0, 300), sf::Vector2f(571, 352),
-		CENTER_CENTER, CENTER_CENTER, "DATA5", ART_PATH + "Kruskal.png");
-	add_button_with_texture(selection, sf::Vector2f(650, 300), sf::Vector2f(571, 352),
-		CENTER_CENTER, CENTER_CENTER, "DATA6", ART_PATH + "Dijkstra.png");
 }
 
 void setup_visualizer(UIUnit& visualizer) {
 	// set up visualizer
-	add_button(visualizer, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26,
+	Button* select = add_button(visualizer, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26,
 		TOP_LEFT, TOP_LEFT, "SELECT", "SELECT");
-	add_button(visualizer, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
+	Button* settings = add_button(visualizer, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
 		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
 
-	add_text(visualizer, sf::Vector2f(0, -500), 100, 
+	Button* visualizer_text = add_text(visualizer, sf::Vector2f(0, -500), 100,
 		CENTER_CENTER, CENTER_CENTER, "VISUALIZER", "VISUALIZER");
 
-	add_button(visualizer, sf::Vector2f(30, 460), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+
+	Button* ds_name = add_text(visualizer, sf::Vector2f(0, 200), 36,
+		CENTER_CENTER, TOP_CENTER, "DS_NAME", "nil");
+
+	select->set_transition_type(LEFT);
+	settings->set_transition_type(RIGHT);
+	visualizer_text->set_transition_type(DOWN);
+	select->set_transition_strength(7);
+	settings->set_transition_strength(7);
+	visualizer_text->set_transition_strength(7);
+
+	ds_name->set_transition_type(DOWN);
+	ds_name->set_transition_strength(10);
+
+	Button* command_1 = add_button(visualizer, sf::Vector2f(30, 460), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_1", "LOAD");
-	add_button(visualizer, sf::Vector2f(30, 540), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+	Button* command_2 = add_button(visualizer, sf::Vector2f(30, 540), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_2", "INIT");
-	add_button(visualizer, sf::Vector2f(30, 620), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT, 
+	Button* command_3 = add_button(visualizer, sf::Vector2f(30, 620), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_3", "INSERT");
-	add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+	Button* command_4 = add_button(visualizer, sf::Vector2f(30, 700), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_4", "ERASE");
-	add_button(visualizer, sf::Vector2f(30, 780), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+	Button* command_5 = add_button(visualizer, sf::Vector2f(30, 780), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_5", "SEARCH");
-	add_button(visualizer, sf::Vector2f(30, 860), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+	Button* command_6 = add_button(visualizer, sf::Vector2f(30, 860), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_6", "CLEAR");
-	add_button(visualizer, sf::Vector2f(30, 940), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
+	Button* command_7 = add_button(visualizer, sf::Vector2f(30, 940), sf::Vector2f(150, 50), 23, TOP_LEFT, TOP_LEFT,
 		"COMMAND_7", "UPDATE");
 
+	command_1->set_transition_type(LEFT);
+	command_2->set_transition_type(LEFT);
+	command_3->set_transition_type(LEFT);
+	command_4->set_transition_type(LEFT);
+	command_5->set_transition_type(LEFT);
+	command_6->set_transition_type(LEFT);
+	command_7->set_transition_type(LEFT);
 
-	Button* nigger1 = add_button(visualizer, sf::Vector2f(30, -30), sf::Vector2f(200, 50), 20, BOTTOM_LEFT, BOTTOM_LEFT,
+	Button* prev_button = add_button(visualizer, sf::Vector2f(30, -30), sf::Vector2f(200, 50), 20, BOTTOM_LEFT, BOTTOM_LEFT,
 		"PREVIOUS", "Previous");
-	nigger1 -> set_border_width(0);
-	nigger1->set_justify_content(CENTER_LEFT);
-	Button* nigger2 = add_button(visualizer, sf::Vector2f(-30, -30), sf::Vector2f(200, 50), 20, BOTTOM_RIGHT, BOTTOM_RIGHT,
+	prev_button->set_border_width(0);
+	prev_button->set_justify_content(CENTER_LEFT);
+	Button* next_button = add_button(visualizer, sf::Vector2f(-30, -30), sf::Vector2f(200, 50), 20, BOTTOM_RIGHT, BOTTOM_RIGHT,
 		"NEXT", "Next");
-	nigger2->set_border_width(0);
-	nigger2->set_justify_content(CENTER_RIGHT);
+	next_button->set_border_width(0);
+	next_button->set_justify_content(CENTER_RIGHT);
 
-	std::string vcl[] = {"<<", "<", "||", ">", ">>"};
+	prev_button->set_transition_type(UP);
+	next_button->set_transition_type(UP);
+
+
+	Button* toggle_pseudocode = add_button(visualizer, sf::Vector2f(-10, 0), sf::Vector2f(200, 50), 40, CENTER_RIGHT, CENTER_RIGHT,
+		"TOGGLE_PSEUDOCODE", "<");
+	toggle_pseudocode->set_border_width(0);
+	toggle_pseudocode->set_justify_content(CENTER_RIGHT);
+
+
+	std::string vcl[] = { "<<", "<", "||", ">", ">>" };
 
 	for (int i = 1; i <= 5; ++i) {
-		Button* BUTTON = add_button(visualizer, sf::Vector2f((i-3) * 170, -50), sf::Vector2f(150, 60), 50, BOTTOM_CENTER, BOTTOM_CENTER,
-			"CONTROLFLOW" + std::string(1, i + '0'), vcl[i-1]);
+		Button* BUTTON = add_button(visualizer, sf::Vector2f((i - 3) * 170, -50), sf::Vector2f(150, 60), 50, BOTTOM_CENTER, BOTTOM_CENTER,
+			"CONTROLFLOW" + std::string(1, i + '0'), vcl[i - 1]);
 		BUTTON->set_border_width(0);
 		BUTTON->set_justify_content(CENTER_CENTER);
+		BUTTON->set_transition_type(UP);
 	}
 
-	add_text(visualizer, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
+	Button* bottom_text = add_text(visualizer, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
 		"BOTTOM_TEXT",
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
+}
+void setup_selection(UIUnit& selection) {
+	Button* back = add_button(selection, sf::Vector2f(50, 50), sf::Vector2f(200, 60), 26,
+		TOP_LEFT, TOP_LEFT, "BACK", "BACK");
+	Button* settings = add_button(selection, sf::Vector2f(-50, 50), sf::Vector2f(200, 60), 26,
+		TOP_RIGHT, TOP_RIGHT, "SETTINGS", "SETTINGS");
+	Button* selection_text = add_text(selection, sf::Vector2f(0, -500), 100, CENTER_CENTER, CENTER_CENTER, "SELECT", "SELECT YOUR DATA");
+
+	back->set_transition_type(LEFT);
+	settings->set_transition_type(RIGHT);
+	selection_text->set_transition_type(DOWN);
+
+	back->set_transition_strength(7);
+	settings->set_transition_strength(7);
+	selection_text->set_transition_strength(7);
+
+	Button* bottom_text = add_text(selection, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
+		"BOTTOM_TEXT",
+		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
+
+	Button* data1 = add_button_with_texture(selection, sf::Vector2f(-650, -100), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA1", ART_PATH + "LinkedList.png");
+	Button* data2 = add_button_with_texture(selection, sf::Vector2f(0, -100), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA2", ART_PATH + "HashMap.png");
+	Button* data3 = add_button_with_texture(selection, sf::Vector2f(650, -100), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA3", ART_PATH + "AVLTree.png");
+
+	Button* data4 = add_button_with_texture(selection, sf::Vector2f(-650, 300), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA4", ART_PATH + "Trie.png");
+	Button* data5 = add_button_with_texture(selection, sf::Vector2f(0, 300), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA5", ART_PATH + "Kruskal.png");
+	Button* data6 = add_button_with_texture(selection, sf::Vector2f(650, 300), sf::Vector2f(571, 352),
+		CENTER_CENTER, CENTER_CENTER, "DATA6", ART_PATH + "Dijkstra.png");
+
+	data1->set_transition_type(UP);
+	data2->set_transition_type(UP);
+	data3->set_transition_type(UP);
+	data4->set_transition_type(UP);
+	data5->set_transition_type(UP);
+	data6->set_transition_type(UP);
+
+
+	data1->set_transition_strength(6);
+	data2->set_transition_strength(6);
+	data3->set_transition_strength(6);
+	data4->set_transition_strength(4);
+	data5->set_transition_strength(4);
+	data6->set_transition_strength(4);
 }
 
 

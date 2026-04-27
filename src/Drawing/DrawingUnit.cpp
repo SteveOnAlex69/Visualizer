@@ -130,9 +130,11 @@ void DrawingUnit::draw_edge(Node u, Node v, std::string val, float opacity, sf::
 	}
 }
 
-void DrawingUnit::draw_viz_state(VisualizerState& viz_lu, bool flag) {
-	draw_graph(viz_lu.get_graph(), flag);
-	draw_pseudo_code(viz_lu.get_pseudo_code());
+void DrawingUnit::draw_viz_state(VisualizerState& viz_lu, bool flag1, bool flag2) {
+	draw_graph(viz_lu.get_graph(), flag1);
+
+	if (flag2)
+		draw_pseudo_code(viz_lu.get_pseudo_code());
 }
 
 void DrawingUnit::draw_graph(Graph& graph, bool flag) {
@@ -160,7 +162,40 @@ void DrawingUnit::draw_pseudo_code(Pseudocode& sudo_code) {
 	appwindow->draw(rect);
 
 	std::string content = sudo_code.get_content();
-	sf::Vector2f ROOT_POS(screen_center.x * 2 - 67 - 370, screen_center.y - 340);
+
+	std::string cur_string;
+	switch (sudo_code.get_command_name()) {
+	case 0:
+		cur_string = "";
+		break;
+	case 1:
+		cur_string = "INSERTION";
+		break;
+	case 2:
+		cur_string = "DELETION";
+		break;
+	case 3:
+		if (sudo_code.get_DS_name() <= 4) cur_string = "SEARCH";
+		else if (sudo_code.get_DS_name() == 5) cur_string = "KRUSKAL";
+		else if (sudo_code.get_DS_name() == 6) cur_string = "DIJKSTRA";
+		break;
+	case 4:
+		cur_string = "UPDATE";
+		break;
+	}
+
+	sf::Vector2f DUMB(screen_center.x * 2 - 67 - 200, screen_center.y - 310);
+	sf::Text title_tex(font);
+	title_tex.setString(cur_string);
+	title_tex.setFillColor(FIRST_COLOR);
+	title_tex.setCharacterSize(40);
+	title_tex.setPosition(DUMB);
+	sf::FloatRect textRect = title_tex.getLocalBounds();
+	title_tex.setOrigin(textRect.size * 0.5f + textRect.position);
+	appwindow->draw(title_tex);
+
+
+	sf::Vector2f ROOT_POS(screen_center.x * 2 - 67 - 370, screen_center.y - 280);
 	sf::Text tex(font);
 	tex.setString(sudo_code.get_content());
 	tex.setFillColor(FIRST_COLOR * FIRST_COLOR * FIRST_COLOR);
@@ -205,7 +240,6 @@ void DrawingUnit::shift_canvas(sf::Vector2f v) {
 void DrawingUnit::scale_canvas(sf::Vector2f mouse_pos, int delta) {
 	if (delta) {
 		sf::Vector2f diff = mouse_pos - root;
-
 		float cur_scaling = std::exp((float)delta / 10);
 		scaling *= cur_scaling;
 		diff /= cur_scaling;

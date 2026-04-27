@@ -5,6 +5,7 @@ AppSetting::AppSetting() {
 	speed_number = 1;
 	background_speed = 2;
 	info_display = 1;
+	pseudocode_display = 1;
 }
 
 void AppSetting::set_background(int bg) {background_number = bg;}
@@ -19,6 +20,8 @@ int AppSetting::get_bg_speed() { return background_speed; }
 void AppSetting::set_info_display(int s) { info_display = s; }
 int AppSetting::get_info_display() { return info_display; }
 
+void AppSetting::set_pseudocode_display(int s) { pseudocode_display = s; }
+int AppSetting::get_pseudocode_display() { return pseudocode_display; }
 
 
 
@@ -33,4 +36,7 @@ void AppSetting::next_bg_speed() {
 }
 void AppSetting::next_info_display() {
 	info_display = (info_display + 1) % INFO_DISPLAY_CYCLE;
+}
+void AppSetting::next_pseudocode_display() {
+	pseudocode_display = (pseudocode_display + 1) % PSEUDOCODE_DISPLAY_CYCLE;
 }

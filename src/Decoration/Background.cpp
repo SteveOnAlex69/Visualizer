@@ -9,7 +9,7 @@ BackgroundDrawer::BackgroundDrawer(sf::RenderWindow* window, sf::Font f) {
 	appwindow = window;
 	font = f;
 	total_time = 0;
-	for (int i = 0; i < 1000; ++i) {
+	for (int i = 0; i < 367; ++i) {
 		points.push_back(sf::Vector3f(rngesus(-2000, 2000), rngesus(-2000, 2000), rngesus(100, 2000)));
 	}
 
