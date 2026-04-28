@@ -40,6 +40,9 @@ public:
 	void toggle_flow();
 
 	int get_flow();
+
+	float get_current_time();
+	float get_max_time();
 private:
 	AnimationUnit* anim;
 	GeneralData* ds;

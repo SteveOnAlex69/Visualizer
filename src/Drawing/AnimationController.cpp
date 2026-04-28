@@ -425,8 +425,11 @@ void AnimationController::clear_current_ds() {
 void AnimationController::handle_init(std::string s) {
 	current_command = 0;
 	anim->force_latest();
-	ds->clear();
-	update_graph();
+
+	if (anim->get_max_time() > 0) {
+		ds->clear();
+		update_graph();
+	}
 
 	ds->init(s);
 	update_graph();
@@ -459,3 +462,11 @@ void AnimationController::toggle_flow() {
 }
 
 int AnimationController::get_flow() { return flow; }
+
+
+float AnimationController::get_current_time() {
+	return anim->get_current_time();
+}
+float AnimationController::get_max_time() {
+	return anim->get_max_time();
+}

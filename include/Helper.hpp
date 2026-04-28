@@ -20,6 +20,7 @@ const sf::Color FIFTH_COLOR = sf::Color(120, 230, 120); // GREEN
 const sf::Color SIXTH_COLOR = sf::Color(230, 230, 120); // YELLOW
 const std::string FONT_PATH = std::string(PROJECT_DIR) + "assets/Font/Consola.ttf";
 const std::string ART_PATH = std::string(PROJECT_DIR) + "assets/Art/";
+const std::string SOUND_PATH = std::string(PROJECT_DIR) + "assets/Sound/";
 const std::string BACKGROUND_PATH = ART_PATH + "/background.png";
 const std::string FOREGROUND_PATH = ART_PATH + "/foreground.png";
 const std::string PSEUDOCODE_PATH = std::string(PROJECT_DIR) + "assets/PseudoCode/";
@@ -40,7 +41,7 @@ const float ANIMATION_TIME = 1.5f;
 
 
 enum UserCommand {
-	NONE = 0, LOAD = 1, INIT = 2, INSERT = 3, ERASE = 4, SEARCH = 5, CLEAR = 6, UPDATE = 7
+	NONE = 0, LOAD = 1, INIT = 2, INSERT = 3, ERASE = 4, SEARCH = 5, CLEAR = 6, UPDATE = 7, RANDOM = 8, SUBMIT = 9
 };
 
 #define ll long long
@@ -78,5 +79,8 @@ bool check_valid_string(std::string s); // check if whatever in the textbox is p
 
 std::vector<std::vector<std::string>> split_to_row(std::string s, char delimiter = ' ');
 
+std::string init_random_test(int type);
+
+std::string floatToOneDecimal(float value);
 
 #endif

@@ -10,6 +10,15 @@ void AnimationUnit::force_latest() {
 	else animation_time = (history.size() - 1) * ANIMATION_TIME;
 }
 
+
+float AnimationUnit::get_current_time() {
+	return animation_time;
+}
+
+float AnimationUnit::get_max_time() {
+	return (history.size() - 1) * ANIMATION_TIME;
+}
+
 void AnimationUnit::add_state(VisualizerState state) {
 	history.push_back(state);
 }

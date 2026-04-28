@@ -8,6 +8,7 @@ UIUnit::UIUnit(sf::RenderWindow* window, sf::Font f) {
 	appwindow = window;
 	font = f;
 	kick_start();
+	are_hovering = last_hovering = 0;
 }
 
 void UIUnit::kick_start() {
@@ -201,11 +202,15 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 
 
 Button* UIUnit::check_hovering(sf::Vector2f mouse_pos) {
+	last_hovering = are_hovering;
+	are_hovering = false;
 	Button* hovering = nullptr;
 	for (auto i : buttons) {
 		if (i->check_hovering(mouse_pos) && i->get_visibility()) hovering = i;
 		i->send_update_state(current_time, i->check_hovering(mouse_pos));
 	}
+
+	if (hovering) are_hovering = true;
 	return hovering;
 }
 
@@ -221,4 +226,8 @@ Button* UIUnit::get_focused_text_box() {
 			return i;
 	}
 	return nullptr;
+}
+
+bool UIUnit::just_hovered() {
+	return (last_hovering == false && are_hovering == true);
 }

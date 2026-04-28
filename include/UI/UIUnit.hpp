@@ -32,6 +32,8 @@ public:
 	float get_last_frame();
 
 	void kick_start();
+
+	bool just_hovered();
 private:
 	sf::RenderWindow* appwindow;
 	sf::Font font;
@@ -40,6 +42,8 @@ private:
 	float current_time;
 
 	float last_frame_time = 0;
+
+	bool are_hovering, last_hovering;
 };
 
 

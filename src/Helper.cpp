@@ -1,7 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <Helper.hpp>
 #include <intrin.h>
-
+#include <sstream>
+#include <algorithm>
+#include <random>
+#include <set>
 unsigned long long MASK(int i) { return 1ULL << i; }
 int GETBIT(int mask, int i) { return ((mask) >> i) & 1; }
 int pop_cnt(unsigned long long mask) { return __popcnt(mask); }
@@ -91,4 +94,47 @@ bool check_valid_string(std::string s) {
 	std::vector<std::string> p = split(" " + s);
 	for (auto i : p) if (i.size() > 4) return false;
 	return true;
+}
+
+std::string init_random_test(int type) {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> len_dist(1, 10);
+	std::uniform_int_distribution<> val_dist(0, 19);
+
+	int length = len_dist(gen);
+	std::ostringstream oss;
+
+	if (type <= 3) {
+		for (int i = 0; i < length; ++i) {
+			oss << val_dist(gen);
+			if (i < length - 1) oss << " ";
+		}
+	}
+	else {
+		std::set<std::pair<int, int>> existing_edges;
+
+		for (int i = 0; i < length; ++i) {
+			int u, v;
+
+			do {
+				u = val_dist(gen);
+				v = val_dist(gen);
+			} while (u == v || existing_edges.count({ std::min(u, v), std::max(u, v) }));
+
+			existing_edges.insert({ std::min(u, v), std::max(u, v) });
+
+			int w = val_dist(gen);
+			oss << u << " " << v << " " << w << " ";
+			if (i < length - 1) oss << "\n";
+		}
+	}
+
+	return oss.str();
+}
+
+std::string floatToOneDecimal(float value) {
+	std::ostringstream out;
+	out << std::fixed << std::setprecision(1) << value;
+	return out.str();
 }

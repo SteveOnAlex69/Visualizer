@@ -31,6 +31,10 @@ public:
 	void jump_to_front();
 	void jump_back();
 	void jump_front();
+
+
+	float get_current_time();
+	float get_max_time();
 private:
 	std::vector<VisualizerState> history;
 	float animation_time;

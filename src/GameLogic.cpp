@@ -37,6 +37,8 @@
 #include <StateMachine/AppSetting.hpp>
 #include <FileReader/FileHandler.hpp>
 
+#include <Sound/SoundPlayer.hpp>
+
 
 #define ll long long
 #define GETBIT(mask, i) (((mask) >> (i)) & 1)
@@ -51,8 +53,8 @@ UIUnit menu, settings, about, visualizer, selection;
 BackgroundDrawer bg_drawer;
 InputHandler input_state;
 AnimationController anim;
-
 AppSetting appsex;
+SoundPlayer sound_player;
 
 void setup_menus() {
 	setup_menu(menu);
@@ -78,6 +80,9 @@ void appStart(sf::RenderWindow& appwindow) {
 	selection = UIUnit(&appwindow, font);
 
 	anim = AnimationController(new AnimationUnit(), &ds);
+
+	sound_player.loadSound(SOUND_PATH + "hover.wav", HOVER);
+	sound_player.loadSound(SOUND_PATH + "select.wav", SELECT);
 
 	setup_menus();
 }
@@ -110,9 +115,12 @@ bool menu_switcher(std::string s) { // true means switching away from the curren
 void handle_menu(sf::RenderWindow& appwindow, UIUnit &menu, MenuManager &menu_manager) {
 	menu.draw(input_state.get_mouse_pos());
 	Button* cur = menu.check_hovering(input_state.get_mouse_pos());
+	if (menu.just_hovered()) sound_player.playSound(HOVER);
 	if (input_state.get_mouse_state() == CLICK) {
 		if (cur) {
-			if (menu_switcher(cur->get_name()));
+			if (menu_switcher(cur->get_name())) {
+				sound_player.playSound(SELECT);
+			}
 			else if (cur->get_name() == "QUIT") {
 				appwindow.close();
 			}
@@ -123,8 +131,10 @@ void handle_menu(sf::RenderWindow& appwindow, UIUnit &menu, MenuManager &menu_ma
 
 void handle_settings(sf::RenderWindow& appwindow, UIUnit& settings, MenuManager& menu_manager) {
 	Button* cur = settings.check_hovering(input_state.get_mouse_pos());
+	if (settings.just_hovered()) sound_player.playSound(HOVER);
 	if (input_state.get_mouse_state() == CLICK) {
 		if (cur) {
+			sound_player.playSound(SELECT);
 			if (menu_switcher(cur->get_name()));
 			else {
 				if (cur->get_name() == "BACKGROUND_BUTTON") {
@@ -165,6 +175,8 @@ namespace PageState { // for the ABOUT class
 void handle_about(sf::RenderWindow& appwindow, UIUnit& about, MenuManager& menu_manager){
 	about.draw(input_state.get_mouse_pos());
 	Button* cur = about.check_hovering(input_state.get_mouse_pos());
+	if (about.just_hovered()) sound_player.playSound(HOVER);
+
 	std::string button_name = "";
 
 	if (input_state.get_mouse_state() == CLICK)
@@ -173,9 +185,11 @@ void handle_about(sf::RenderWindow& appwindow, UIUnit& about, MenuManager& menu_
 	if (menu_switcher(button_name)) return;
 	else if (button_name == "NEXT_PAGE" || input_state.get_keyboard_key(RIGHT_ARROW) == CLICK) {
 		PageState::cur_page = (PageState::cur_page + 1) % 5;
+		sound_player.playSound(HOVER);
 	}
 	else if (button_name == "PREV_PAGE" || input_state.get_keyboard_key(LEFT_ARROW) == CLICK) {
 		PageState::cur_page = (PageState::cur_page + 4) % 5;
+		sound_player.playSound(HOVER);
 	}
 	PageState::next_state(about.get_last_frame());
 	
@@ -263,21 +277,43 @@ UserCommand command_activated(std::string command) {
 	if (input_state.get_keyboard_key(KEY_P) == CLICK || command == "COMMAND_" + std::string(1, '0' + (int)CLEAR)) return CLEAR;
 	if (ds.get_current_type() == LINKED_LIST &&
 		(input_state.get_keyboard_key(KEY_U) == CLICK || command == "COMMAND_" + std::string(1, '0' + (int)UPDATE))) return UPDATE;
+	if (command == "COMMAND_" + std::string(1, '0' + (int)RANDOM)) return RANDOM;
+	if (command == "COMMAND_" + std::string(1, '0' + (int)SUBMIT)) return SUBMIT;
 	return NONE;
 }
 
 void text_box_receive(std::string s);
 void execute_command(UserCommand command) {
-	std::cout << "Command activated: " << command << std::endl;
+	if (command == RANDOM) {
+		visualizer.find_button("TEXT_BOX")->set_focused(1);
+
+		std::string cur = init_random_test(ds.get_current_type());
+		visualizer.find_button("TEXT_BOX")->set_string(cur);
+		std::cout << cur << "\n";
+		return;
+	}
+	
+	std::string tex = "";
+	Button* text_box = visualizer.find_button("TEXT_BOX");
+	if (text_box) tex = text_box->get_string();
+
 	despawn_text_box(visualizer);
 	despawn_form(visualizer);
-
 	for (int i = 1; ; ++i) {
 		Button* b = visualizer.find_button("COMMAND_" + std::string(1, '0' + i));
 		if (b) b->set_focused(0);
 		else break;
 	}
-	visualizer.find_button("COMMAND_" + std::string(1, '0' + command))->set_focused(1);
+	
+	Button* focused_button = visualizer.find_button("COMMAND_" + std::string(1, '0' + command));
+	if (focused_button)
+		focused_button->set_focused(1);	
+
+
+	if (command == SUBMIT) {
+		text_box_receive(tex);
+		return;
+	}
 	if (command == CLEAR) {
 		anim.clear_current_ds();
 		return;
@@ -355,6 +391,9 @@ void execute_control(int control) {
 	case 5:
 		anim.jump_to_front();
 		break;
+	case 6:
+		appsex.next_speed();
+		break;
 	}
 }
 
@@ -400,7 +439,6 @@ bool received_text_input() {
 		if (input_state.get_keyboard_key(SPACE) == CLICK) return true;
 		if (input_state.get_keyboard_key(ENTER) == CLICK) return true;
 	}
-
 	return false;
 }
 
@@ -529,10 +567,26 @@ void handle_input(UIUnit &visualizer) {
 		appsex.next_pseudocode_display();
 		visualizer.find_button("TOGGLE_PSEUDOCODE")->set_focused(0);
 	}
+
 }
 
 void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuManager& menu_manager) {
 	handle_ds_switcher();
+
+	visualizer.find_button("DS_NAME")->set_string(get_ds_name( ds.get_current_type() ));
+	visualizer.find_button("COMMAND_" + std::string(1, '0' + (int) SEARCH))->set_string((ds.is_drawing_ds()) ? "SEARCH" : "RUN");
+	visualizer.find_button("COMMAND_" + std::string(1, '0' + (int) UPDATE))->set_visibility(ds.get_current_type() == LINKED_LIST);
+	visualizer.find_button("CONTROLFLOW3")->set_string(
+		(anim.get_flow()) ? "||" : "[>]"
+	);
+	visualizer.find_button("CONTROLFLOW6")->set_string(SPEED_MODIFIER_NAMES[appsex.get_speed()]);
+
+	float t1 = anim.get_current_time(), t2 = anim.get_max_time();
+	std::string displayed = floatToOneDecimal(t1) + "/" + floatToOneDecimal(t2) + " s";
+	visualizer.find_button("TIMELINE")->set_string(displayed);
+	visualizer.find_button("TOGGLE_PSEUDOCODE")->set_string((appsex.get_pseudocode_display()) ? ">" : "<");
+
+	handle_input(visualizer);
 
 	Button* text_box = visualizer.find_button("TEXT_BOX");
 	if (text_box != nullptr && text_box->get_focused() == false) {
@@ -544,16 +598,6 @@ void handle_visualizing(sf::RenderWindow& appwindow, UIUnit& visualizer, MenuMan
 		despawn_form(visualizer);
 		text_box_mode = NONE;
 	}
-
-	visualizer.find_button("DS_NAME")->set_string(get_ds_name( ds.get_current_type() ));
-	visualizer.find_button("COMMAND_" + std::string(1, '0' + (int) SEARCH))->set_string((ds.is_drawing_ds()) ? "SEARCH" : "RUN");
-	visualizer.find_button("COMMAND_" + std::string(1, '0' + (int) UPDATE))->set_visibility(ds.get_current_type() == LINKED_LIST);
-	visualizer.find_button("CONTROLFLOW3")->set_string(
-		(anim.get_flow()) ? "||" : "[>]"
-	);
-	visualizer.find_button("TOGGLE_PSEUDOCODE")->set_string((appsex.get_pseudocode_display()) ? ">" : "<");
-
-	handle_input(visualizer);
 	if (anim.is_empty()) anim.update_graph();
 	if (input_state.get_mouse_state() == HOLD)
 		drawing_unit.shift_canvas(input_state.get_mouse_delta());
@@ -581,7 +625,7 @@ int pollEvent(sf::RenderWindow& appwindow) { // if window is closed, return 0
 	return return_val;
 }
 
-float timer = 5;
+float timer = 0;
 
 void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	int cur = pollEvent(appwindow);

@@ -298,6 +298,18 @@ void setup_visualizer(UIUnit& visualizer) {
 		BUTTON->set_transition_type(UP);
 	}
 
+	Button* SPEED = add_button(visualizer, sf::Vector2f(-3 * 170, -50), sf::Vector2f(150, 60), 40, BOTTOM_CENTER, BOTTOM_CENTER,
+		"CONTROLFLOW6", "1x");
+	SPEED->set_border_width(0);
+	SPEED->set_justify_content(CENTER_CENTER);
+	SPEED->set_transition_type(UP);
+
+
+	Button* TIMELINE = add_text(visualizer, sf::Vector2f(3 * 170, -50), 25, BOTTOM_CENTER, BOTTOM_CENTER,
+		"TIMELINE", "0/0s");
+	TIMELINE->set_justify_content(CENTER_CENTER);
+	TIMELINE->set_transition_type(UP);
+
 	Button* bottom_text = add_text(visualizer, sf::Vector2f(0, -10), 20, BOTTOM_CENTER, BOTTOM_CENTER,
 		"BOTTOM_TEXT",
 		"This project was made by Le Kien Thanh, APCS 2025, First year, with 2 days left on the clock");
@@ -362,6 +374,13 @@ void spawn_text_box(UIUnit& scene, UserCommand user_command) {
 		lmao->set_justify_content(TOP_LEFT);
 		lmao->set_focused(1);
 		lmao->set_line_width(20);
+
+
+		Button* command_8 = add_button(scene, sf::Vector2f(220, 980), sf::Vector2f(125, 50), 23, TOP_LEFT, TOP_LEFT,
+			"COMMAND_8", "RANDOM");
+		Button* command_9 = add_button(scene, sf::Vector2f(395, 980), sf::Vector2f(125, 50), 23, TOP_LEFT, TOP_LEFT,
+			"COMMAND_9", "SUBMIT");
+
 	}
 	else {
 		sf::Vector2f pos = sf::Vector2f(220, 620);
@@ -375,6 +394,8 @@ void spawn_text_box(UIUnit& scene, UserCommand user_command) {
 
 void despawn_text_box(UIUnit& scene) {
 	scene.erase_element(scene.find_button("TEXT_BOX"));
+	scene.erase_element(scene.find_button("COMMAND_8"));
+	scene.erase_element(scene.find_button("COMMAND_9"));
 }
 
 void spawn_message_box(UIUnit& scene, std::string message) {
