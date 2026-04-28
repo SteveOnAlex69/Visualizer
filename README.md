@@ -52,7 +52,7 @@ The build process is fully automated via CMake. It is configured to automaticall
 8. Once compiled, navigate to the newly generated `build/` folder in your File Explorer and run `DataVisualizer.exe`. 
 
 ## Demo
-Youtube Video Link: 
+Youtube Video Link: [Youtube Music](https://www.youtube.com/watch?v=szpjRGeeSnU)
 
 
 ## License
