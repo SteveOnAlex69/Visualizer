@@ -284,6 +284,7 @@ UserCommand command_activated(std::string command) {
 
 void text_box_receive(std::string s);
 void execute_command(UserCommand command) {
+	std::cout << "Executing: " << command << std::endl;
 	if (command == RANDOM) {
 		visualizer.find_button("TEXT_BOX")->set_focused(1);
 
@@ -549,7 +550,6 @@ void handle_input(UIUnit &visualizer) {
 		visualizer.click(mouse_pos);
 		if (cur) pressed_button = cur->get_name();
 	}
-
 	if (menu_switcher(pressed_button)) {
 		ds.reset_current();
 		despawn_text_box(visualizer);
@@ -557,8 +557,9 @@ void handle_input(UIUnit &visualizer) {
 		anim.clear_graph();
 		text_box_mode = NONE;
 	}
-	else if (command_activated(pressed_button))
+	else if (command_activated(pressed_button)) {
 		execute_command(command_activated(pressed_button));
+	}
 	else if (control_activated(pressed_button))
 		execute_control(control_activated(pressed_button));
 	else if (visualizer.get_focused_text_box()) 
