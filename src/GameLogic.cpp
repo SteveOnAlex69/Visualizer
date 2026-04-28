@@ -31,6 +31,8 @@
 #include <UI/UIUnit.hpp>
 
 #include <Decoration/Background.hpp>
+#include <Decoration/Intro.hpp>
+
 #include <Input/InputHandler.hpp>
 #include <StateMachine/AppSetting.hpp>
 #include <FileReader/FileHandler.hpp>
@@ -151,13 +153,48 @@ void handle_settings(sf::RenderWindow& appwindow, UIUnit& settings, MenuManager&
 	settings.draw(input_state.get_mouse_pos());
 }
 
-void handle_about(sf::RenderWindow& appwindow, UIUnit& about, MenuManager& menu_manager) {
+namespace PageState { // for the ABOUT class
+	int cur_page = 0;
+	float cur_state = 0;
+
+	void next_state(float delta) {
+		float diff = (cur_page - cur_state);
+		cur_state += diff * delta * 3;
+	}
+}
+void handle_about(sf::RenderWindow& appwindow, UIUnit& about, MenuManager& menu_manager){
 	about.draw(input_state.get_mouse_pos());
 	Button* cur = about.check_hovering(input_state.get_mouse_pos());
-	if (input_state.get_mouse_state() == CLICK) {
-		if (cur) {
-			if (menu_switcher(cur->get_name()));
-		}
+	std::string button_name = "";
+
+	if (input_state.get_mouse_state() == CLICK)
+		if (cur) button_name = cur->get_name();
+
+	if (menu_switcher(button_name)) return;
+	else if (button_name == "NEXT_PAGE" || input_state.get_keyboard_key(RIGHT_ARROW) == CLICK) {
+		PageState::cur_page = (PageState::cur_page + 1) % 5;
+	}
+	else if (button_name == "PREV_PAGE" || input_state.get_keyboard_key(LEFT_ARROW) == CLICK) {
+		PageState::cur_page = (PageState::cur_page + 4) % 5;
+	}
+	PageState::next_state(about.get_last_frame());
+	
+	for (int i = 0; i < 5; ++i) {
+		float diff = (i - PageState::cur_state);
+
+		std::string page_name = "PAGE" + std::string(1, '1' + i);
+		Button* cur = about.find_button(page_name);
+		cur->set_button_pos(sf::Vector2f(screen_center.x * 2 * diff, 0));
+		const sf::Vector2f MAX_SIZE = sf::Vector2f(1225, 725);
+		cur->set_button_size(MAX_SIZE * std::exp(-abs(diff * 0.5f)) );
+
+		std::string dot_name = "DOT" + std::string(1, '1' + i);
+		Button* dot = about.find_button(dot_name);
+		dot->set_button_pos(sf::Vector2f(diff * 30, 500));
+		dot->set_font_size(67 + std::exp(-abs(diff * 2.0f)) * 33);
+
+		int g = FIRST_COLOR.g + 2 * (SECOND_COLOR.g - FIRST_COLOR.g) * std::exp(-abs(diff * 0.5f));
+		dot->set_font_color(sf::Color(FIRST_COLOR.r, g, FIRST_COLOR.b));
 	}
 }
 
@@ -200,6 +237,8 @@ void handle_ds_switcher() {
 
 		visualizer.find_button("PREVIOUS")->set_focused(0);
 		visualizer.find_button("NEXT")->set_focused(0);
+
+		drawing_unit.reset_canvas();
 
 		despawn_text_box(visualizer);
 		despawn_form(visualizer);
@@ -542,43 +581,53 @@ int pollEvent(sf::RenderWindow& appwindow) { // if window is closed, return 0
 	return return_val;
 }
 
+float timer = 5;
+
 void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	int cur = pollEvent(appwindow);
 	if (cur == 0) return;
-	delta *= SPEED_MODIFIER[appsex.get_speed()];
-	bg_drawer.draw(input_state.get_mouse_pos(), appsex.get_background(), 
-		delta * BACKGROUND_SPEED[appsex.get_bg_speed()]);
+	timer += delta;
+	appwindow.clear(sf::Color(36, 36, 36));
 
-	input_state.update_mouse(delta);
-	input_state.update_keyboard(delta);
+	if (timer >= 5) {
+		delta *= SPEED_MODIFIER[appsex.get_speed()];
+		bg_drawer.draw(input_state.get_mouse_pos(), appsex.get_background(),
+			delta * BACKGROUND_SPEED[appsex.get_bg_speed()]);
 
-	anim.update_timer(delta);
+		input_state.update_mouse(delta);
+		input_state.update_keyboard(delta);
 
-	if (input_state.get_keyboard_key(KEY_L) == CLICK) {
-		loadTextFile();
+		anim.update_timer(delta);
+
+		if (input_state.get_keyboard_key(KEY_L) == CLICK) {
+			loadTextFile();
+		}
+
+		switch (menu_manager.get_current_state()) {
+		case MENU:
+			menu.update_timer(delta);
+			handle_menu(appwindow, menu, menu_manager);
+			break;
+		case SETTINGS:
+			settings.update_timer(delta);
+			handle_settings(appwindow, settings, menu_manager);
+			break;
+		case ABOUT:
+			about.update_timer(delta);
+			handle_about(appwindow, about, menu_manager);
+			break;
+		case VISUALIZING:
+			visualizer.update_timer(delta);
+			handle_visualizing(appwindow, visualizer, menu_manager);
+			break;
+		case SELECTION:
+			selection.update_timer(delta);
+			handle_selection(appwindow, selection, menu_manager);
+			break;
+		}
 	}
-
-	switch (menu_manager.get_current_state()) {
-	case MENU:
-		menu.update_timer(delta);
-		handle_menu(appwindow, menu, menu_manager);
-		break;
-	case SETTINGS:
-		settings.update_timer(delta);
-		handle_settings(appwindow, settings, menu_manager);
-		break;
-	case ABOUT:
-		about.update_timer(delta);
-		handle_about(appwindow, about, menu_manager);
-		break;
-	case VISUALIZING:
-		visualizer.update_timer(delta);
-		handle_visualizing(appwindow, visualizer, menu_manager);
-		break;
-	case SELECTION:
-		selection.update_timer(delta);
-		handle_selection(appwindow, selection, menu_manager);
-		break;
+	if (timer <= 15) {
+		Intro::draw_intro(appwindow, timer);
 	}
 	
 	appwindow.display();

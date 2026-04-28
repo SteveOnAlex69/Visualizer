@@ -7,16 +7,20 @@ UIUnit::UIUnit() { current_time = 0; }
 UIUnit::UIUnit(sf::RenderWindow* window, sf::Font f) {
 	appwindow = window;
 	font = f;
-	current_time = 0;
+	kick_start();
 }
 
 void UIUnit::kick_start() {
 	current_time = 0;
+	last_frame_time = 0;
 }
 
 void UIUnit::update_timer(float delta) {
 	current_time += delta;
+	last_frame_time = delta;
 }
+
+float UIUnit::get_last_frame() { return last_frame_time; }
 
 void UIUnit::add_element(Button* button) {
 	buttons.push_back(button);
@@ -149,7 +153,6 @@ void UIUnit::draw_button(Button* button, sf::Vector2f mouse_pos) {
 		int cnt = 0;
 		std::string ans = "";
 		for (auto i : brah) {
-			if (i.empty()) continue;
 			if (cnt == 0 || i == "\n") {
 				ans += i;
 				if (i == "\n") cnt = 0;

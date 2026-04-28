@@ -34,6 +34,7 @@ public:
 
 	void shift_canvas(sf::Vector2f v);
 	void scale_canvas(sf::Vector2f mouse_pos, int delta);
+	void reset_canvas();
 private:
 	sf::RenderWindow* appwindow;
 	sf::Font font;

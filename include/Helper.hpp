@@ -13,7 +13,7 @@
 const sf::Vector2u windowSize = sf::Vector2u(1920, 1200);
 const sf::Color BACKGROUND = sf::Color(36, 36, 36);
 const sf::Color FIRST_COLOR = sf::Color(230, 230, 230); // WHITE
-const sf::Color SECOND_COLOR = sf::Color(220, 180, 220); // PINK
+const sf::Color SECOND_COLOR = sf::Color(230, 200, 230); // PINK
 const sf::Color THIRD_COLOR = sf::Color(170, 230, 230); // CYAN
 const sf::Color FOURTH_COLOR = sf::Color(200, 100, 100); // RED
 const sf::Color FIFTH_COLOR = sf::Color(120, 230, 120); // GREEN

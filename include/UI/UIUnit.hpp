@@ -29,6 +29,7 @@ public:
 	Button* get_focused_text_box();
 
 	void update_timer(float delta);
+	float get_last_frame();
 
 	void kick_start();
 private:
@@ -37,6 +38,8 @@ private:
 	std::vector<Button*> buttons;
 	void draw_button(Button* button, sf::Vector2f mouse_pos);
 	float current_time;
+
+	float last_frame_time = 0;
 };
 
 

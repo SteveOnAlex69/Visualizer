@@ -143,38 +143,23 @@ void setup_about(UIUnit& about) {
 	settings->set_transition_strength(7);
 	about_text->set_transition_strength(7);
 
-
-
-	std::vector<std::string> lines;
-	lines.push_back("This project (Data structure visualizer) was made by Le Kien Thanh - 25125035");
-	lines.push_back("My nickname is steveonalex");
-	lines.push_back("This was created on 31st of March.");
-	lines.push_back("It's just a random college project.");
-	lines.push_back("I procrastinated this like crazy. Life is tough");
-	lines.push_back("At least I managed to push this out, cool I guess.");
-	lines.push_back("===========");
-	lines.push_back("HOW TO USE:");
-	lines.push_back("There are four data structures, namely Linked List, Hashmap, AVL Tree, Trie");
-	lines.push_back("You can load from file, init, insert, erase, search, or update for an element and see what happens.");
-	lines.push_back("There are also two graph algorithms, namely Kruskal and Dijkstra");
-	lines.push_back("You can load from file, init, insert, erase, run the algorithm and see what happens.");
-	lines.push_back("That's it!");
-	lines.push_back("===========");
-	lines.push_back("DEV LOGS:");
-	lines.push_back("1 month before deadlines: nothing");
-	lines.push_back("1 week before deadlines: implemented the data structures");
-	lines.push_back("3 days before deadlines: adding the option system");
-	lines.push_back("2 days before deadlines: redesigning the entire project");
-	lines.push_back("===========");
-	lines.push_back("QUOTE OF THE DAY:");
-	lines.push_back("\"In my next magic trick, I will code a project worth half my grade in 2 hours.\"");
-	for (int i = 0; i < (int)lines.size(); ++i) {
-		sf::Vector2f po(0, 200);
-		po += sf::Vector2f(0, 36) * (i * 1.0f);
-		Button* line_text = add_text(about, po, 30, CENTER_CENTER, TOP_CENTER, "AHH", lines[i]);
-		line_text->set_transition_type(UP);
-		line_text->set_transition_strength(10 * exp(-i * 0.1));
+	const int PAGE_COUNT = 5;
+	for (int i = 0; i < PAGE_COUNT; ++i) {
+		Button* about_page = add_button_with_texture(about, sf::Vector2f(screen_center.x * 2 * i, 0), sf::Vector2f(1225, 725),
+			CENTER_CENTER, CENTER_CENTER, "PAGE" + std::string(1, '1' + i), ART_PATH + "page" + std::string(1, '1' + i) + ".png");
+		Button* dot = add_button(about, sf::Vector2f(0, 500), sf::Vector2f(0, 0), 67, CENTER_CENTER, CENTER_CENTER,
+			"DOT" + std::string(1, '1' + i), ".");
 	}
+
+	Button* next_page = add_button(about, sf::Vector2f(-10, 0), sf::Vector2f(200, 50), 80, CENTER_RIGHT, CENTER_RIGHT,
+		"NEXT_PAGE", "[>]");
+	next_page->set_border_width(0);
+	next_page->set_justify_content(CENTER_RIGHT);
+
+	Button* previous_page = add_button(about, sf::Vector2f(10, 0), sf::Vector2f(200, 50), 80, CENTER_LEFT, CENTER_LEFT,
+		"PREV_PAGE", "[<]");
+	previous_page->set_border_width(0);
+	previous_page->set_justify_content(CENTER_LEFT);
 }
 
 void setup_settings(UIUnit& settings) {

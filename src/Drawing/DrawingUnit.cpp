@@ -1,9 +1,3 @@
-// fucked up font size
-// fucked up AVL offset
-// fucked up Trie offset
-// fucked up Kruskal offset
-// fucked up Dijkstra offset
-
 #include <Drawing/DrawingUnit.hpp>
 #include <Helper.hpp>
 
@@ -245,4 +239,9 @@ void DrawingUnit::scale_canvas(sf::Vector2f mouse_pos, int delta) {
 		diff /= cur_scaling;
 		root = mouse_pos - diff;
 	}
+}
+
+void DrawingUnit::reset_canvas() {
+	root = sf::Vector2f(0, 0);
+	scaling = 1;
 }
