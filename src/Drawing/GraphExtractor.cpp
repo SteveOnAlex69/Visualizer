@@ -83,7 +83,9 @@ namespace GraphExtractor {
 		sf::Vector2f OFFSETY(0, 150);
 		Graph vcl;
 
-		Node prev = vcl.add_node(Node("", ROOT, (unsigned long long)arr[0], SQUARE, 1));
+		Node prev = Node("", ROOT, (unsigned long long)arr[0], SQUARE, 1);
+		prev.set_weight("Head");
+		vcl.add_node(prev);
 
 		for (int i = 1; i < (int)arr.size(); ++i) {
 			int y = (i - 1) / mod;
