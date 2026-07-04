@@ -626,7 +626,7 @@ int pollEvent(sf::RenderWindow& appwindow) { // if window is closed, return 0
 	return return_val;
 }
 
-float timer = 0;
+float timer = 5;
 
 void appLoop(sf::RenderWindow& appwindow, float delta) { // receive delta in s
 	int cur = pollEvent(appwindow);
