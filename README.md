@@ -1,11 +1,16 @@
 ﻿# Data Structure and Algorithm Visualizer
 
-- [Project Overview](#project-overview)
-- [Key Features](#key-features)
-- [Technical Requirements](#technical-requirements)
-- [Installation & Build Guide](#installation--build-guide)
-- [Demo](#demo)
-- [License](#license)
+![](datavisualizer.gif)
+
+
+
+- [Data Structure and Algorithm Visualizer](#data-structure-and-algorithm-visualizer)
+  - [Project Overview](#project-overview)
+  - [Key Features](#key-features)
+  - [Technical Requirements](#technical-requirements)
+  - [Installation \& Build Guide](#installation--build-guide)
+  - [Demo](#demo)
+  - [License](#license)
 
 ## Project Overview
 
@@ -14,6 +19,9 @@ This is a standalone, interactive C++ application designed to visualize core Dat
 Instead of writing a monolithic script where the math and graphics are tangled together, this visualizer runs on a strictly **decoupled state-machine architecture**. The core C++ logic structures (like the AVL tree and Dijkstra's flood-fill) operate entirely in a vacuum. A middleman controller takes snapshots of the data and passes them to the SFML rendering engine. This prevents spaghetti code and guarantees that the visual animations never interfere with the actual computer science math.
 
 Hopefully you have an enjoyable time playing around with this program, and hopefully it should be intuitive enough to use without friction :P
+
+![](dataselect.png)
+
 
 **Implemented Structures:**
 1. Singly Linked List
@@ -52,7 +60,7 @@ The build process is fully automated via CMake. It is configured to automaticall
 8. Once compiled, navigate to the newly generated `build/` folder in your File Explorer and run `DataVisualizer.exe`. 
 
 ## Demo
-Youtube Video Link: [Youtube Music](https://www.youtube.com/watch?v=szpjRGeeSnU)
+Youtube Video Link: [Demo Video](https://www.youtube.com/watch?v=szpjRGeeSnU)
 
 
 ## License
